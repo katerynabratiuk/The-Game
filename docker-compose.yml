@@ -1,0 +1,22 @@
+services:
+  db:
+    container_name: postgres_thegame
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT}
+    networks:
+      - db
+    restart: unless-stopped
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:
