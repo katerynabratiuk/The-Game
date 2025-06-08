@@ -1,4 +1,4 @@
-package com.example.game;
+package com.example.game.Server;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

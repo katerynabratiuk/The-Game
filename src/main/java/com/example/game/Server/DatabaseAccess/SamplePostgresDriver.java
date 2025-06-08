@@ -1,4 +1,6 @@
-package com.example.game;
+package com.example.game.Server.DatabaseAccess;
+
+import com.example.game.Server.EnvLoader;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
