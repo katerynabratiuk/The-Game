@@ -23,23 +23,5 @@ public class ConcurrentQueue<T> {
     public int size() {
         return queue.size();
     }
-
-    public static class Coordinates implements Serializable {
-        private final int x;
-        private final int y;
-
-        public Coordinates(int x, int y) {
-            this.x  = x;
-            this.y = y;
-        }
-
-        public int x() {
-            return this.x;
-        }
-
-        public int y() {
-            return this.y;
-        }
-    }
 }
 

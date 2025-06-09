@@ -1,17 +1,24 @@
 package com.example.game.Client;
 
+import com.example.game.DataStructures.Actor;
 import com.example.game.DataStructures.ConcurrentQueue;
+import com.example.game.DataStructures.Coordinates;
+import com.example.game.Server.EnvLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.util.Map;
+import java.util.UUID;
 
 
 public class ActorPositionUpdateThread extends Thread {
     private volatile boolean running = true;
-    private final ConcurrentQueue<ConcurrentQueue.Coordinates> coordinateQueue;
+    private final String clientId = UUID.randomUUID().toString();
+    private final ConcurrentQueue<Coordinates> coordinateQueue;
     private DatagramSocket socket;
+    private final int PORT = this.getPort();
 
     public ActorPositionUpdateThread() {
         this.coordinateQueue = new ConcurrentQueue<>();
@@ -23,7 +30,7 @@ public class ActorPositionUpdateThread extends Thread {
         setDaemon(true);
     }
 
-    public void updateCoordinates(ConcurrentQueue.Coordinates newCoordinates) {
+    public void updateCoordinates(Coordinates newCoordinates) {
         coordinateQueue.put(newCoordinates);
     }
 
@@ -41,12 +48,10 @@ public class ActorPositionUpdateThread extends Thread {
 
         while (running && !Thread.currentThread().isInterrupted()) {
             try {
-                ConcurrentQueue.Coordinates coords = coordinateQueue.get();
-                sendCoordinates(coords);
-                Thread.sleep(50);
-
+                update();
+                // Thread.sleep(50);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                this.interrupt();
                 break;
             }
         }
@@ -57,26 +62,40 @@ public class ActorPositionUpdateThread extends Thread {
         System.out.println("Actor Coordinates Update Thread stopped");
     }
 
-    private void sendCoordinates(ConcurrentQueue.Coordinates coords) {
+    private void update() throws InterruptedException {
+        Coordinates coords = coordinateQueue.get();
+        Actor actor = new Actor(clientId, coords);
+        sendCoordinates(actor);
+    }
+
+    private void sendCoordinates(Actor actor) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(coords);
+            oos.writeObject(actor);
             oos.flush();
 
             byte[] data = baos.toByteArray();
             DatagramPacket packet = new DatagramPacket(
-                    data, data.length, java.net.InetAddress.getByName(null), 5678
-            );
+                    data, data.length, java.net.InetAddress.getByName(null), PORT);
 
             socket.send(packet);
             oos.close();
             baos.close();
-
         } catch (Exception e) {
             if (running) {
                 System.err.println("Error sending coordinates: " + e.getMessage());
             }
         }
     }
+
+    public DatagramSocket getSocket() {
+        return socket;
+    }
+
+    private int getPort() {
+        Map<String, String> dotenv = EnvLoader.loadEnv(".env");
+        return Integer.parseInt(dotenv.get("UPD_SERVER_PORT"));
+    }
+
 }

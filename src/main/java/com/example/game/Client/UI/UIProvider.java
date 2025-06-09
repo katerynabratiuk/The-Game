@@ -1,7 +1,8 @@
 package com.example.game.Client.UI;
 
+import com.example.game.Client.ActorPositionListenerThread;
 import com.example.game.Client.ActorPositionUpdateThread;
-import com.example.game.DataStructures.ConcurrentQueue;
+import com.example.game.DataStructures.Coordinates;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,8 +10,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class UIProvider {
-    private static volatile ConcurrentQueue.Coordinates position = new ConcurrentQueue.Coordinates(0, 0);
+    private static volatile Coordinates position = new Coordinates(0, 0);
     private static ActorPositionUpdateThread senderThread;
+    private static ActorPositionListenerThread listenerThread;
     private static ActorPanel actorPanel;
 
     public static void createAndShowGUI() {
@@ -28,6 +30,8 @@ public class UIProvider {
         try {
             senderThread = new ActorPositionUpdateThread();
             senderThread.start();
+            listenerThread = new ActorPositionListenerThread(senderThread.getSocket(), actorPanel, actorPanel.getGameState());
+            listenerThread.start();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(frame, "Failed to start sender thread: " + e.getMessage());
             return;
@@ -39,7 +43,6 @@ public class UIProvider {
                 position = calculateNewPosition(e.getKeyCode());
                 senderThread.updateCoordinates(position);
                 positionLabel.setText("Position: (" + position.x() + ", " + position.y() + ")");
-                actorPanel.updatePosition(position);
             }
         });
         actorPanel.requestFocusInWindow();
@@ -59,16 +62,16 @@ public class UIProvider {
     }
 
     // TODO: refactor after java 8 issue solving
-    private static ConcurrentQueue.Coordinates calculateNewPosition(int keyCode) {
+    private static Coordinates calculateNewPosition(int keyCode) {
         System.out.println("Pressed key: " + keyCode);
         if (keyCode == KeyEvent.VK_LEFT) {
-            return new ConcurrentQueue.Coordinates(position.x() - 1, position.y());
+            return new Coordinates(position.x() - 1, position.y());
         } else if (keyCode == KeyEvent.VK_RIGHT) {
-            return new ConcurrentQueue.Coordinates(position.x() + 1, position.y());
+            return new Coordinates(position.x() + 1, position.y());
         } else if (keyCode == KeyEvent.VK_UP) {
-            return new ConcurrentQueue.Coordinates(position.x(), position.y() - 1);
+            return new Coordinates(position.x(), position.y() - 1);
         } else if (keyCode == KeyEvent.VK_DOWN) {
-            return new ConcurrentQueue.Coordinates(position.x(), position.y() + 1);
+            return new Coordinates(position.x(), position.y() + 1);
         } else {
             return position;
         }
