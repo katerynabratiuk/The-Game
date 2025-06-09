@@ -10,7 +10,7 @@ public class ConcurrentQueue<T> {
         while (queue.isEmpty()) {
             wait();
         }
-        T task = queue.get(queue.size()-1);
+        T task = queue.remove(0);
         queue.remove(task);
         return task;
     }
@@ -20,7 +20,7 @@ public class ConcurrentQueue<T> {
         notify();
     }
 
-    public int size() {
+    public synchronized int size() {
         return queue.size();
     }
 }

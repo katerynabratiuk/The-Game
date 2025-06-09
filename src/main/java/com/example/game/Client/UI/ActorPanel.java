@@ -18,6 +18,7 @@ public class ActorPanel extends JPanel {
     }
 
     public void updateAllActors(GameState gameState) {
+        // set new game state for all actors on the map (temporary method)
         this.gameState = gameState;
         repaint();
     }

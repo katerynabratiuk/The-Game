@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Actor implements Serializable {
     private final String uuid;
-    private final Coordinates coordinates;
+    private Coordinates coordinates;
     public boolean someFutureFeatureEnabled;
 
     public Actor(String clientId,Coordinates coordinates) {
@@ -12,6 +12,15 @@ public class Actor implements Serializable {
         this.coordinates = coordinates;
     }
 
-    public String getClientId() { return uuid; }
-    public Coordinates getCoordinates() { return coordinates; }
+    public String getClientId() {
+        return uuid;
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Coordinates newCoords) {
+        this.coordinates = newCoords;
+    }
 }

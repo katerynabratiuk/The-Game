@@ -1,27 +1,30 @@
 package com.example.game.Client;
 
-import com.example.game.DataStructures.Actor;
 import com.example.game.DataStructures.ConcurrentQueue;
-import com.example.game.DataStructures.Coordinates;
+import com.example.game.DataStructures.ClientInput;
 import com.example.game.Server.EnvLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.UUID;
 
 
-public class ActorPositionUpdateThread extends Thread {
-    private volatile boolean running = true;
-    private final String clientId = UUID.randomUUID().toString();
-    private final ConcurrentQueue<Coordinates> coordinateQueue;
-    private DatagramSocket socket;
+public class InputsUpdateThread extends Thread {
+    private final String CLIENT_UUID = UUID.randomUUID().toString();
     private final int PORT = this.getPort();
 
-    public ActorPositionUpdateThread() {
-        this.coordinateQueue = new ConcurrentQueue<>();
+    private final ConcurrentQueue<ClientInput> inputsQueue;
+    private volatile boolean running = true;
+    private final DatagramSocket socket;
+    private final InetAddress CLIENT_ADDRESS = java.net.InetAddress.getByName(null);
+
+    public InputsUpdateThread() throws UnknownHostException {
+        this.inputsQueue = new ConcurrentQueue<>();
         try {
             this.socket = new DatagramSocket();
         } catch (Exception e) {
@@ -30,8 +33,9 @@ public class ActorPositionUpdateThread extends Thread {
         setDaemon(true);
     }
 
-    public void updateCoordinates(Coordinates newCoordinates) {
-        coordinateQueue.put(newCoordinates);
+    public void updateInputsQueue(int keyCode) {
+        ClientInput input = new ClientInput(CLIENT_UUID, keyCode);
+        inputsQueue.put(input);
     }
 
     public void shutdown() {
@@ -44,47 +48,37 @@ public class ActorPositionUpdateThread extends Thread {
 
     @Override
     public void run() {
-        System.out.println("Actor Coordinates Update Thread started");
+        System.out.println("Actor Inputs Update Thread started");
 
         while (running && !Thread.currentThread().isInterrupted()) {
-            try {
-                update();
-                // Thread.sleep(50);
-            } catch (InterruptedException e) {
-                this.interrupt();
-                break;
-            }
+            send();
         }
 
         if (socket != null && !socket.isClosed()) {
             socket.close();
         }
-        System.out.println("Actor Coordinates Update Thread stopped");
+
+        System.out.println("Actor Inputs Update Thread stopped");
     }
 
-    private void update() throws InterruptedException {
-        Coordinates coords = coordinateQueue.get();
-        Actor actor = new Actor(clientId, coords);
-        sendCoordinates(actor);
-    }
-
-    private void sendCoordinates(Actor actor) {
+    private void send() {
         try {
+            ClientInput input = inputsQueue.get();
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(actor);
+            oos.writeObject(input);
             oos.flush();
 
             byte[] data = baos.toByteArray();
-            DatagramPacket packet = new DatagramPacket(
-                    data, data.length, java.net.InetAddress.getByName(null), PORT);
+            DatagramPacket packet = new DatagramPacket(data, data.length, CLIENT_ADDRESS, PORT);
 
             socket.send(packet);
             oos.close();
             baos.close();
         } catch (Exception e) {
             if (running) {
-                System.err.println("Error sending coordinates: " + e.getMessage());
+                System.err.println("Error sending input: " + e.getMessage());
             }
         }
     }

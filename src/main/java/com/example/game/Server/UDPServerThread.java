@@ -1,33 +1,32 @@
 package com.example.game.Server;
 
 import com.example.game.DataStructures.Actor;
+import com.example.game.DataStructures.ClientInput;
+import com.example.game.DataStructures.Coordinates;
 import com.example.game.DataStructures.GameState;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap; // can we use this?
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class UDPServerThread extends Thread {
     protected DatagramSocket socket = null;
 
     private final int BUFFER_SIZE = 1024;
     private final int PORT = this.getPort();
-    private byte[] BUFFER = new byte[BUFFER_SIZE];
 
     private final Set<InetSocketAddress> clients = ConcurrentHashMap.newKeySet();
-    private final List<Actor> actors = new CopyOnWriteArrayList<>();
+    private final Map<String, Actor> actors = new ConcurrentHashMap<>();
 
     public void run() {
         connectSocket();
         while (true) {
             try {
-                DatagramPacket packet = new DatagramPacket(BUFFER, BUFFER.length);
+                DatagramPacket packet = new DatagramPacket(new byte[BUFFER_SIZE], BUFFER_SIZE);
                 socket.receive(packet);
-
-                Actor update = process(packet);
-                updateActorList(update);
+                ClientInput input = process(packet);
+                updateActor(input);
                 trackClient(packet);
                 broadcast();
             } catch (IOException | ClassNotFoundException e) {
@@ -47,27 +46,27 @@ public class UDPServerThread extends Thread {
     }
 
     private void broadcast() throws IOException {
-        GameState gameState = new GameState(new ArrayList<>(actors));
+        GameState gameState = new GameState(new ArrayList<>(actors.values()));
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(gameState);
-        byte[] dataToSend = baos.toByteArray();  // reuse original data
+        byte[] dataToSend = baos.toByteArray();
 
         for (InetSocketAddress client : clients) {
-            DatagramPacket response = new DatagramPacket(dataToSend, dataToSend.length,
-                    client.getAddress(), client.getPort());
+            DatagramPacket response = new DatagramPacket(dataToSend, dataToSend.length, client.getAddress(), client.getPort());
             socket.send(response);
             System.out.println("Updates sent to " + clients.size() + " clients");
         }
     }
 
 
-    private Actor process(DatagramPacket packet) throws IOException, ClassNotFoundException {
+    private ClientInput process(DatagramPacket packet) throws IOException, ClassNotFoundException {
         ByteArrayInputStream bais = new ByteArrayInputStream(packet.getData());
         ObjectInputStream ois = new ObjectInputStream(bais);
-        Actor actor = (Actor) ois.readObject();
-        System.out.printf("Received coordinates: x=%d, y=%d%n", actor.getCoordinates().x(), actor.getCoordinates().y());
-        return actor;
+        ClientInput input = (ClientInput) ois.readObject();
+        System.out.printf("Received input: %d", input.keyInput());
+        return input;
     }
 
     private void trackClient(DatagramPacket packet) {
@@ -75,14 +74,16 @@ public class UDPServerThread extends Thread {
         clients.add(senderAddress);
     }
 
-    private void updateActorList(Actor newActor) {
-        for (int i = 0; i < actors.size(); i++) {
-            if (actors.get(i).getClientId().equals(newActor.getClientId())) {
-                actors.set(i, newActor);
-                return;
-            }
+    private void updateActor(ClientInput input) {
+        Actor actor = actors.get(input.uuid());
+
+        if (actor == null) {
+            Coordinates startCoords = new Coordinates(0, 0);
+            actor = new Actor(input.uuid(), startCoords);
+            actors.put(input.uuid(), actor);
         }
-        actors.add(newActor);
+
+        PositionUpdater.handleInput(input.keyInput(), actor);
     }
 
     private int getPort() {
