@@ -56,7 +56,6 @@ public class UDPServerThread extends Thread {
         for (InetSocketAddress client : clients) {
             DatagramPacket response = new DatagramPacket(dataToSend, dataToSend.length, client.getAddress(), client.getPort());
             socket.send(response);
-            System.out.println("Updates sent to " + clients.size() + " clients");
         }
     }
 
@@ -65,7 +64,7 @@ public class UDPServerThread extends Thread {
         ByteArrayInputStream bais = new ByteArrayInputStream(packet.getData());
         ObjectInputStream ois = new ObjectInputStream(bais);
         ClientInput input = (ClientInput) ois.readObject();
-        System.out.printf("Received input: %d", input.keyInput());
+        System.out.printf("Received input: %d\n", input.keyInput());
         return input;
     }
 
@@ -84,6 +83,7 @@ public class UDPServerThread extends Thread {
         }
 
         PositionUpdater.handleInput(input.keyInput(), actor);
+        System.out.printf("Updated Actor %s. Set coordinates: x:%s y:%s\n", actor.getClientId(), actor.getCoordinates().x(), actor.getCoordinates().y());
     }
 
     private int getPort() {

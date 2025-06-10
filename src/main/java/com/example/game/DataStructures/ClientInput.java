@@ -1,6 +1,8 @@
 package com.example.game.DataStructures;
 
-public class ClientInput {
+import java.io.Serializable;
+
+public class ClientInput implements Serializable {
     private final String uuid;
     private final int keyInputCode;
 

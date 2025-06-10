@@ -28,22 +28,8 @@ public class PositionUpdater {
         inputActions.put(KeyEvent.VK_SPACE, actor -> turn(actor));
     }
 
-    public static Coordinates calculateNewPosition(int keyCode, Coordinates coords) {
-        if (keyCode == KeyEvent.VK_LEFT) {
-            return new Coordinates(coords.x() - 1, coords.y());
-        } else if (keyCode == KeyEvent.VK_RIGHT) {
-            return new Coordinates(coords.x() + 1, coords.y());
-        } else if (keyCode == KeyEvent.VK_UP) {
-            return new Coordinates(coords.x(), coords.y() - 1);
-        } else if (keyCode == KeyEvent.VK_DOWN) {
-            return new Coordinates(coords.x(), coords.y() + 1);
-        } else {
-            return coords;
-        }
-    }
-
-    public static Actor handleInput(int keyCode, Actor actor) {
-        return inputActions.getOrDefault(keyCode, a -> a).apply(actor);
+    public static void handleInput(int keyCode, Actor actor) {
+        inputActions.getOrDefault(keyCode, a -> a).apply(actor);
     }
 
     private static Actor move(Actor actor, int dx, int dy) {

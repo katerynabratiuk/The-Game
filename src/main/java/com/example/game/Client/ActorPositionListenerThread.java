@@ -17,7 +17,7 @@ public class ActorPositionListenerThread extends Thread {
     private final ActorPanel actorPanel;
     private volatile boolean running = true;
 
-    public ActorPositionListenerThread(DatagramSocket socket, ActorPanel actorPanel, GameState gameState) {
+    public ActorPositionListenerThread(DatagramSocket socket, ActorPanel actorPanel) {
         this.socket = socket;
         setDaemon(true);
         this.actorPanel = actorPanel;

@@ -30,7 +30,7 @@ public class UIProvider {
         try {
             senderThread = new InputsUpdateThread();
             senderThread.start();
-            listenerThread = new ActorPositionListenerThread(senderThread.getSocket(), actorPanel, actorPanel.getGameState());
+            listenerThread = new ActorPositionListenerThread(senderThread.getSocket(), actorPanel);
             listenerThread.start();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(frame, "Failed to start sender thread: " + e.getMessage());

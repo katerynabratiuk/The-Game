@@ -5,6 +5,7 @@ import com.example.game.DataStructures.ClientInput;
 import com.example.game.Server.EnvLoader;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -50,7 +51,7 @@ public class InputsUpdateThread extends Thread {
     public void run() {
         System.out.println("Actor Inputs Update Thread started");
 
-        while (running && !Thread.currentThread().isInterrupted()) {
+        while (running) {
             send();
         }
 
@@ -64,7 +65,6 @@ public class InputsUpdateThread extends Thread {
     private void send() {
         try {
             ClientInput input = inputsQueue.get();
-
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
             oos.writeObject(input);
@@ -76,7 +76,7 @@ public class InputsUpdateThread extends Thread {
             socket.send(packet);
             oos.close();
             baos.close();
-        } catch (Exception e) {
+        } catch (InterruptedException | IOException e) {
             if (running) {
                 System.err.println("Error sending input: " + e.getMessage());
             }

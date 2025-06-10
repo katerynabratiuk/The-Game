@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class ActorPanel extends JPanel {
     private GameState gameState;
     private final int ACTOR_SIZE = 20;
-    private final int SCALE = 10;
+    private final int SCALE = 5;
 
     public ActorPanel() {
         this.gameState = new GameState(new ArrayList<>());
