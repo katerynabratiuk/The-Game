@@ -4,7 +4,7 @@ target/
 !**/src/test/**/target/
 
 ### Environment ###
-.env
+GameCommonLib/src/main/resources/config.properties
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
