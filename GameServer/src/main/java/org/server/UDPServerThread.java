@@ -43,11 +43,8 @@ public class UDPServerThread extends Thread {
 
     private void connectSocket() throws UnknownHostException {
         try {
-            // WIP
-            InetAddress localHost = InetAddress.getLocalHost();
             InetAddress serverAddress = InetAddress.getByName(SERVER_ADDRESS);
-            socket = new DatagramSocket(PORT, localHost);
-
+            socket = new DatagramSocket(PORT, serverAddress);
 
         } catch (SocketException | UnknownHostException e) {
             throw new RuntimeException(e);
