@@ -4,6 +4,12 @@ import org.lib.DataStructures.Actor;
 import org.lib.DataStructures.ClientInput;
 import org.lib.DataStructures.Coordinates;
 import org.lib.DataStructures.GameState;
+import org.lib.PacketProcessing.receive.Decoder;
+import org.lib.PacketProcessing.receive.Decryptor;
+import org.lib.PacketProcessing.receive.PacketReceiverThread;
+import org.lib.PacketProcessing.send.Encoder;
+import org.lib.PacketProcessing.send.Encryptor;
+import org.lib.PacketProcessing.send.PacketSenderThread;
 
 import java.io.*;
 import java.net.*;
@@ -13,39 +19,39 @@ import java.util.concurrent.ConcurrentHashMap; // can we use this?
 import static org.lib.Environment.EnvLoader.ENV_VARS;
 
 public class UDPServerThread extends Thread {
-    protected DatagramSocket socket = null;
-    private final int BUFFER_SIZE = 1024;
+    public DatagramSocket socket;
     private final int PORT = Integer.parseInt(ENV_VARS.get("UDP_SERVER_PORT"));
     private final String SERVER_ADDRESS = ENV_VARS.get("UDP_SERVER_HOST");
-    private final Set<InetSocketAddress> clients = ConcurrentHashMap.newKeySet();
-    private final Map<String, Actor> actors = new ConcurrentHashMap<>();
+//    private final Set<InetSocketAddress> clients = ConcurrentHashMap.newKeySet();
+//    private final Map<String, Actor> actors = new ConcurrentHashMap<>();
+    private final PacketReceiverThread  receivingThread;
+    private final PacketSenderThread sendingThread;
+
+    public UDPServerThread() throws SocketException {
+        this.socket = new DatagramSocket(PORT);
+        this.sendingThread = new PacketSenderThread(socket, new Encoder(), new Encryptor());
+        this.receivingThread = new PacketReceiverThread(socket, new PlayerController(), new Decoder(), new Decryptor());
+    }
 
     public void run() {
         try {
             connectSocket();
+            startProcessingThreads();
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
-        while (true) {
-            try {
-                DatagramPacket packet = new DatagramPacket(new byte[BUFFER_SIZE], BUFFER_SIZE);
-                socket.receive(packet);
-                ClientInput input = process(packet);
-                updateActor(input);
-                trackClient(packet);
-                broadcast();
-            } catch (IOException | ClassNotFoundException e) {
-                break;
-            }
-        }
         socket.close();
+    }
+
+    private void startProcessingThreads() {
+        sendingThread.start();
+        receivingThread.start();
     }
 
     private void connectSocket() throws UnknownHostException {
         try {
             InetAddress serverAddress = InetAddress.getByName(SERVER_ADDRESS);
             socket = new DatagramSocket(PORT, serverAddress);
-
         } catch (SocketException | UnknownHostException e) {
             throw new RuntimeException(e);
         }
