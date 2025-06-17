@@ -1,7 +1,7 @@
 package org.lib.PacketProcessing.receive;
 
 import lombok.SneakyThrows;
-import org.lib.PacketProcessing.CRC16;
+import org.lib.PacketProcessing.crc.CRC16;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

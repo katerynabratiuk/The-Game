@@ -1,6 +1,5 @@
 package org.lib.PacketProcessing.send;
 
-public interface IEncryptor<T>
-{
-    byte[] encrypt(T message);
+public interface IEncryptor {
+    byte[] encrypt(byte[] payload);
 }

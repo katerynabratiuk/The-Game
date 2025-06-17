@@ -1,4 +1,4 @@
-package org.lib.DataStructures;
+package org.lib.DataStructures.concurrency;
 
 import java.util.ArrayList;
 

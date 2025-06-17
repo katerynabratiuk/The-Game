@@ -30,6 +30,12 @@
             <version>1.18.32</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.19.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

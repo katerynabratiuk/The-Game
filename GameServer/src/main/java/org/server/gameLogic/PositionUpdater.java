@@ -1,7 +1,7 @@
-package org.server;
+package org.server.gameLogic;
 
-import org.lib.DataStructures.Actor;
-import org.lib.DataStructures.Coordinates;
+import org.lib.DataStructures.payloads.Actor;
+import org.lib.DataStructures.payloads.Coordinates;
 
 import java.awt.event.KeyEvent;
 import java.util.HashMap;

@@ -1,5 +1,7 @@
 package org.lib.PacketProcessing.send;
 
+import org.lib.PacketProcessing.crc.CRC16;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;

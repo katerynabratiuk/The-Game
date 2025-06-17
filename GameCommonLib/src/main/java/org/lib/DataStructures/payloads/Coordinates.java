@@ -1,4 +1,4 @@
-package org.lib.DataStructures;
+package org.lib.DataStructures.payloads;
 import java.io.Serializable;
 
 public class Coordinates implements Serializable {

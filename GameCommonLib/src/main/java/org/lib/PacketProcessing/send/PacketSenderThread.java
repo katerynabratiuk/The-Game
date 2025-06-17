@@ -1,52 +1,46 @@
 package org.lib.PacketProcessing.send;
 
-import org.lib.DataStructures.ConcurrentQueue;
-import org.lib.DataStructures.GameState;
-import org.lib.PacketProcessing.receive.IDecoder;
-import org.lib.PacketProcessing.receive.IDecryptor;
+import org.lib.DataStructures.concurrency.ConcurrentQueue;
+
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.SocketAddress;
+import java.util.Set;
 
 public class PacketSenderThread extends Thread {
     private final DatagramSocket socket;
-    private final ConcurrentQueue<OutgoingMessage> queue = new ConcurrentQueue<>();
+    private final ConcurrentQueue<byte[]> queue = new ConcurrentQueue<>();
     private final IEncoder encoder;
     private final IEncryptor encryptor;
+    private final Set<SocketAddress> receivers;
 
-    public PacketSenderThread(DatagramSocket socket, IEncoder encoder, IEncryptor encryptor) {
+    public PacketSenderThread(DatagramSocket socket, IEncoder encoder, IEncryptor encryptor, Set<SocketAddress> receivers) {
         this.socket = socket;
         this.encoder = encoder;
         this.encryptor = encryptor;
+        this.receivers = receivers;
     }
 
-    public void send(InetAddress address, int port, Object message) {
-        queue.put(new OutgoingMessage(address, port, message));
+    public void send(byte[] payload) {
+        queue.put(payload);
     }
 
     @Override
     public void run() {
         while (true) {
             try {
-                OutgoingMessage msg = queue.get();
-                byte[] encrypted = encryptor.encrypt(msg);
+                byte[] payload = queue.get();
+                byte[] encrypted = encryptor.encrypt(payload);
                 byte[] encoded = encoder.encode(encrypted);
 
-                DatagramPacket dp = new DatagramPacket(encoded, encoded.length, msg.address, msg.port);
-                socket.send(dp);
+                for (SocketAddress client : receivers) {
+                    DatagramPacket packet = new DatagramPacket(encoded, encoded.length, client);
+                    socket.send(packet);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    static class OutgoingMessage {
-        InetAddress address;
-        int port;
-        Object payload;
-
-        public OutgoingMessage(InetAddress address, int port, Object message) {
         }
     }
 }

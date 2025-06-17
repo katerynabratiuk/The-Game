@@ -1,10 +1,9 @@
-package org.lib.DataStructures;
+package org.lib.DataStructures.payloads;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameState implements Serializable {
+public class GameState extends Payload {
     private List<Actor> actors;
 
     public GameState(ArrayList<Actor> actors) {

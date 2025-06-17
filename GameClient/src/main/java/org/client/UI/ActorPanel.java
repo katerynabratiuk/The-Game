@@ -1,14 +1,16 @@
 package org.client.UI;
 
-import org.lib.DataStructures.Actor;
-import org.lib.DataStructures.Coordinates;
-import org.lib.DataStructures.GameState;
+import lombok.Getter;
+import org.lib.DataStructures.payloads.Actor;
+import org.lib.DataStructures.payloads.Coordinates;
+import org.lib.DataStructures.payloads.GameState;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class ActorPanel extends JPanel {
+    @Getter
     private GameState gameState;
     private final int ACTOR_SIZE = 20;
     private final int SCALE = 5;
@@ -47,7 +49,4 @@ public class ActorPanel extends JPanel {
         g2d.drawLine(centerX, 0, centerX, getHeight());
     }
 
-    public GameState getGameState() {
-        return gameState;
-    }
 }

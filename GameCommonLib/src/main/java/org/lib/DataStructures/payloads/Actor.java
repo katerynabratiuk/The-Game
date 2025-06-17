@@ -1,8 +1,6 @@
-package org.lib.DataStructures;
+package org.lib.DataStructures.payloads;
 
-import java.io.Serializable;
-
-public class Actor implements Serializable {
+public class Actor extends Payload {
     private final String uuid;
     private Coordinates coordinates;
     public boolean someFutureFeatureEnabled;

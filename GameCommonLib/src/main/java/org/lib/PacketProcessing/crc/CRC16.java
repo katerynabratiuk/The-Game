@@ -1,4 +1,4 @@
-package org.lib.PacketProcessing;
+package org.lib.PacketProcessing.crc;
 
 public class CRC16 {
     public static short calcCrc(byte[] bytes, int offset, int length) {
