@@ -1,17 +1,18 @@
 package org.lib.DataStructures.payloads;
 
 public class Actor extends Payload {
-    private final String uuid;
+    private String clientId;
     private Coordinates coordinates;
-    public boolean someFutureFeatureEnabled;
 
     public Actor(String clientId,Coordinates coordinates) {
-        this.uuid = clientId;
+        this.clientId = clientId;
         this.coordinates = coordinates;
     }
 
+    public Actor() {}
+
     public String getClientId() {
-        return uuid;
+        return clientId;
     }
 
     public Coordinates getCoordinates() {

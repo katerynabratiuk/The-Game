@@ -28,18 +28,25 @@ public class PacketSenderThread extends Thread {
 
     @Override
     public void run() {
-        while (true) {
+        while (!socket.isClosed()) {
             try {
                 byte[] payload = queue.get();
                 byte[] encrypted = encryptor.encrypt(payload);
                 byte[] encoded = encoder.encode(encrypted);
 
-                for (SocketAddress client : receivers) {
-                    DatagramPacket packet = new DatagramPacket(encoded, encoded.length, client);
+                for (SocketAddress receiver : receivers) {
+                    DatagramPacket packet = new DatagramPacket(encoded, encoded.length, receiver);
                     socket.send(packet);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                if (socket.isClosed()) {
+                    System.out.println("Sender socket closed, exiting thread...");
+                    break;
+                }
+            } finally {
+                if (!socket.isClosed()) {
+                    socket.close();
+                }
             }
         }
     }

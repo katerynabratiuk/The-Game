@@ -6,6 +6,7 @@ import java.util.List;
 public class GameState extends Payload {
     private List<Actor> actors;
 
+    public GameState() {};
     public GameState(ArrayList<Actor> actors) {
         this.actors = actors;
     }

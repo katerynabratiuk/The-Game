@@ -1,8 +1,10 @@
 package org.lib.DataStructures.payloads;
 
 public class PlayerInput extends Payload {
-    private final String clientUUID;
-    private final int keyInputCode;
+    private String clientUUID;
+    private int keyInputCode;
+
+    public PlayerInput() {}
 
     public PlayerInput(String uuid, int keyInputCode) {
         this.clientUUID = uuid;

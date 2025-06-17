@@ -12,6 +12,7 @@ public class Decoder implements IDecoder {
     @Override
     @SneakyThrows
     public byte[] decode(byte[] packet) {
+        System.out.println("Decoding.... at " + Thread.currentThread().getName());
         ByteBuffer buffer = ByteBuffer.wrap(packet).order(ByteOrder.BIG_ENDIAN);
 
         byte bMagic = buffer.get();

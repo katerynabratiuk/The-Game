@@ -1,6 +1,7 @@
 package org.lib.DataStructures.payloads;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -14,6 +15,10 @@ import static org.lib.DataStructures.payloads.PayloadStructType.*;
         @JsonSubTypes.Type(value = PlayerNotification.class, name = "PLAYER_NOTIFICATION")
 })
 public class Payload {
+    @JsonIgnore private String type;
+
+    public Payload() {}
+
     public PayloadStructType getType() {
         Class<?> type = this.getClass();
         return switch (type.getSimpleName()) {

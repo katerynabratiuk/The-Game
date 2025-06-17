@@ -1,19 +1,22 @@
 package org.server.network;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.lib.DataStructures.payloads.NetworkPayload;
+
+import java.io.IOException;
 
 
 public class Serializer {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    @SneakyThrows
-    public static byte[] serialize(NetworkPayload payload) {
+
+    public static byte[] serialize(NetworkPayload payload) throws JsonProcessingException {
         return objectMapper.writeValueAsBytes(payload);
     }
 
-    @SneakyThrows
-    public static NetworkPayload deserialize(byte[] data) {
+
+    public static NetworkPayload deserialize(byte[] data) throws IOException {
         return objectMapper.readValue(data, NetworkPayload.class);
     }
 }

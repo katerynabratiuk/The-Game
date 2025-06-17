@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -25,26 +26,33 @@ public class PacketReceiverThread extends Thread {
         this.clients = clients;
     }
 
-    @SneakyThrows
     @Override
     public void run() {
         byte[] buffer = new byte[1024];
-        var packet = new DatagramPacket(buffer, buffer.length);
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-        while (true) {
-            try {
-                socket.receive(packet);
-                clients.add(packet.getSocketAddress());
-                byte[] data = Arrays.copyOf(packet.getData(), packet.getLength());
+        try {
+            while (!socket.isClosed()) {
+                try {
+                    socket.receive(packet);
+                    clients.add(packet.getSocketAddress());
+                    byte[] data = Arrays.copyOf(packet.getData(), packet.getLength());
+                    byte[] decoded = decoder.decode(data);
+                    byte[] decrypted = decryptor.decrypt(decoded);
 
-                byte[] decoded = decoder.decode(data);
-                var decrypted = decryptor.decrypt(decoded);
+                    System.out.println("Starting registering at... " + Thread.currentThread().getName());
+                    controller.register(decrypted);
 
-                controller.register(decrypted);
-
-            } catch (IOException e) {
+                } catch (IOException e) {
+                    if (socket.isClosed()) {
+                        System.out.println("Receiver socket closed, exiting thread...");
+                        break;
+                    }
+                }
+            }
+        } finally {
+            if (!socket.isClosed()) {
                 socket.close();
-                e.printStackTrace();
             }
         }
     }

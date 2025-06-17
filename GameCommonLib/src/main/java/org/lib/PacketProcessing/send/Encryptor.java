@@ -13,6 +13,7 @@ public class Encryptor implements IEncryptor{
         System.out.println("DEBUG: Encrypting...");
 
         byte[] iv = CipherFactory.generateRandomIV();
+        System.out.println(iv);
         Cipher cipher = CipherFactory.getCipher(Cipher.ENCRYPT_MODE, iv);
         byte[] ciphertext = cipher.doFinal(payload);
 
