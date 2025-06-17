@@ -53,45 +53,4 @@ public class UDPServerThread extends Thread {
 
         System.out.println("Server listening on port " + PORT + "...");
     }
-
-//    private void broadcast() throws IOException {
-//        GameState gameState = new GameState(new ArrayList<>(actors.values()));
-//
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        ObjectOutputStream oos = new ObjectOutputStream(baos);
-//        oos.writeObject(gameState);
-//        byte[] dataToSend = baos.toByteArray();
-//
-//        for (InetSocketAddress client : clients) {
-//            DatagramPacket response = new DatagramPacket(dataToSend, dataToSend.length, client.getAddress(), client.getPort());
-//            socket.send(response);
-//        }
-//    }
-//
-//
-//    private ClientInput process(DatagramPacket packet) throws IOException, ClassNotFoundException {
-//        ByteArrayInputStream bais = new ByteArrayInputStream(packet.getData());
-//        ObjectInputStream ois = new ObjectInputStream(bais);
-//        ClientInput input = (ClientInput) ois.readObject();
-//        System.out.printf("Received input: %d\n", input.keyInput());
-//        return input;
-//    }
-//
-//    private void trackClient(DatagramPacket packet) {
-//        InetSocketAddress senderAddress = new InetSocketAddress(packet.getAddress(), packet.getPort());
-//        clients.add(senderAddress);
-//    }
-//
-//    private void updateActor(ClientInput input) {
-//        Actor actor = actors.get(input.uuid());
-//
-//        if (actor == null) {
-//            Coordinates startCoords = new Coordinates(0, 0);
-//            actor = new Actor(input.uuid(), startCoords);
-//            actors.put(input.uuid(), actor);
-//        }
-//
-//        PositionUpdater.handleInput(input.keyInput(), actor);
-//        System.out.printf("Updated Actor %s. Set coordinates: x:%s y:%s\n", actor.getClientId(), actor.getCoordinates().x(), actor.getCoordinates().y());
-//    }
 }
