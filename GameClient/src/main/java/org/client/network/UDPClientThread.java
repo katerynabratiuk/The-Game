@@ -1,13 +1,13 @@
 package org.client.network;
 
 import lombok.Getter;
-import org.client.gameLogic.ClientController;
-import org.lib.PacketProcessing.receive.Decoder;
-import org.lib.PacketProcessing.receive.Decryptor;
-import org.lib.PacketProcessing.receive.PacketReceiverThread;
-import org.lib.PacketProcessing.send.Encoder;
-import org.lib.PacketProcessing.send.Encryptor;
-import org.lib.PacketProcessing.send.PacketSenderThread;
+import org.client.game_logic.ClientController;
+import org.lib.packet_processing.receive.Decoder;
+import org.lib.packet_processing.receive.Decryptor;
+import org.lib.packet_processing.receive.PacketReceiverThread;
+import org.lib.packet_processing.send.Encoder;
+import org.lib.packet_processing.send.Encryptor;
+import org.lib.packet_processing.send.PacketSenderThread;
 
 import java.io.IOException;
 import java.net.*;
@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.lib.Environment.EnvLoader.ENV_VARS;
+import static org.lib.environment.EnvLoader.ENV_VARS;
 
 public class UDPClientThread extends Thread {
     private final DatagramSocket socket;

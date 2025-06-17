@@ -1,7 +1,7 @@
 package org.client.UI;
 
 import lombok.SneakyThrows;
-import org.client.gameLogic.ClientController;
+import org.client.game_logic.ClientController;
 import org.client.network.UDPThreadWrapper;
 
 import javax.swing.*;

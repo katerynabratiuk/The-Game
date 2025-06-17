@@ -1,9 +1,9 @@
 package org.client.UI;
 
 import lombok.Getter;
-import org.lib.DataStructures.payloads.Actor;
-import org.lib.DataStructures.payloads.Coordinates;
-import org.lib.DataStructures.payloads.GameState;
+import org.lib.data_structures.payloads.Actor;
+import org.lib.data_structures.payloads.Coordinates;
+import org.lib.data_structures.payloads.GameState;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,19 +1,19 @@
 package org.server.network;
 
 import lombok.SneakyThrows;
-import org.lib.PacketProcessing.receive.Decoder;
-import org.lib.PacketProcessing.receive.Decryptor;
-import org.lib.PacketProcessing.receive.PacketReceiverThread;
-import org.lib.PacketProcessing.send.Encoder;
-import org.lib.PacketProcessing.send.Encryptor;
-import org.lib.PacketProcessing.send.PacketSenderThread;
-import org.server.gameLogic.PlayerController;
+import org.lib.packet_processing.receive.Decoder;
+import org.lib.packet_processing.receive.Decryptor;
+import org.lib.packet_processing.receive.PacketReceiverThread;
+import org.lib.packet_processing.send.Encoder;
+import org.lib.packet_processing.send.Encryptor;
+import org.lib.packet_processing.send.PacketSenderThread;
+import org.server.game_logic.PlayerController;
 
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap; // can we use this?
 
-import static org.lib.Environment.EnvLoader.ENV_VARS;
+import static org.lib.environment.EnvLoader.ENV_VARS;
 
 public class UDPServerThread extends Thread {
     public DatagramSocket socket;

@@ -1,7 +1,7 @@
 package org.client.network;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.lib.DataStructures.payloads.NetworkPayload;
+import org.lib.data_structures.payloads.NetworkPayload;
 
 
 public class Serializer {

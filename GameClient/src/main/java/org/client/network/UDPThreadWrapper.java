@@ -1,8 +1,8 @@
 package org.client.network;
 
-import org.client.gameLogic.ClientController;
-import org.lib.DataStructures.payloads.NetworkPayload;
-import org.lib.DataStructures.payloads.PlayerInput;
+import org.client.game_logic.ClientController;
+import org.lib.data_structures.payloads.NetworkPayload;
+import org.lib.data_structures.payloads.PlayerInput;
 
 import java.io.IOException;
 import java.util.List;

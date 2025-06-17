@@ -1,6 +1,6 @@
 package org.server;
 
-import org.server.gameLogic.PlayerController;
+import org.server.game_logic.PlayerController;
 import org.server.network.UDPServerThread;
 
 public class UDPServer {

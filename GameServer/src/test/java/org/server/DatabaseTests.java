@@ -1,7 +1,7 @@
 package org.server;
 
 import org.junit.jupiter.api.Test;
-import org.server.DatabaseAccess.SamplePostgresDriver;
+import org.server.database_access.SamplePostgresDriver;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
