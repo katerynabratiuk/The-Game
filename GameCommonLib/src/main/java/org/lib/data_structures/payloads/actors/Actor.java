@@ -1,8 +1,10 @@
-package org.lib.data_structures.payloads;
+package org.lib.data_structures.payloads.actors;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.lib.data_structures.payloads.Coordinates;
+import org.lib.data_structures.payloads.Payload;
 
 import java.util.UUID;
 

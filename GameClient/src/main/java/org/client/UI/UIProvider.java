@@ -1,11 +1,7 @@
 package org.client.UI;
 
-import lombok.SneakyThrows;
 import org.client.game_logic.ClientController;
-import org.client.network.Serializer;
 import org.client.network.UDPThreadWrapper;
-import org.lib.data_structures.payloads.JoinRequest;
-import org.lib.data_structures.payloads.NetworkPayload;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,6 +48,7 @@ public class UIProvider {
         frame.add(actorPanel, BorderLayout.CENTER);
 
         actorPanel.addKeyListener(controller.getKeyListener(positionLabel));
+        actorPanel.addMouseListener(controller.getMouseClickListener());
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300);

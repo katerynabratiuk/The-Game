@@ -2,8 +2,6 @@ package org.lib.data_structures.payloads;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Getter
 @NoArgsConstructor
 public class Coordinates extends Payload {

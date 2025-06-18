@@ -1,5 +1,7 @@
 package org.lib.data_structures.payloads;
 
+import org.lib.data_structures.payloads.actors.Actor;
+
 import java.util.ArrayList;
 import java.util.List;
 

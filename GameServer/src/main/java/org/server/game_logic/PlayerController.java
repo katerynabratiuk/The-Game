@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.*;
 import org.lib.controllers.IController;
+import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.packet_processing.send.PacketSenderThread;
 import org.server.network.Serializer;
 
@@ -93,7 +94,7 @@ public class PlayerController implements IController, Runnable {
             return;
         }
 
-        gameStateService.updateActorByInput(p);
+        gameStateService.updateGameStateByInput(p);
         var gameState = gameStateService.snapshot();
         var networkPayload = new NetworkPayload(List.of(gameState));
         var serialized = Serializer.serialize(networkPayload);

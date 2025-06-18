@@ -1,9 +1,10 @@
 package org.client.UI;
 
 import lombok.Getter;
-import org.lib.data_structures.payloads.Actor;
+import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.Coordinates;
 import org.lib.data_structures.payloads.GameState;
+import org.lib.data_structures.payloads.actors.Bullet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +39,12 @@ public class ActorPanel extends JPanel {
             int x = centerX + pos.getX() * SCALE - ACTOR_SIZE / 2;
             int y = centerY + pos.getY() * SCALE - ACTOR_SIZE / 2;
 
-            g2d.setColor(Color.BLUE);
+            if (actor instanceof Bullet) {
+                g2d.setColor(Color.RED); // this will be set with actors parameters
+            } else {
+                g2d.setColor(Color.BLUE);
+            }
+
             g2d.fillOval(x, y, ACTOR_SIZE, ACTOR_SIZE);
             g2d.setColor(Color.BLACK);
             g2d.drawString(actor.getUuid().substring(0, 4), x + ACTOR_SIZE / 2, y - 5);  // temp actor id

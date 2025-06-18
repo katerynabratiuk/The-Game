@@ -6,8 +6,8 @@ import lombok.Setter;
 import java.util.List;
 
 public class NetworkPayload {
-    @Getter @Setter
-    private List<Payload> payloads;
+    @Getter @Setter private List<Payload> payloads;
+    @Getter @Setter private int sequenceNumber;
 
     public NetworkPayload() {}
 
