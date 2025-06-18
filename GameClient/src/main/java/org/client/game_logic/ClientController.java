@@ -1,7 +1,6 @@
 package org.client.game_logic;
 
 import lombok.Setter;
-import lombok.SneakyThrows;
 import org.client.UI.ActorPanel;
 import org.client.network.Serializer;
 import org.client.network.UDPThreadWrapper;
@@ -21,8 +20,7 @@ import java.awt.event.KeyListener;
 public class ClientController implements IController, Runnable {
     private final ActorPanel actorPanel;
     private final ConcurrentQueue<NetworkPayload> receivedPackets = new ConcurrentQueue<>();
-    @Setter
-    private UDPThreadWrapper networkManager; // Will be injected
+    @Setter private UDPThreadWrapper networkManager;
 
     public ClientController(ActorPanel actorPanel) {
         this.actorPanel = actorPanel;
@@ -57,7 +55,6 @@ public class ClientController implements IController, Runnable {
         }
     }
 
-    @SneakyThrows
     private void handle(NetworkPayload payload) {
         for (var p : payload.getPayloads()) {
             switch (p.getType()) {
@@ -69,7 +66,6 @@ public class ClientController implements IController, Runnable {
     }
 
     private void handlePlayerNotification(PlayerNotification p) {
-        System.out.println(p);
     }
 
     private void handleGameState(GameState p) {

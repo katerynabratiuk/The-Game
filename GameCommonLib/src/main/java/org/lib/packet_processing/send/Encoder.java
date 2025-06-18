@@ -16,6 +16,7 @@ import java.util.Arrays;
 public class Encoder implements IEncoder {
     private static final byte MAGIC = 0x13;
 
+    // TODO: add acknowledgment mechanism
     @Override
     public byte[] encode(byte[] encryptedMsgBytes) {
         int dataLength = encryptedMsgBytes.length;

@@ -1,20 +1,17 @@
 package org.lib.data_structures.payloads;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 
-public class Coordinates implements Serializable {
-    private final int x;
-    private final int y;
+@Getter
+@NoArgsConstructor
+public class Coordinates extends Payload {
+    private int x;
+    private int y;
 
     public Coordinates(int x, int y) {
         this.x  = x;
         this.y = y;
-    }
-
-    public int x() {
-        return this.x;
-    }
-
-    public int y() {
-        return this.y;
     }
 }

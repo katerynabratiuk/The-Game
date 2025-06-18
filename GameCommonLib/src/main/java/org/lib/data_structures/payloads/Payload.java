@@ -12,7 +12,8 @@ import static org.lib.data_structures.payloads.PayloadStructType.*;
         @JsonSubTypes.Type(value = PlayerInput.class, name = "PLAYER_INPUT"),
         @JsonSubTypes.Type(value = GameState.class, name = "GAME_STATE"),
         @JsonSubTypes.Type(value = Actor.class, name = "ACTOR"),
-        @JsonSubTypes.Type(value = PlayerNotification.class, name = "PLAYER_NOTIFICATION")
+        @JsonSubTypes.Type(value = PlayerNotification.class, name = "PLAYER_NOTIFICATION"),
+        @JsonSubTypes.Type(value = JoinRequest.class, name = "JOIN_REQUEST")
 })
 public class Payload {
     @JsonIgnore private String type;
@@ -26,6 +27,7 @@ public class Payload {
             case "GameState" -> GAME_STATE;
             case "Actor" -> ACTOR;
             case "PlayerNotification" -> PLAYER_NOTIFICATION;
+            case "JoinRequest" -> JOIN_REQUEST;
             default -> UNKNOWN;
         };
     }

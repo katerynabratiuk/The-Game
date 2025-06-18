@@ -35,13 +35,13 @@ public class ActorPanel extends JPanel {
 
         for (Actor actor : gameState.getActorsSnapshot()) {
             Coordinates pos = actor.getCoordinates();
-            int x = centerX + pos.x() * SCALE - ACTOR_SIZE / 2;
-            int y = centerY + pos.y() * SCALE - ACTOR_SIZE / 2;
+            int x = centerX + pos.getX() * SCALE - ACTOR_SIZE / 2;
+            int y = centerY + pos.getY() * SCALE - ACTOR_SIZE / 2;
 
             g2d.setColor(Color.BLUE);
             g2d.fillOval(x, y, ACTOR_SIZE, ACTOR_SIZE);
             g2d.setColor(Color.BLACK);
-            g2d.drawString(actor.getClientId().substring(0, 4), x + ACTOR_SIZE / 2, y - 5);  // temp actor id
+            g2d.drawString(actor.getUuid().substring(0, 4), x + ACTOR_SIZE / 2, y - 5);  // temp actor id
         }
 
         g2d.setColor(Color.LIGHT_GRAY);

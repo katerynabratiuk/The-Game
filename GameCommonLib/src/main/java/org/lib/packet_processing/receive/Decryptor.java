@@ -10,7 +10,6 @@ public class Decryptor implements IDecryptor {
     @Override
     @SneakyThrows
     public byte[] decrypt(byte[] packet) {
-        System.out.println("Decrypting.... at " + Thread.currentThread().getName());
         var encryptedMsg = EncryptedIVMessage.fromBytes(packet);
         Cipher cipher = CipherFactory.getCipher(Cipher.DECRYPT_MODE, encryptedMsg.getIv());
         return cipher.doFinal(encryptedMsg.getCiphertext());

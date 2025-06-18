@@ -1,25 +1,20 @@
 package org.lib.data_structures.payloads;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.UUID;
+
+
+@NoArgsConstructor
 public class Actor extends Payload {
-    private String clientId;
-    private Coordinates coordinates;
+    @Getter private final String uuid = UUID.randomUUID().toString();
+    @Getter @Setter private String clientUUID;
+    @Getter @Setter private Coordinates coordinates;
 
-    public Actor(String clientId,Coordinates coordinates) {
-        this.clientId = clientId;
+    public Actor(Coordinates coordinates, String clientUUID) {
         this.coordinates = coordinates;
-    }
-
-    public Actor() {}
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public Coordinates getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(Coordinates newCoords) {
-        this.coordinates = newCoords;
+        this.clientUUID = clientUUID;
     }
 }

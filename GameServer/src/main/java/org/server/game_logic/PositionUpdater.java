@@ -34,13 +34,12 @@ public class PositionUpdater {
 
     private static Actor move(Actor actor, int dx, int dy) {
         Coordinates coord = actor.getCoordinates();
-        Coordinates newCoord = new Coordinates(coord.x() + dx, coord.y() + dy);
+        Coordinates newCoord = new Coordinates(coord.getX() + dx, coord.getY() + dy);
         actor.setCoordinates(newCoord);
         return actor;
     }
 
     private static Actor turn(Actor actor) {
-        System.out.println("Around the world with " + actor.getClientId());
         return actor;
     }
 }

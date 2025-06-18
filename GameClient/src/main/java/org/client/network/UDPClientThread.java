@@ -8,6 +8,7 @@ import org.lib.packet_processing.receive.PacketReceiverThread;
 import org.lib.packet_processing.send.Encoder;
 import org.lib.packet_processing.send.Encryptor;
 import org.lib.packet_processing.send.PacketSenderThread;
+import org.lib.packet_processing.strategies.StaticReceiversStrategy;
 
 import java.io.IOException;
 import java.net.*;
@@ -34,8 +35,9 @@ public class UDPClientThread extends Thread {
         );
 
         Set<SocketAddress> serverSet = Collections.singleton(serverAddress);
-        this.senderThread = new PacketSenderThread(socket, encoder, encryptor, serverSet);
-        this.receiverThread = new PacketReceiverThread(socket, controller, new Decoder(), new Decryptor(), serverSet);
+
+        this.senderThread = new PacketSenderThread(socket, encoder, encryptor, new StaticReceiversStrategy(serverSet));
+        this.receiverThread = new PacketReceiverThread(socket, controller, new Decoder(), new Decryptor(), null);
     }
 
     @Override
