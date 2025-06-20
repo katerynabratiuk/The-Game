@@ -2,6 +2,7 @@ package org.lib.packet_processing.receive;
 
 import org.lib.controllers.IController;
 import org.lib.packet_processing.registry.SocketAddressRegistry;
+import org.lib.packet_processing.serializers.Serializer;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -31,16 +32,20 @@ public class PacketReceiverThread extends Thread {
             try {
                 socket.receive(packet);
 
-                // TODO: rewrite this null check - ambiguous logic
-                if (registry != null) {
-                    registry.add(packet.getSocketAddress());
-                }
+
 
                 byte[] data = Arrays.copyOf(packet.getData(), packet.getLength());
                 byte[] decoded = decoder.decode(data);
                 byte[] decrypted = decryptor.decrypt(decoded);
+                var networkPayload = Serializer.deserialize(decrypted);
 
-                controller.register(decrypted);
+                // TODO: rewrite this null check - ambiguous logic
+                // currently registry is passed only to server, and getClientUUID() != null is also only  passed to server
+                if (registry != null && networkPayload.getClientUUID() != null) {
+                    registry.add(networkPayload.getClientUUID(), packet.getSocketAddress());
+                }
+
+                controller.register(networkPayload);
             } catch (IOException e) {
                 if (socket.isClosed()) {
                     break;

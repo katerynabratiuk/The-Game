@@ -60,11 +60,10 @@ public class UIProvider {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
+                networkManager.sendDisconnectRequest();
                 networkManager.shutdown();
             }
         });
     }
-
-
 }
 

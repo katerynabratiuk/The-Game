@@ -8,8 +8,9 @@ import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.*;
 import org.lib.controllers.IController;
 import org.lib.data_structures.payloads.actors.Actor;
+import org.lib.packet_processing.registry.SocketAddressRegistry;
 import org.lib.packet_processing.send.PacketSenderThread;
-import org.server.network.Serializer;
+import org.lib.packet_processing.serializers.Serializer;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,15 +25,8 @@ public class PlayerController implements IController, Runnable {
     }
 
     @Override
-    // @SneakyThrows // TODO: verify all usages of this annotation
-    public void register(byte[] payload) {
-        try {
-            var serialized = Serializer.deserialize(payload);
-            receivedPackets.put(serialized);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+    public void register(NetworkPayload payload) {
+        receivedPackets.put(payload);
     }
 
     @Override
@@ -56,23 +50,33 @@ public class PlayerController implements IController, Runnable {
                 case ACTOR -> handleActor((Actor) p);
                 case GAME_STATE -> handleGameState((GameState) p);
                 case PLAYER_NOTIFICATION -> handlePlayerNotification((PlayerNotification) p);
-                case JOIN_REQUEST -> handleJoinRequest((JoinRequest) p);
+                case CONNECTION_REQUEST -> handleConnectionRequest((ConnectionRequest) p);
                 default -> System.err.println("Unknown payload type: " + p);
             }
         }
     }
 
-    private void handleJoinRequest(JoinRequest p) throws JsonProcessingException {
+    private void handleConnectionRequest(ConnectionRequest p) throws JsonProcessingException {
         // WIP
         // add check if this client is already present in the game state
         // remove disconnected clients
 
-        Actor newActor = new Actor(new Coordinates(0, 0), p.getClientUUID());
-        gameStateService.addActor(newActor);
-        var gameState = gameStateService.snapshot();
-        var networkPayload = new NetworkPayload(List.of(gameState));
-        var serialized = Serializer.serialize(networkPayload);
-        senderThread.send(serialized);
+        switch (p.getConnectionCode()) {
+            case JOIN:
+                Actor newActor = new Actor(new Coordinates(0, 0), p.getClientUUID());
+                gameStateService.addActor(newActor);
+                var gameState = gameStateService.snapshot();
+                var networkPayload = new NetworkPayload(List.of(gameState));
+                var serialized = Serializer.serialize(networkPayload);
+                senderThread.send(serialized);
+                break;
+
+            case DISCONNECT:
+                gameStateService.removeActor(p.getClientUUID());
+                senderThread.removeReceiver(p.getClientUUID());
+                System.out.println("tried to disconnect and remove the receiver");
+                System.out.println(senderThread.hasReceivers());
+        }
     }
 
     private void handlePlayerNotification(PlayerNotification notification) {

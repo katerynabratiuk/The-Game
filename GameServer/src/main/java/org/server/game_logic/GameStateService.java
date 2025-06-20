@@ -54,10 +54,15 @@ public class GameStateService {
         return actors;
     }
 
-    private Actor getActorByClientUUID(String clientUUID) {
+    public Actor getActorByClientUUID(String clientUUID) {
         return actors.stream()
                 .filter(a -> a.getClientUUID().equals(clientUUID))
                 .findFirst()
                 .orElseThrow();
+    }
+
+    public void removeActor(String clientUUID) {
+        var actor = getActorByClientUUID(clientUUID);
+        actors.remove(actor);
     }
 }

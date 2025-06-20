@@ -12,9 +12,8 @@ import org.lib.packet_processing.strategies.StaticReceiversStrategy;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.Collections;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.lib.environment.EnvLoader.ENV_VARS;
 
@@ -34,9 +33,12 @@ public class UDPClientThread extends Thread {
                 Integer.parseInt(ENV_VARS.get("UDP_SERVER_PORT"))
         );
 
-        Set<SocketAddress> serverSet = Collections.singleton(serverAddress);
 
-        this.senderThread = new PacketSenderThread(socket, encoder, encryptor, new StaticReceiversStrategy(serverSet));
+        // extract to a method
+        Map<String, SocketAddress> serverMap = new ConcurrentHashMap<>();
+        serverMap.put("server", serverAddress);
+
+        this.senderThread = new PacketSenderThread(socket, encoder, encryptor, new StaticReceiversStrategy(serverMap));
         this.receiverThread = new PacketReceiverThread(socket, controller, new Decoder(), new Decryptor(), null);
     }
 

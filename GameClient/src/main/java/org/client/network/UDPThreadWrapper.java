@@ -1,9 +1,9 @@
 package org.client.network;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.client.game_logic.ClientController;
-import org.lib.data_structures.payloads.JoinRequest;
-import org.lib.data_structures.payloads.NetworkPayload;
-import org.lib.data_structures.payloads.PlayerInput;
+import org.lib.data_structures.payloads.*;
+import org.lib.packet_processing.serializers.Serializer;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,16 +20,17 @@ public class UDPThreadWrapper {
     }
 
     public void sendInput(PlayerInput input) {
-        var networkPayload = new NetworkPayload(List.of(input));
-        var serialized = Serializer.serialize(networkPayload);
-        clientThread.getSenderThread().send(serialized);
+        send(List.of(input));
     }
 
     public void sendJoinRequest() {
-        var joinRequest = new JoinRequest(getClientId());
-        var payload = new NetworkPayload(List.of(joinRequest));
-        var serialized = Serializer.serialize(payload);
-        clientThread.getSenderThread().send(serialized);
+        var joinRequest = new ConnectionRequest(getClientId(), ConnectionCode.JOIN);
+        send(List.of(joinRequest));
+    }
+
+    public void sendDisconnectRequest() {
+        var req = new ConnectionRequest(getClientId(), ConnectionCode.DISCONNECT);
+        send(List.of(req));
     }
 
     public void shutdown() {
@@ -38,5 +39,21 @@ public class UDPThreadWrapper {
 
     public String getClientId() {
         return clientThread.getClientId();
+    }
+
+    private void send(List<Payload> payloads) {
+        var serialized = serializePayload(payloads);
+        clientThread.getSenderThread().send(serialized);
+    }
+
+    private byte[] serializePayload(List<Payload> payloads) {
+        var payload = new NetworkPayload(payloads);
+        payload.setClientUUID(getClientId());
+        try {
+            return Serializer.serialize(payload);
+        } catch (JsonProcessingException e) {
+            // TODO: fix exception throwing
+            throw new RuntimeException(e);
+        }
     }
 }

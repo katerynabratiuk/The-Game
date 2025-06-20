@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class JoinRequest extends Payload{
+public class ConnectionResponse extends Payload{
     @Getter @Setter private String clientUUID;
 }

@@ -1,4 +1,4 @@
-package org.server.network;
+package org.lib.packet_processing.serializers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.lib.data_structures.payloads.NetworkPayload;

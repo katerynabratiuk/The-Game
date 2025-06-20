@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Setter;
 import org.lib.data_structures.payloads.NetworkPayload;
 import org.lib.packet_processing.send.PacketSenderThread;
-import org.server.network.Serializer;
+import org.lib.packet_processing.serializers.Serializer;
 
 import java.util.List;
 
@@ -21,7 +21,20 @@ public class GameThread extends Thread {
 
     @Override
     public void run() {
-        while (senderThread.isAlive()) {
+        while (true) {
+            if (senderThread == null || !senderThread.isAlive()) break;
+
+            // TODO: prototype logic
+            if (!senderThread.hasReceivers()) {
+                System.out.println("No receivers. Waiting...");
+                try {
+                    Thread.sleep(1000);
+                    continue;
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+
             try {
                 long startTime = System.currentTimeMillis();
 

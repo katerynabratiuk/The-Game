@@ -3,11 +3,9 @@ package org.lib.packet_processing.send;
 import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.packet_processing.strategies.ReceiverStrategy;
 
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketAddress;
-import java.util.Set;
 
 public class PacketSenderThread extends Thread {
     private final DatagramSocket socket;
@@ -52,6 +50,16 @@ public class PacketSenderThread extends Thread {
         } finally {
             System.out.println("Closed Sender Thread loop...");
         }
+    }
+
+    public synchronized boolean hasReceivers() {
+        System.out.println(receiverStrategy.getReceivers().size());
+        return !receiverStrategy.getReceivers().isEmpty();
+    }
+
+    public synchronized void removeReceiver(String clientUUID) {
+        System.out.println("removing receiver " + clientUUID);
+        receiverStrategy.removeReceiver(clientUUID);
     }
 }
 

@@ -2,7 +2,6 @@ package org.client.game_logic;
 
 import lombok.Setter;
 import org.client.UI.ActorPanel;
-import org.client.network.Serializer;
 import org.client.network.UDPThreadWrapper;
 import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.*;
@@ -54,9 +53,8 @@ public class ClientController implements IController, Runnable {
     }
 
     @Override
-    public void register(byte[] payload) {
-        var serialized = Serializer.deserialize(payload);
-        receivedPackets.put(serialized);
+    public void register(NetworkPayload payload) {
+        receivedPackets.put(payload);
     }
 
     @Override

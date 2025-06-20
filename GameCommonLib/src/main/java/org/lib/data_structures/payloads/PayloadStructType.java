@@ -5,7 +5,8 @@ public enum PayloadStructType {
     GAME_STATE,
     ACTOR,
     PLAYER_NOTIFICATION,
-    JOIN_REQUEST,
+    CONNECTION_REQUEST,
+    CONNECTION_RESPONSE,
     DISCONNECT,
     UNKNOWN
 }
