@@ -25,7 +25,7 @@ public class GameStateService {
         for (Actor actor : actors) {
             if (actor instanceof Bullet bullet) {
                 Vector2D current = new Vector2D(bullet.getCoordinates().getX(), bullet.getCoordinates().getY());
-                Vector2D target = new Vector2D(bullet.getTargetCoordinates().getX(), bullet.getTargetCoordinates().getY());
+                Vector2D target = new Vector2D(bullet.getDirection().getX(), bullet.getDirection().getY());
 
                 Vector2D direction = target.subtract(current).normalize();
                 Vector2D movement = direction.scalarMultiply(bullet.getMovementSpeed());

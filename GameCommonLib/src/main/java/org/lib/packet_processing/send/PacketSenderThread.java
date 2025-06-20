@@ -53,12 +53,10 @@ public class PacketSenderThread extends Thread {
     }
 
     public synchronized boolean hasReceivers() {
-        System.out.println(receiverStrategy.getReceivers().size());
         return !receiverStrategy.getReceivers().isEmpty();
     }
 
     public synchronized void removeReceiver(String clientUUID) {
-        System.out.println("removing receiver " + clientUUID);
         receiverStrategy.removeReceiver(clientUUID);
     }
 }

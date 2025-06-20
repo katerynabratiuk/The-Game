@@ -35,9 +35,7 @@ public class ActorPanel extends JPanel {
         int centerY = getHeight() / 2;
 
         for (Actor actor : gameState.getActorsSnapshot()) {
-            Coordinates pos = actor.getCoordinates();
-            int x = centerX + pos.getX() * SCALE - ACTOR_SIZE / 2;
-            int y = centerY + pos.getY() * SCALE - ACTOR_SIZE / 2;
+            Coordinates pos = convertToMapCoordinates(actor.getCoordinates().getX(), actor.getCoordinates().getY());
 
             if (actor instanceof Bullet) {
                 g2d.setColor(Color.RED); // this will be set with actors parameters
@@ -45,14 +43,30 @@ public class ActorPanel extends JPanel {
                 g2d.setColor(Color.BLUE);
             }
 
-            g2d.fillOval(x, y, ACTOR_SIZE, ACTOR_SIZE);
+            g2d.fillOval(pos.getX(), pos.getY(), ACTOR_SIZE, ACTOR_SIZE);
             g2d.setColor(Color.BLACK);
-            g2d.drawString(actor.getUuid().substring(0, 4), x + ACTOR_SIZE / 2, y - 5);  // temp actor id
+            g2d.drawString(actor.getUuid().substring(0, 4), pos.getX() + ACTOR_SIZE / 2, pos.getY() - 5);  // temp actor id
         }
 
         g2d.setColor(Color.LIGHT_GRAY);
         g2d.drawLine(0, centerY, getWidth(), centerY);
         g2d.drawLine(centerX, 0, centerX, getHeight());
+    }
+
+    public Coordinates convertToMapCoordinates(int x, int y) {
+        int centerX = getWidth() / 2;
+        int centerY = getHeight() / 2;
+        int xOut = centerX + x * SCALE - ACTOR_SIZE / 2;
+        int yOut = centerY + y * SCALE - ACTOR_SIZE / 2;
+        return new Coordinates(xOut, yOut);
+    }
+
+    public Coordinates convertToGameCoordinates(int screenX, int screenY) {
+        int centerX = getWidth() / 2;
+        int centerY = getHeight() / 2;
+        int gameX = (screenX - centerX) / SCALE;
+        int gameY = (screenY - centerY) / SCALE;
+        return new Coordinates(gameX, gameY);
     }
 
 }

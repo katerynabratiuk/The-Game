@@ -37,6 +37,7 @@ public class PlayerController implements IController, Runnable {
                 handle(payload);
             } catch (Exception e) {
                 e.printStackTrace();
+                break;
             }
         }
     }
@@ -59,7 +60,6 @@ public class PlayerController implements IController, Runnable {
     private void handleConnectionRequest(ConnectionRequest p) throws JsonProcessingException {
         // WIP
         // add check if this client is already present in the game state
-        // remove disconnected clients
 
         switch (p.getConnectionCode()) {
             case JOIN:
@@ -74,8 +74,6 @@ public class PlayerController implements IController, Runnable {
             case DISCONNECT:
                 gameStateService.removeActor(p.getClientUUID());
                 senderThread.removeReceiver(p.getClientUUID());
-                System.out.println("tried to disconnect and remove the receiver");
-                System.out.println(senderThread.hasReceivers());
         }
     }
 

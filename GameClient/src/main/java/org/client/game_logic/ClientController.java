@@ -37,16 +37,11 @@ public class ClientController implements IController, Runnable {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Point clickPoint = e.getPoint();
-
-                int mapX = clickPoint.x;
-                int mapY = clickPoint.y;
-
-                Coordinates target = new Coordinates(mapX, mapY);
+                var direction = new DirectionVector(actorPanel.convertToGameCoordinates(clickPoint.x, clickPoint.y));
                 PlayerInput input = new PlayerInput(networkManager.getClientId(), MouseEvent.BUTTON1);
-                input.setTargetCoordinates(target);
+                input.setDirection(direction);
 
-                System.out.println("Mouse clicked at: " + input.getTargetCoordinates().getX() + " " + input.getTargetCoordinates().getY());
-
+                System.out.println("Mouse clicked at: " + input.getDirection().getX() + " " + input.getDirection().getY());
                 networkManager.sendInput(input);
             }
         };
@@ -65,6 +60,7 @@ public class ClientController implements IController, Runnable {
                 handle(payload);
             } catch (Exception e) {
                 e.printStackTrace();
+                break;
             }
         }
     }

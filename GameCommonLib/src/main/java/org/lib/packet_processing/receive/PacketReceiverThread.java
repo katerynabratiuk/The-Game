@@ -32,15 +32,13 @@ public class PacketReceiverThread extends Thread {
             try {
                 socket.receive(packet);
 
-
-
                 byte[] data = Arrays.copyOf(packet.getData(), packet.getLength());
                 byte[] decoded = decoder.decode(data);
                 byte[] decrypted = decryptor.decrypt(decoded);
                 var networkPayload = Serializer.deserialize(decrypted);
 
                 // TODO: rewrite this null check - ambiguous logic
-                // currently registry is passed only to server, and getClientUUID() != null is also only  passed to server
+                // currently registry is passed only to server, and getClientUUID() != null is also only passed to server
                 if (registry != null && networkPayload.getClientUUID() != null) {
                     registry.add(networkPayload.getClientUUID(), packet.getSocketAddress());
                 }
