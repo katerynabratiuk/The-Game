@@ -2,6 +2,7 @@ package org.server.game_logic;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.lib.data_structures.payloads.Coordinates;
+import org.lib.data_structures.payloads.DirectionVector;
 import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.GameState;
 import org.lib.data_structures.payloads.PlayerInput;
@@ -12,7 +13,6 @@ import java.util.List;
 
 public class GameStateService {
     private final List<Actor> actors = new ArrayList<>();
-    // private final Object lock = new Object();
 
     public synchronized void updateGameStateByInput(PlayerInput input) {
         var actor = getActorByClientUUID(input.getClientUUID());
@@ -24,18 +24,21 @@ public class GameStateService {
 
         for (Actor actor : actors) {
             if (actor instanceof Bullet bullet) {
-                Vector2D current = new Vector2D(bullet.getCoordinates().getX(), bullet.getCoordinates().getY());
-                Vector2D target = new Vector2D(bullet.getDirection().getX(), bullet.getDirection().getY());
+                long currentTime = System.currentTimeMillis();
 
-                Vector2D direction = target.subtract(current).normalize();
-                Vector2D movement = direction.scalarMultiply(bullet.getMovementSpeed());
+                if (currentTime - bullet.getCreationTime() >= bullet.getLifespan()) {
+                    toRemove.add(bullet);
+                    continue;
+                }
+
+                Vector2D current = new Vector2D(bullet.getCoordinates().getX(), bullet.getCoordinates().getY());
+                Vector2D direction = DirectionVector.toVector2D(bullet.getDirection());
+                if (direction.getNorm() == 0) continue;
+
+                Vector2D movement = direction.normalize().scalarMultiply(bullet.getMovementSpeed());
                 Vector2D newPos = current.add(movement);
 
-                if (current.distance(target) <= bullet.getMovementSpeed()) {
-                    toRemove.add(bullet);
-                } else {
-                    bullet.setCoordinates(new Coordinates((int)newPos.getX(), (int)newPos.getY()));
-                }
+                bullet.setCoordinates(new Coordinates((int) newPos.getX(), (int) newPos.getY()));
             }
         }
 
