@@ -13,6 +13,8 @@ import java.util.List;
 
 public class GameStateService {
     private final List<Actor> actors = new ArrayList<>();
+    private boolean friendlyFireEnabled = false;
+    // add queue for updates?
 
     public synchronized void updateGameStateByInput(PlayerInput input) {
         var actor = getActorByClientUUID(input.getClientUUID());
@@ -20,6 +22,12 @@ public class GameStateService {
     }
 
     public synchronized void updateGameThread() {
+        updateBullets();
+        checkCollision();
+    }
+
+    private synchronized void updateBullets() {
+        // rewrite with pendingDestroy
         List<Actor> toRemove = new ArrayList<>();
 
         for (Actor actor : actors) {
@@ -31,18 +39,47 @@ public class GameStateService {
                     continue;
                 }
 
-                Vector2D current = new Vector2D(bullet.getCoordinates().getX(), bullet.getCoordinates().getY());
-                Vector2D direction = Vector.toVector2D(bullet.getDirection());
+                var current = new Vector2D(bullet.getCoordinates().getX(), bullet.getCoordinates().getY());
+                var direction = Vector.toVector2D(bullet.getDirection());
                 if (direction.getNorm() == 0) continue;
 
-                Vector2D movement = direction.normalize().scalarMultiply(bullet.getMovementSpeed());
-                Vector2D newPos = current.add(movement);
+                var movement = direction.normalize().scalarMultiply(bullet.getMovementSpeed());
+                var newPos = current.add(movement);
 
                 bullet.setCoordinates(new Coordinates((int) newPos.getX(), (int) newPos.getY()));
             }
         }
 
         actors.removeAll(toRemove);
+    }
+
+    private synchronized void checkCollision() {
+        List<Actor> actorsToRemove = new ArrayList<>();
+
+        for (Actor trigger : actors) {
+            for (Actor target : actors) {
+                if (target == trigger) continue;
+
+                if (isCollision(trigger, target)) {
+                    trigger.OnCollision(target);
+                }
+            }
+
+            if (trigger.isPendingDestroy()) {
+                actorsToRemove.add(trigger);
+            }
+        }
+
+        actors.removeAll(actorsToRemove);
+    }
+
+    private boolean isCollision(Actor trigger, Actor target) {
+        double x = trigger.getCoordinates().getX() - target.getCoordinates().getX();
+        double y = trigger.getCoordinates().getY() - target.getCoordinates().getY();
+        double distance = Math.sqrt(x*x + y*y);
+
+        double radSum = trigger.getRadius() + target.getRadius();
+        return distance <= radSum;
     }
 
     public synchronized GameState snapshot() {
@@ -66,6 +103,7 @@ public class GameStateService {
 
     public void removeActor(String clientUUID) {
         var actor = getActorByClientUUID(clientUUID);
+        if (actor == null) return;
         actors.remove(actor);
     }
 }

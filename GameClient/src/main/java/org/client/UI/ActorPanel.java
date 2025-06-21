@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.Coordinates;
 import org.lib.data_structures.payloads.GameState;
+import org.lib.data_structures.payloads.actors.PlayerCharacter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,8 +30,8 @@ public class ActorPanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        int centerX = getWidth() / 2;
-        int centerY = getHeight() / 2;
+//        int centerX = getWidth() / 2;
+//        int centerY = getHeight() / 2;
 
         for (Actor actor : gameState.getActorsSnapshot()) {
             Coordinates pos = convertToMapCoordinates(actor.getCoordinates().getX(), actor.getCoordinates().getY(), (int)actor.getRadius());
@@ -38,12 +39,27 @@ public class ActorPanel extends JPanel {
             g2d.setColor(actor.color());
             g2d.fillOval(pos.getX(), pos.getY(), (int) actor.getRadius()*2, (int)actor.getRadius()*2);
             g2d.setColor(Color.BLACK);
-            // g2d.drawString(randomId, pos.getY() - 5);  // temp actor id
-        }
 
-        g2d.setColor(Color.LIGHT_GRAY);
-        g2d.drawLine(0, centerY, getWidth(), centerY);
-        g2d.drawLine(centerX, 0, centerX, getHeight());
+            if (actor instanceof PlayerCharacter pc) {
+                int maxHP = pc.getMaxHp();
+                int diameter = (int) actor.getRadius() * 2;
+                int currentHP = pc.getHitPoints();
+                int barHeight = 4;
+                int healthWidth = (int) (((double) currentHP / maxHP) * diameter);
+
+                // Bar background (gray)
+                g2d.setColor(Color.DARK_GRAY);
+                g2d.fillRect(pos.getX(), pos.getY() - barHeight - 2, diameter, barHeight);
+
+                // Health amount (green)
+                g2d.setColor(Color.GREEN);
+                g2d.fillRect(pos.getX(), pos.getY() - barHeight - 2, healthWidth, barHeight);
+
+                // Optional: draw black border around health bar
+                g2d.setColor(Color.BLACK);
+                g2d.drawRect(pos.getX(), pos.getY() - barHeight - 2, diameter, barHeight);
+            }
+        }
     }
 
     public Coordinates convertToMapCoordinates(int x, int y, int actorSizeOffset) {

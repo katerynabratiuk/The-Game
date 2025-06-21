@@ -9,6 +9,7 @@ import org.lib.data_structures.payloads.Coordinates;
 import org.lib.data_structures.payloads.Vector;
 
 import java.awt.*;
+import java.util.Objects;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +21,7 @@ public class Bullet extends Actor {
     private int lifespan = 500; // in milliseconds
 
     @JsonIgnore @Getter @Setter
-    private double damage;
+    private int damage = 1;
 
     @JsonIgnore @Getter @Setter
     private Vector direction;
@@ -35,5 +36,12 @@ public class Bullet extends Actor {
         updateColor(Color.RED);
         this.creationTime = System.currentTimeMillis();
         this.direction = vector;
+    }
+
+    @Override
+    public void OnCollision(Actor target) {
+        // TODO: needs refactoring to prevent checking UUID in all colliding actors
+        if (Objects.equals(getClientUUID(), target.getClientUUID())) return;
+        setPendingDestroy(true);
     }
 }

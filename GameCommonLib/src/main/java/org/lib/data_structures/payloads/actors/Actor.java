@@ -24,6 +24,9 @@ public class Actor extends Payload {
     @Getter @Setter
     private Coordinates coordinates;
 
+    @JsonIgnore @Getter @Setter
+    private boolean pendingDestroy;
+
     @Getter @Setter
     private double radius = 10; // circular space occupied by actor
 
@@ -35,6 +38,7 @@ public class Actor extends Payload {
 
     @Getter @Setter
     private int B = 0;
+
 
     public Actor(Coordinates coordinates, String clientUUID) {
         this.coordinates = coordinates;
@@ -50,4 +54,6 @@ public class Actor extends Payload {
     public Color color() {
         return new Color(R, G, B);
     }
+
+    public void OnCollision(Actor target) {}
 }

@@ -35,7 +35,6 @@ public class PacketReceiverThread extends Thread {
 
 
                 byte[] data = Arrays.copyOf(packet.getData(), packet.getLength());
-                System.out.println("Received " + data.length);
                 byte[] decoded = decoder.decode(data);
                 byte[] decrypted = decryptor.decrypt(decoded);
                 var networkPayload = Serializer.deserialize(decrypted);

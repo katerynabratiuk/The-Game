@@ -35,6 +35,7 @@ public class KeyBindingsHandler {
         inputActions.getOrDefault(keyCode, (a, l, i) -> {}).apply(actor, actors, input);
     }
 
+    // idea: send to server player`s direction like it is done with bullets
     private static void move(Actor actor, int dx, int dy) {
         Coordinates coord = actor.getCoordinates();
         Coordinates newCoord = new Coordinates(coord.getX() + dx, coord.getY() + dy);

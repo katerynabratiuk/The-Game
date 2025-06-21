@@ -8,12 +8,16 @@ import lombok.Setter;
 import org.lib.data_structures.payloads.Coordinates;
 
 import java.awt.*;
+import java.util.Objects;
 
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlayerCharacter extends Actor {
     @Getter @Setter
-    private double hitPoints;
+    private int hitPoints = 5;
+
+    @Getter
+    private int maxHp = 5;
 
     @JsonIgnore @Getter @Setter
     private double movementSpeed = 10; // temp
@@ -29,5 +33,27 @@ public class PlayerCharacter extends Actor {
         updateColor(Color.BLUE);
         setCoordinates(coordinates);
         setClientUUID(clientUUID);
+    }
+
+    @Override
+    public void OnCollision(Actor target) {
+        // change UUID string field to UUID type
+        if (Objects.equals(getClientUUID(), target.getClientUUID())) return; // prevent self-damage from bullets
+
+        if (target instanceof Bullet bullet) {
+            takeDamage(bullet.getDamage());
+        }
+    }
+
+    private void takeDamage(int damage) {
+        int newHp = getHitPoints() - damage;
+        updateHitPoints(newHp);
+    }
+
+    private void updateHitPoints(int newHp) {
+        if (newHp <= 0) {
+            setPendingDestroy(true);
+        }
+        setHitPoints(newHp);
     }
 }
