@@ -26,13 +26,16 @@ public class PacketReceiverThread extends Thread {
 
     @Override
     public void run() {
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[2048];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         while (!socket.isClosed()) {
             try {
                 socket.receive(packet);
 
+
+
                 byte[] data = Arrays.copyOf(packet.getData(), packet.getLength());
+                System.out.println("Received " + data.length);
                 byte[] decoded = decoder.decode(data);
                 byte[] decrypted = decryptor.decrypt(decoded);
                 var networkPayload = Serializer.deserialize(decrypted);

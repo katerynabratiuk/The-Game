@@ -38,7 +38,7 @@ public class ActorPanel extends JPanel {
             g2d.setColor(actor.color());
             g2d.fillOval(pos.getX(), pos.getY(), (int) actor.getRadius()*2, (int)actor.getRadius()*2);
             g2d.setColor(Color.BLACK);
-            g2d.drawString(actor.getUuid().substring(0, 4), pos.getX() + (int)actor.getRadius(), pos.getY() - 5);  // temp actor id
+            // g2d.drawString(randomId, pos.getY() - 5);  // temp actor id
         }
 
         g2d.setColor(Color.LIGHT_GRAY);

@@ -40,7 +40,7 @@ public class GameState extends Payload {
         this.actors = actorsSnapshot;
     }
 
-    public void removeActor(String uuid) {
-        actors.removeIf(actor -> actor.getUuid().equals(uuid));
-    }
+//    public void removeActor(String uuid) {
+//        actors.removeIf(actor -> actor.getUuid().equals(uuid));
+//    }
 }
