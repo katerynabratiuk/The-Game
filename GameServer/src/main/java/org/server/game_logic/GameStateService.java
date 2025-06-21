@@ -2,7 +2,7 @@ package org.server.game_logic;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.lib.data_structures.payloads.Coordinates;
-import org.lib.data_structures.payloads.DirectionVector;
+import org.lib.data_structures.payloads.Vector;
 import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.GameState;
 import org.lib.data_structures.payloads.PlayerInput;
@@ -32,7 +32,7 @@ public class GameStateService {
                 }
 
                 Vector2D current = new Vector2D(bullet.getCoordinates().getX(), bullet.getCoordinates().getY());
-                Vector2D direction = DirectionVector.toVector2D(bullet.getDirection());
+                Vector2D direction = Vector.toVector2D(bullet.getDirection());
                 if (direction.getNorm() == 0) continue;
 
                 Vector2D movement = direction.normalize().scalarMultiply(bullet.getMovementSpeed());

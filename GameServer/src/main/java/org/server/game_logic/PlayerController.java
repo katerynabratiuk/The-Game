@@ -8,6 +8,7 @@ import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.*;
 import org.lib.controllers.IController;
 import org.lib.data_structures.payloads.actors.Actor;
+import org.lib.data_structures.payloads.actors.PlayerCharacter;
 import org.lib.packet_processing.send.PacketSenderThread;
 import org.lib.packet_processing.serializers.Serializer;
 
@@ -61,8 +62,8 @@ public class PlayerController implements IController, Runnable {
 
         switch (p.getConnectionCode()) {
             case JOIN:
-                Actor newActor = new Actor(new Coordinates(0, 0), p.getClientUUID());
-                gameStateService.addActor(newActor);
+                var character = new PlayerCharacter(p.getClientUUID(), new Coordinates(0, 0));
+                gameStateService.addActor(character);
                 var gameState = gameStateService.snapshot();
                 var networkPayload = new NetworkPayload(List.of(gameState));
                 var serialized = Serializer.serialize(networkPayload);

@@ -1,7 +1,6 @@
 package org.server.game_logic;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.lib.data_structures.payloads.DirectionVector;
+import org.lib.data_structures.payloads.Vector;
 import org.lib.data_structures.payloads.PlayerInput;
 import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.Coordinates;
@@ -43,12 +42,13 @@ public class KeyBindingsHandler {
     }
 
     private static void shoot(Actor actor, List<Actor> actors, PlayerInput input) {
-        System.out.println("Actor " + actor.getUuid() + " shot!");
         double x = input.getDirection().getX();
         double y = input.getDirection().getY();
-        var newActor = new Bullet(new Coordinates(actor.getCoordinates().getX() - 1, actor.getCoordinates().getY() - 1), input.getClientUUID());
-        newActor.setDirection(new DirectionVector(x, y));
+        var newActor = new Bullet(
+                input.getClientUUID(),
+                new Coordinates(actor.getCoordinates().getX() - 1, actor.getCoordinates().getY() - 1),
+                new Vector(x, y));
+
         actors.add(newActor);
-        System.out.println("New bullet spawned");
     }
 }

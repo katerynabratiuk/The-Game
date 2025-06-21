@@ -9,5 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ConnectionRequest extends Payload{
     @Getter @Setter private String clientUUID;
-    @Getter @Setter private ConnectionCode connectionCode; // int
+    @Getter @Setter private ConnectionCode connectionCode;
 }

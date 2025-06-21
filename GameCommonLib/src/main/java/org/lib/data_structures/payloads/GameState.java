@@ -1,14 +1,15 @@
 package org.lib.data_structures.payloads;
 
+import lombok.NoArgsConstructor;
 import org.lib.data_structures.payloads.actors.Actor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
 public class GameState extends Payload {
     private List<Actor> actors;
 
-    public GameState() {};
     public GameState(ArrayList<Actor> actors) {
         this.actors = actors;
     }

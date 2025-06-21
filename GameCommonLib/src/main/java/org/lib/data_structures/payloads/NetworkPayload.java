@@ -8,7 +8,7 @@ import java.util.List;
 public class NetworkPayload {
     @Getter @Setter private List<Payload> payloads;
     @Getter @Setter private int sequenceNumber;
-    @Getter @Setter private String clientUUID; // nullable
+    @Getter @Setter private String clientUUID;
 
     public NetworkPayload() {}
 

@@ -37,7 +37,7 @@ public class ClientController implements IController, Runnable {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Point clickPoint = e.getPoint();
-                var direction = new DirectionVector(actorPanel.convertToGameCoordinates(clickPoint.x, clickPoint.y));
+                var direction = new Vector(actorPanel.convertToGameCoordinates(clickPoint.x, clickPoint.y));
                 PlayerInput input = new PlayerInput(networkManager.getClientId(), MouseEvent.BUTTON1);
                 input.setDirection(direction);
 

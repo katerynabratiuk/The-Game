@@ -12,6 +12,8 @@ import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.actors.Bullet;
 import org.lib.data_structures.payloads.actors.PlayerCharacter;
 
+import java.awt.*;
+
 import static org.lib.data_structures.payloads.PayloadStructType.*;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")

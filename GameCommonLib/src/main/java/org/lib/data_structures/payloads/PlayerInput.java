@@ -6,7 +6,7 @@ import lombok.Setter;
 public class PlayerInput extends Payload {
     @Getter private String clientUUID;
     @Getter private int keyInputCode;
-    @Getter @Setter private DirectionVector direction;
+    @Getter @Setter private Vector direction;
 
     public PlayerInput() {}
 
