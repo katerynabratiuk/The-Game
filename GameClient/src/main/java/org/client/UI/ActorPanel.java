@@ -13,7 +13,6 @@ import java.util.ArrayList;
 public class ActorPanel extends JPanel {
     @Getter
     private GameState gameState;
-    private final int ACTOR_SIZE = 20;
     private final int SCALE = 5;
 
     public ActorPanel() {
@@ -35,7 +34,7 @@ public class ActorPanel extends JPanel {
         int centerY = getHeight() / 2;
 
         for (Actor actor : gameState.getActorsSnapshot()) {
-            Coordinates pos = convertToMapCoordinates(actor.getCoordinates().getX(), actor.getCoordinates().getY());
+            Coordinates pos = convertToMapCoordinates(actor.getCoordinates().getX(), actor.getCoordinates().getY(), (int)actor.getRadius());
 
             if (actor instanceof Bullet) {
                 g2d.setColor(Color.RED); // this will be set with actors parameters
@@ -43,9 +42,9 @@ public class ActorPanel extends JPanel {
                 g2d.setColor(Color.BLUE);
             }
 
-            g2d.fillOval(pos.getX(), pos.getY(), ACTOR_SIZE, ACTOR_SIZE);
+            g2d.fillOval(pos.getX(), pos.getY(), (int) actor.getRadius()*2, (int)actor.getRadius()*2);
             g2d.setColor(Color.BLACK);
-            g2d.drawString(actor.getUuid().substring(0, 4), pos.getX() + ACTOR_SIZE / 2, pos.getY() - 5);  // temp actor id
+            g2d.drawString(actor.getUuid().substring(0, 4), pos.getX() + (int)actor.getRadius(), pos.getY() - 5);  // temp actor id
         }
 
         g2d.setColor(Color.LIGHT_GRAY);
@@ -53,11 +52,11 @@ public class ActorPanel extends JPanel {
         g2d.drawLine(centerX, 0, centerX, getHeight());
     }
 
-    public Coordinates convertToMapCoordinates(int x, int y) {
+    public Coordinates convertToMapCoordinates(int x, int y, int actorSizeOffset) {
         int centerX = getWidth() / 2;
         int centerY = getHeight() / 2;
-        int xOut = centerX + x * SCALE - ACTOR_SIZE / 2;
-        int yOut = centerY + y * SCALE - ACTOR_SIZE / 2;
+        int xOut = centerX + x * SCALE - actorSizeOffset;
+        int yOut = centerY + y * SCALE - actorSizeOffset;
         return new Coordinates(xOut, yOut);
     }
 

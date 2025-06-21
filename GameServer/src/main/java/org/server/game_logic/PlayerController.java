@@ -8,11 +8,9 @@ import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.*;
 import org.lib.controllers.IController;
 import org.lib.data_structures.payloads.actors.Actor;
-import org.lib.packet_processing.registry.SocketAddressRegistry;
 import org.lib.packet_processing.send.PacketSenderThread;
 import org.lib.packet_processing.serializers.Serializer;
 
-import java.io.IOException;
 import java.util.List;
 
 public class PlayerController implements IController, Runnable {

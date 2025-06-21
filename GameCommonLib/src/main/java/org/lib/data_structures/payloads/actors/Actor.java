@@ -14,6 +14,7 @@ public class Actor extends Payload {
     @Getter private final String uuid = UUID.randomUUID().toString();
     @Getter @Setter private String clientUUID;
     @Getter @Setter private Coordinates coordinates;
+    @Getter @Setter private double radius = 10; // circular space occupied by actor
 
     public Actor(Coordinates coordinates, String clientUUID) {
         this.coordinates = coordinates;

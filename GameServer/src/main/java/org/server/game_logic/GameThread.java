@@ -43,7 +43,7 @@ public class GameThread extends Thread {
                 var gameState = gameStateService.snapshot();
                 var payload = new NetworkPayload(List.of(gameState));
                 var serialized = Serializer.serialize(payload);
-                senderThread.send(serialized);
+                 senderThread.send(serialized);
 
                 // maintain frame rate - verify this
                 long elapsed = System.currentTimeMillis() - startTime;
