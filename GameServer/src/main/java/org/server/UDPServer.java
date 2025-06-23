@@ -1,15 +1,15 @@
 package org.server;
 
-import org.server.game_logic.GameStateService;
+import org.server.game_logic.GameStateManager;
 import org.server.game_logic.GameThread;
-import org.server.game_logic.PlayerController;
-import org.server.network.UDPServerThread;
+import org.server.game_logic.PayloadRouter;
+import org.server.network.UDPSockerThread;
 
 public class UDPServer {
     public static void main(String[] args) {
-        GameStateService service = new GameStateService();
-        PlayerController controller = new PlayerController(service);
-        UDPServerThread serverThread = new UDPServerThread(controller);
+        GameStateManager service = new GameStateManager();
+        PayloadRouter controller = new PayloadRouter(service);
+        UDPSockerThread serverThread = new UDPSockerThread(controller);
         GameThread gameThread = new GameThread(service);
 
         serverThread.start();

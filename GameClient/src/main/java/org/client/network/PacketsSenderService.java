@@ -1,18 +1,18 @@
 package org.client.network;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.client.game_logic.ClientController;
+import org.client.game_logic.PayloadRouter;
 import org.lib.data_structures.payloads.*;
 import org.lib.packet_processing.serializers.Serializer;
 
 import java.io.IOException;
 import java.util.List;
 
-public class UDPThreadWrapper {
-    private final UDPClientThread clientThread;
+public class PacketsSenderService {
+    private final UDPSocketThread clientThread;
 
-    public UDPThreadWrapper(ClientController controller) throws IOException {
-        this.clientThread = new UDPClientThread(controller);
+    public PacketsSenderService(PayloadRouter controller) throws IOException {
+        this.clientThread = new UDPSocketThread(controller);
     }
 
     public void start() {

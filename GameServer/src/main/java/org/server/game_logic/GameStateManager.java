@@ -11,7 +11,7 @@ import org.lib.data_structures.payloads.actors.Bullet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameStateService {
+public class GameStateManager {
     private final List<Actor> actors = new ArrayList<>();
     private boolean friendlyFireEnabled = false;
     // add queue for updates?

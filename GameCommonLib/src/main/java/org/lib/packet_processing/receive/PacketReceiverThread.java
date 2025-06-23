@@ -32,8 +32,6 @@ public class PacketReceiverThread extends Thread {
             try {
                 socket.receive(packet);
 
-
-
                 byte[] data = Arrays.copyOf(packet.getData(), packet.getLength());
                 byte[] decoded = decoder.decode(data);
                 byte[] decrypted = decryptor.decrypt(decoded);

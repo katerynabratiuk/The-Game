@@ -1,8 +1,8 @@
 package org.client.game_logic;
 
 import lombok.Setter;
-import org.client.UI.ActorPanel;
-import org.client.network.UDPThreadWrapper;
+import org.client.UI.MapPanel;
+import org.client.network.PacketsSenderService;
 import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.*;
 import org.lib.controllers.IController;
@@ -12,12 +12,12 @@ import java.awt.*;
 import java.awt.event.*;
 
 
-public class ClientController implements IController, Runnable {
-    private final ActorPanel actorPanel;
+public class PayloadRouter implements IController, Runnable {
+    private final MapPanel actorPanel;
     private final ConcurrentQueue<NetworkPayload> receivedPackets = new ConcurrentQueue<>();
-    @Setter private UDPThreadWrapper networkManager;
+    @Setter private PacketsSenderService networkManager;
 
-    public ClientController(ActorPanel actorPanel) {
+    public PayloadRouter(MapPanel actorPanel) {
         this.actorPanel = actorPanel;
     }
 

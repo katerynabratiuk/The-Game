@@ -1,7 +1,7 @@
 package org.client.network;
 
 import lombok.Getter;
-import org.client.game_logic.ClientController;
+import org.client.game_logic.PayloadRouter;
 import org.lib.packet_processing.receive.Decoder;
 import org.lib.packet_processing.receive.Decryptor;
 import org.lib.packet_processing.receive.PacketReceiverThread;
@@ -17,28 +17,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.lib.environment.EnvLoader.ENV_VARS;
 
-public class UDPClientThread extends Thread {
-    private final DatagramSocket socket;
+public class UDPSocketThread extends Thread {
     @Getter private final PacketSenderThread senderThread;
     @Getter private final PacketReceiverThread receiverThread;
     @Getter private final String clientId = UUID.randomUUID().toString();
-    private final Encoder encoder = new Encoder();
-    private final Encryptor encryptor = new Encryptor();
 
-    public UDPClientThread(ClientController controller) throws IOException {
-        this.socket = new DatagramSocket();
-
-        InetSocketAddress serverAddress = new InetSocketAddress(
-                InetAddress.getByName(ENV_VARS.get("UDP_SERVER_HOST")),
-                Integer.parseInt(ENV_VARS.get("UDP_SERVER_PORT"))
-        );
-
-
-        // extract to a method
-        Map<String, SocketAddress> serverMap = new ConcurrentHashMap<>();
-        serverMap.put("server", serverAddress);
-
-        this.senderThread = new PacketSenderThread(socket, encoder, encryptor, new StaticReceiversStrategy(serverMap));
+    public UDPSocketThread(PayloadRouter controller) throws IOException {
+        var socket = new DatagramSocket();
+        this.senderThread = new PacketSenderThread(socket, new Encoder(), new Encryptor(), new StaticReceiversStrategy(wrapServerAsReceiver()));
         this.receiverThread = new PacketReceiverThread(socket, controller, new Decoder(), new Decryptor(), null);
     }
 
@@ -51,5 +37,19 @@ public class UDPClientThread extends Thread {
     public void shutdown() {
         senderThread.interrupt();
         receiverThread.interrupt();
+    }
+
+    private InetSocketAddress getServerAddress() throws UnknownHostException {
+        return new InetSocketAddress(
+                InetAddress.getByName(ENV_VARS.get("UDP_SERVER_HOST")),
+                Integer.parseInt(ENV_VARS.get("UDP_SERVER_PORT"))
+        );
+    }
+
+    private Map<String, SocketAddress> wrapServerAsReceiver() throws UnknownHostException {
+        var serverAddress = getServerAddress();
+        Map<String, SocketAddress> serverMap = new ConcurrentHashMap<>();
+        serverMap.put("server", serverAddress);
+        return serverMap;
     }
 }

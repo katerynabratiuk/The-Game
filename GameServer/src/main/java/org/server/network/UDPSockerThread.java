@@ -10,19 +10,19 @@ import org.lib.packet_processing.send.Encoder;
 import org.lib.packet_processing.send.Encryptor;
 import org.lib.packet_processing.send.PacketSenderThread;
 import org.lib.packet_processing.strategies.DynamicRegistryStrategy;
-import org.server.game_logic.PlayerController;
+import org.server.game_logic.PayloadRouter;
 
 import java.net.*;
 
 import static org.lib.environment.EnvLoader.ENV_VARS;
 
-public class UDPServerThread extends Thread {
+public class UDPSockerThread extends Thread {
     @Getter public DatagramSocket socket;
     @Getter private final PacketReceiverThread  receivingThread;
     @Getter private final PacketSenderThread sendingThread;
 
     @SneakyThrows
-    public UDPServerThread(PlayerController controller) {
+    public UDPSockerThread(PayloadRouter controller) {
         String SERVER_ADDRESS = ENV_VARS.get("UDP_SERVER_HOST");
         InetAddress serverAddress = InetAddress.getByName(SERVER_ADDRESS);
         int PORT = Integer.parseInt(ENV_VARS.get("UDP_SERVER_PORT"));

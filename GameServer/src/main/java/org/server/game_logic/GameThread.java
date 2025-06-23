@@ -9,12 +9,12 @@ import org.lib.packet_processing.serializers.Serializer;
 import java.util.List;
 
 public class GameThread extends Thread {
-    private final GameStateService gameStateService;
+    private final GameStateManager gameStateService;
     @Setter private PacketSenderThread senderThread;
     private final int FPS = 30; // dev test value
     private final long FRAME_TIME = 1000 / FPS;
 
-    public GameThread(GameStateService gameStateService) {
+    public GameThread(GameStateManager gameStateService) {
         this.gameStateService = gameStateService;
     }
 

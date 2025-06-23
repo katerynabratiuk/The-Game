@@ -1,7 +1,7 @@
 package org.client.UI;
 
-import org.client.game_logic.ClientController;
-import org.client.network.UDPThreadWrapper;
+import org.client.game_logic.PayloadRouter;
+import org.client.network.PacketsSenderService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,9 +10,9 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 public class UIProvider {
-    private static ActorPanel actorPanel;
-    private static UDPThreadWrapper networkManager;
-    private static ClientController controller;
+    private static MapPanel actorPanel;
+    private static PacketsSenderService networkManager;
+    private static PayloadRouter controller;
 
     public static void createAndShowGUI() {
         try {
@@ -26,11 +26,11 @@ public class UIProvider {
 
 
     private static void initSocket() throws IOException {
-        actorPanel = new ActorPanel();
-        controller = new ClientController(actorPanel);
+        actorPanel = new MapPanel();
+        controller = new PayloadRouter(actorPanel);
         new Thread(controller).start();
 
-        networkManager = new UDPThreadWrapper(controller);
+        networkManager = new PacketsSenderService(controller);
         controller.setNetworkManager(networkManager);
         networkManager.start();
         networkManager.sendJoinRequest();

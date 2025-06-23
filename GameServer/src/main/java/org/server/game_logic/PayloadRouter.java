@@ -14,13 +14,13 @@ import org.lib.packet_processing.serializers.Serializer;
 
 import java.util.List;
 
-public class PlayerController implements IController, Runnable {
+public class PayloadRouter implements IController, Runnable {
     private final ConcurrentQueue<NetworkPayload> receivedPackets = new ConcurrentQueue<>();
-    private final GameStateService gameStateService;
+    private final GameStateManager gameStateManager;
     @Getter @Setter private PacketSenderThread senderThread;
 
-    public PlayerController(GameStateService gameStateService) {
-        this.gameStateService = gameStateService;
+    public PayloadRouter(GameStateManager gameStateManager) {
+        this.gameStateManager = gameStateManager;
     }
 
     @Override
@@ -63,15 +63,15 @@ public class PlayerController implements IController, Runnable {
         switch (p.getConnectionCode()) {
             case JOIN:
                 var character = new PlayerCharacter(p.getClientUUID(), new Coordinates(0, 0));
-                gameStateService.addActor(character);
-                var gameState = gameStateService.snapshot();
+                gameStateManager.addActor(character);
+                var gameState = gameStateManager.snapshot();
                 var networkPayload = new NetworkPayload(List.of(gameState));
                 var serialized = Serializer.serialize(networkPayload);
                 senderThread.send(serialized);
                 break;
 
             case DISCONNECT:
-                gameStateService.removeActor(p.getClientUUID());
+                gameStateManager.removeActor(p.getClientUUID());
                 senderThread.removeReceiver(p.getClientUUID());
         }
     }
@@ -95,8 +95,8 @@ public class PlayerController implements IController, Runnable {
             return;
         }
 
-        gameStateService.updateGameStateByInput(p);
-        var gameState = gameStateService.snapshot();
+        gameStateManager.updateGameStateByInput(p);
+        var gameState = gameStateManager.snapshot();
         var networkPayload = new NetworkPayload(List.of(gameState));
         var serialized = Serializer.serialize(networkPayload);
         senderThread.send(serialized);
