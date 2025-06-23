@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.lib.data_structures.payloads.Coordinates;
-import org.lib.data_structures.payloads.Vector;
+import org.lib.data_structures.payloads.game.Coordinates;
+import org.lib.data_structures.payloads.game.Vector;
 
 import java.awt.*;
 import java.util.Objects;

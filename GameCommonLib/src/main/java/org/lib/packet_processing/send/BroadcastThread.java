@@ -1,27 +1,29 @@
 package org.lib.packet_processing.send;
 
 import org.lib.data_structures.concurrency.ConcurrentQueue;
+import org.lib.data_structures.payloads.NetworkPayload;
+import org.lib.packet_processing.serializers.Serializer;
 import org.lib.packet_processing.strategies.ReceiverStrategy;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketAddress;
 
-public class PacketSenderThread extends Thread {
+public class BroadcastThread extends Thread {
     private final DatagramSocket socket;
-    private final ConcurrentQueue<byte[]> queue = new ConcurrentQueue<>();
+    private final ConcurrentQueue<NetworkPayload> queue = new ConcurrentQueue<>();
     private final IEncoder encoder;
     private final IEncryptor encryptor;
     private final ReceiverStrategy receiverStrategy;
 
-    public PacketSenderThread(DatagramSocket socket, IEncoder encoder, IEncryptor encryptor, ReceiverStrategy receiverStrategy) {
+    public BroadcastThread(DatagramSocket socket, IEncoder encoder, IEncryptor encryptor, ReceiverStrategy receiverStrategy) {
         this.socket = socket;
         this.encoder = encoder;
         this.encryptor = encryptor;
         this.receiverStrategy = receiverStrategy;
     }
 
-    public void send(byte[] payload) {
+    public void send(NetworkPayload payload) {
         queue.put(payload);
     }
 
@@ -30,8 +32,9 @@ public class PacketSenderThread extends Thread {
         try {
             while (!socket.isClosed()) {
                 try {
-                    byte[] payload = queue.get();
-                    byte[] encrypted = encryptor.encrypt(payload);
+                    NetworkPayload payload = queue.get();
+                    byte[] serialized = Serializer.serialize(payload);
+                    byte[] encrypted = encryptor.encrypt(serialized);
                     byte[] encoded = encoder.encode(encrypted);
 
                     for (SocketAddress receiver : receiverStrategy.getReceivers()) {

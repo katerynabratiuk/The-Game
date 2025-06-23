@@ -1,6 +1,7 @@
-package org.lib.data_structures.payloads;
+package org.lib.data_structures.payloads.game;
 
 import lombok.NoArgsConstructor;
+import org.lib.data_structures.payloads.Payload;
 import org.lib.data_structures.payloads.actors.Actor;
 
 import java.util.ArrayList;

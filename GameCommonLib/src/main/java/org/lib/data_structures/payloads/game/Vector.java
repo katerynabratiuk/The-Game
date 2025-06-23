@@ -1,8 +1,9 @@
-package org.lib.data_structures.payloads;
+package org.lib.data_structures.payloads.game;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.lib.data_structures.payloads.Payload;
 
 @Getter
 @NoArgsConstructor

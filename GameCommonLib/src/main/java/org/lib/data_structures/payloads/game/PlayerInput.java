@@ -1,7 +1,8 @@
-package org.lib.data_structures.payloads;
+package org.lib.data_structures.payloads.game;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.lib.data_structures.payloads.Payload;
 
 public class PlayerInput extends Payload {
     @Getter private String clientUUID;

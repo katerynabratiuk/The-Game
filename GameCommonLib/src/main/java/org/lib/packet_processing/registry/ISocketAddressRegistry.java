@@ -8,4 +8,5 @@ public interface ISocketAddressRegistry {
     Collection<SocketAddress> getAll();
     void add(String key, SocketAddress address);
     void remove(String key);
+    SocketAddress get(String clientUUID);
 }

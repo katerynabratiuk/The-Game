@@ -1,7 +1,7 @@
 package org.lib.packet_processing.send;
 
 import lombok.SneakyThrows;
-import org.lib.data_structures.payloads.EncryptedIVMessage;
+import org.lib.data_structures.payloads.network.EncryptedIVMessage;
 import org.lib.packet_processing.cipher.CipherFactory;
 
 import javax.crypto.Cipher;

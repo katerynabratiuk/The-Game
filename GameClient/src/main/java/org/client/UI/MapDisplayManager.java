@@ -2,23 +2,19 @@ package org.client.UI;
 
 import lombok.Getter;
 import org.lib.data_structures.payloads.actors.Actor;
-import org.lib.data_structures.payloads.Coordinates;
-import org.lib.data_structures.payloads.GameState;
+import org.lib.data_structures.payloads.game.Coordinates;
+import org.lib.data_structures.payloads.game.GameState;
 import org.lib.data_structures.payloads.actors.PlayerCharacter;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
-public class MapPanel extends JPanel {
-    @Getter
-    private GameState gameState;
+public class MapDisplayManager extends JPanel {
+    @Getter private GameState gameState;
     private final int SCALE = 5;
 
-    public MapPanel() {
+    public MapDisplayManager() {
         this.gameState = new GameState(new ArrayList<>());
     }
 

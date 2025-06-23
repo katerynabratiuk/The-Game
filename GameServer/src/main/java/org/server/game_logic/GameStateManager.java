@@ -1,11 +1,11 @@
 package org.server.game_logic;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.lib.data_structures.payloads.Coordinates;
-import org.lib.data_structures.payloads.Vector;
+import org.lib.data_structures.payloads.game.Coordinates;
+import org.lib.data_structures.payloads.game.Vector;
 import org.lib.data_structures.payloads.actors.Actor;
-import org.lib.data_structures.payloads.GameState;
-import org.lib.data_structures.payloads.PlayerInput;
+import org.lib.data_structures.payloads.game.GameState;
+import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.actors.Bullet;
 
 import java.util.ArrayList;
@@ -13,10 +13,10 @@ import java.util.List;
 
 public class GameStateManager {
     private final List<Actor> actors = new ArrayList<>();
-    private boolean friendlyFireEnabled = false;
     // add queue for updates?
 
     public synchronized void updateGameStateByInput(PlayerInput input) {
+        // now it retrieves first client`s actor - potential bugs
         var actor = getActorByClientUUID(input.getClientUUID());
         KeyBindingsHandler.handleInput(input.getKeyInputCode(), actor, actors, input);
     }

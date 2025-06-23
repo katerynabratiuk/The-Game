@@ -1,4 +1,4 @@
-package org.lib.data_structures.payloads;
+package org.lib.data_structures.payloads.network;
 
 import lombok.Getter;
 import lombok.Setter;

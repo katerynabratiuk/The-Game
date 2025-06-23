@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.lib.data_structures.payloads.Coordinates;
+import org.lib.data_structures.payloads.game.Coordinates;
 
 import java.awt.*;
 import java.util.Objects;

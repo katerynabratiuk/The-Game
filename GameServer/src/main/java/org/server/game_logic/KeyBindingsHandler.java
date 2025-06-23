@@ -1,9 +1,9 @@
 package org.server.game_logic;
 
-import org.lib.data_structures.payloads.Vector;
-import org.lib.data_structures.payloads.PlayerInput;
+import org.lib.data_structures.payloads.game.Vector;
+import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.actors.Actor;
-import org.lib.data_structures.payloads.Coordinates;
+import org.lib.data_structures.payloads.game.Coordinates;
 import org.lib.data_structures.payloads.actors.Bullet;
 
 import java.awt.event.KeyEvent;

@@ -1,4 +1,4 @@
-package org.lib.data_structures.payloads;
+package org.lib.data_structures.payloads.enums;
 
 public enum ConnectionCode {
     JOIN,

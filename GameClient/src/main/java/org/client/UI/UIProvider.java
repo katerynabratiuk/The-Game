@@ -10,7 +10,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 public class UIProvider {
-    private static MapPanel actorPanel;
+    private static MapDisplayManager mapDisplayManager;
     private static PacketsSenderService networkManager;
     private static PayloadRouter controller;
 
@@ -26,8 +26,8 @@ public class UIProvider {
 
 
     private static void initSocket() throws IOException {
-        actorPanel = new MapPanel();
-        controller = new PayloadRouter(actorPanel);
+        mapDisplayManager = new MapDisplayManager();
+        controller = new PayloadRouter(mapDisplayManager);
         new Thread(controller).start();
 
         networkManager = new PacketsSenderService(controller);
@@ -40,22 +40,22 @@ public class UIProvider {
         JFrame frame = new JFrame("Demo UDP Client");
         JLabel positionLabel = new JLabel("Position: (0, 0)");
 
-        actorPanel.setFocusable(true);
-        actorPanel.setBackground(Color.LIGHT_GRAY);
+        mapDisplayManager.setFocusable(true);
+        mapDisplayManager.setBackground(Color.LIGHT_GRAY);
 
         frame.setLayout(new BorderLayout());
         frame.add(positionLabel, BorderLayout.NORTH);
-        frame.add(actorPanel, BorderLayout.CENTER);
+        frame.add(mapDisplayManager, BorderLayout.CENTER);
 
-        actorPanel.addKeyListener(controller.getKeyListener(positionLabel));
-        actorPanel.addMouseListener(controller.getMouseClickListener());
+        mapDisplayManager.addKeyListener(controller.getKeyListener(positionLabel));
+        mapDisplayManager.addMouseListener(controller.getMouseClickListener());
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300);
         frame.setLocationRelativeTo(null);
 
         frame.setVisible(true);
-        SwingUtilities.invokeLater(actorPanel::requestFocusInWindow);
+        SwingUtilities.invokeLater(mapDisplayManager::requestFocusInWindow);
 
         frame.addWindowListener(new WindowAdapter() {
             @Override

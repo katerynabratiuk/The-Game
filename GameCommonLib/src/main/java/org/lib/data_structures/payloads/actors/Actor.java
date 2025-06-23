@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.lib.data_structures.payloads.Coordinates;
+import org.lib.data_structures.payloads.game.Coordinates;
 import org.lib.data_structures.payloads.Payload;
 
 import java.awt.*;
