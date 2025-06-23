@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class Speed extends Item {
 
-    private Integer power;
+    private Double power;
     private Integer time;
 
     public Speed() {
