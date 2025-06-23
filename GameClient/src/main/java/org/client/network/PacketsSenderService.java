@@ -1,12 +1,15 @@
 package org.client.network;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.client.game_logic.PayloadRouter;
 import org.lib.data_structures.payloads.*;
-import org.lib.packet_processing.serializers.Serializer;
+import org.lib.data_structures.payloads.enums.ConnectionCode;
+import org.lib.data_structures.payloads.game.PlayerInput;
+import org.lib.data_structures.payloads.network.ConnectionRequest;
+import org.lib.data_structures.payloads.queries.ClientLogin;
 
 import java.io.IOException;
 import java.util.List;
+
 
 public class PacketsSenderService {
     private final UDPSocketThread clientThread;
@@ -33,6 +36,11 @@ public class PacketsSenderService {
         send(List.of(req));
     }
 
+    public void sendLogin(String username) {
+        var registration = new ClientLogin(getClientId(), username);
+        send(List.of(registration));
+    }
+
     public void shutdown() {
         clientThread.shutdown();
     }
@@ -41,19 +49,16 @@ public class PacketsSenderService {
         return clientThread.getClientId();
     }
 
-    private void send(List<Payload> payloads) {
-        var serialized = serializePayload(payloads);
-        clientThread.getSenderThread().send(serialized);
-    }
 
-    private byte[] serializePayload(List<Payload> payloads) {
+
+    private void send(List<Payload> payloads) {
+        if (clientThread.getSenderThread() == null) {
+            System.err.println("Sender thread not initialized yet");
+            return;
+        }
+
         var payload = new NetworkPayload(payloads);
         payload.setClientUUID(getClientId());
-        try {
-            return Serializer.serialize(payload);
-        } catch (JsonProcessingException e) {
-            // TODO: fix exception throwing
-            throw new RuntimeException(e);
-        }
+        clientThread.getSenderThread().send(payload);
     }
 }

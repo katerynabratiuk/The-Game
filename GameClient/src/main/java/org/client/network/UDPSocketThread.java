@@ -5,38 +5,63 @@ import org.client.game_logic.PayloadRouter;
 import org.lib.packet_processing.receive.Decoder;
 import org.lib.packet_processing.receive.Decryptor;
 import org.lib.packet_processing.receive.PacketReceiverThread;
+import org.lib.packet_processing.registry.SocketAddressRegistry;
 import org.lib.packet_processing.send.Encoder;
 import org.lib.packet_processing.send.Encryptor;
-import org.lib.packet_processing.send.PacketSenderThread;
-import org.lib.packet_processing.strategies.StaticReceiversStrategy;
+import org.lib.packet_processing.send.UnicastThread;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.lib.environment.EnvLoader.ENV_VARS;
 
 public class UDPSocketThread extends Thread {
-    @Getter private final PacketSenderThread senderThread;
-    @Getter private final PacketReceiverThread receiverThread;
+    @Getter private volatile UnicastThread senderThread;
+    @Getter private volatile PacketReceiverThread receiverThread;
     @Getter private final String clientId = UUID.randomUUID().toString();
+    @Getter private final PayloadRouter controller;
+    private final int RECONNECT_DELAY_MS = 10_000;
+    private volatile boolean running = true;
 
-    public UDPSocketThread(PayloadRouter controller) throws IOException {
-        var socket = new DatagramSocket();
-        this.senderThread = new PacketSenderThread(socket, new Encoder(), new Encryptor(), new StaticReceiversStrategy(wrapServerAsReceiver()));
-        this.receiverThread = new PacketReceiverThread(socket, controller, new Decoder(), new Decryptor(), null);
+    public UDPSocketThread(PayloadRouter controller) {
+        this.controller = controller;
     }
 
     @Override
     public void run() {
-        senderThread.start();
-        receiverThread.start();
+        while (running) {
+            try {
+                initThreads();
+                handleConnectionLoss();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            } catch (IOException e) {
+                handleNetworkError(e);
+            }
+        }
     }
 
     public void shutdown() {
-        senderThread.interrupt();
-        receiverThread.interrupt();
+        running = false;
+        if (senderThread != null) senderThread.interrupt();
+        if (receiverThread != null) receiverThread.interrupt();
+    }
+
+    private void initThreads() throws SocketException, UnknownHostException, InterruptedException {
+        System.out.println("Creating a client socket...");
+        var socket = new DatagramSocket();
+        var registry = getServerAddressRegistry();
+
+        senderThread = new UnicastThread(socket, new Encoder(), new Encryptor(), registry);
+        receiverThread = new PacketReceiverThread(socket, controller, new Decoder(), new Decryptor(), null);
+
+        senderThread.start();
+        receiverThread.start();
+
+        senderThread.join();
+        receiverThread.join();
     }
 
     private InetSocketAddress getServerAddress() throws UnknownHostException {
@@ -46,10 +71,23 @@ public class UDPSocketThread extends Thread {
         );
     }
 
-    private Map<String, SocketAddress> wrapServerAsReceiver() throws UnknownHostException {
+    private SocketAddressRegistry getServerAddressRegistry() throws UnknownHostException {
         var serverAddress = getServerAddress();
-        Map<String, SocketAddress> serverMap = new ConcurrentHashMap<>();
-        serverMap.put("server", serverAddress);
-        return serverMap;
+        var registry = new SocketAddressRegistry();
+        registry.add(getClientId(), serverAddress);
+        return registry;
+    }
+
+    private void handleConnectionLoss() throws InterruptedException {
+        System.err.println("Connection lost. Reconnecting in " + RECONNECT_DELAY_MS/1000 + " seconds...");
+        Thread.sleep(RECONNECT_DELAY_MS);
+    }
+
+    // check if sleep() needed
+    private void handleNetworkError(IOException e) {
+        System.err.println("Network error: " + e.getMessage());
+        if (running) {
+            System.err.println("Attempting reconnection in " + RECONNECT_DELAY_MS/1000 + " seconds...");
+        }
     }
 }

@@ -27,8 +27,10 @@ public class GameThread extends Thread {
             return;
         }
 
+        waitForBroadcastThreadReady();
+
         while (true) {
-            waitForBroadcastThreadReady();
+
             if (shouldSkipFrame()) continue;
 
             try {

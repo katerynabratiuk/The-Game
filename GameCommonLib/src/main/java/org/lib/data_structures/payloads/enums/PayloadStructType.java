@@ -1,12 +1,12 @@
-package org.lib.data_structures.payloads;
+package org.lib.data_structures.payloads.enums;
 
 public enum PayloadStructType {
     PLAYER_INPUT,
     GAME_STATE,
     ACTOR,
-    PLAYER_NOTIFICATION,
+    NOTIFICATION,
     CONNECTION_REQUEST,
     CONNECTION_RESPONSE,
-    DISCONNECT,
+    CLIENT_QUERY,
     UNKNOWN
 }

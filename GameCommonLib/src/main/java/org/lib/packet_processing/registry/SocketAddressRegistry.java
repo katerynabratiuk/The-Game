@@ -10,6 +10,11 @@ public class SocketAddressRegistry implements ISocketAddressRegistry{
     private final Map<String, SocketAddress> receivers = new ConcurrentHashMap<>();
 
     @Override
+    public SocketAddress get(String clientUUID) {
+        return receivers.get(clientUUID);
+    }
+
+    @Override
     public Collection<SocketAddress> getAll() {
         return receivers.values();
     }

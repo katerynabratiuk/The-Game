@@ -1,24 +1,28 @@
 package org.client.game_logic;
 
 import lombok.Setter;
-import org.client.UI.MapPanel;
+import org.client.UI.MapDisplayManager;
 import org.client.network.PacketsSenderService;
 import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.*;
-import org.lib.controllers.IController;
+import org.lib.controllers.IRouter;
+import org.lib.data_structures.payloads.game.GameState;
+import org.lib.data_structures.payloads.game.Notification;
+import org.lib.data_structures.payloads.game.PlayerInput;
+import org.lib.data_structures.payloads.game.Vector;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 
-public class PayloadRouter implements IController, Runnable {
-    private final MapPanel actorPanel;
+public class PayloadRouter implements IRouter, Runnable {
+    private final MapDisplayManager mapDisplayManager;
     private final ConcurrentQueue<NetworkPayload> receivedPackets = new ConcurrentQueue<>();
     @Setter private PacketsSenderService networkManager;
 
-    public PayloadRouter(MapPanel actorPanel) {
-        this.actorPanel = actorPanel;
+    public PayloadRouter(MapDisplayManager mapDisplayManager) {
+        this.mapDisplayManager = mapDisplayManager;
     }
 
     public KeyListener getKeyListener(JLabel positionLabel) {
@@ -37,7 +41,7 @@ public class PayloadRouter implements IController, Runnable {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Point clickPoint = e.getPoint();
-                var direction = new Vector(actorPanel.convertToGameCoordinates(clickPoint.x, clickPoint.y));
+                var direction = new Vector(mapDisplayManager.convertToGameCoordinates(clickPoint.x, clickPoint.y));
                 PlayerInput input = new PlayerInput(networkManager.getClientId(), MouseEvent.BUTTON1);
                 input.setDirection(direction);
 
@@ -65,21 +69,22 @@ public class PayloadRouter implements IController, Runnable {
         }
     }
 
-    private void handle(NetworkPayload payload) {
+    public void handle(NetworkPayload payload) {
         for (var p : payload.getPayloads()) {
             switch (p.getType()) {
                 case GAME_STATE -> handleGameState((GameState) p);
-                case PLAYER_NOTIFICATION -> handlePlayerNotification((PlayerNotification) p);
+                case NOTIFICATION -> handlePlayerNotification((Notification) p);
                 default -> System.err.println("Unknown payload type: " + p);
             }
         }
     }
 
-    private void handlePlayerNotification(PlayerNotification p) {
+    private void handlePlayerNotification(Notification p) {
+        System.out.println("Received notification - " + p.getMessage());
     }
 
     private void handleGameState(GameState p) {
-        actorPanel.updateGameState(p);
+        mapDisplayManager.updateGameState(p);
     }
 }
 

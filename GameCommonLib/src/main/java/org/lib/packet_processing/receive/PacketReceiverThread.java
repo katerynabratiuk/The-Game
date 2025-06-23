@@ -1,6 +1,6 @@
 package org.lib.packet_processing.receive;
 
-import org.lib.controllers.IController;
+import org.lib.controllers.IRouter;
 import org.lib.packet_processing.registry.SocketAddressRegistry;
 import org.lib.packet_processing.serializers.Serializer;
 
@@ -11,12 +11,16 @@ import java.util.Arrays;
 
 public class PacketReceiverThread extends Thread {
     private final DatagramSocket socket;
-    private final IController controller;
+    private final IRouter controller;
     private final IDecoder decoder;
     private final IDecryptor decryptor;
     private final SocketAddressRegistry registry;
 
-    public PacketReceiverThread(DatagramSocket socket, IController controller, IDecoder decoder, IDecryptor decryptor, SocketAddressRegistry registry) {
+    public PacketReceiverThread(DatagramSocket socket,
+                                IRouter controller,
+                                IDecoder decoder,
+                                IDecryptor decryptor,
+                                SocketAddressRegistry registry) {
         this.socket = socket;
         this.controller = controller;
         this.decoder = decoder;
@@ -28,29 +32,33 @@ public class PacketReceiverThread extends Thread {
     public void run() {
         byte[] buffer = new byte[2048];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-        while (!socket.isClosed()) {
-            try {
-                socket.receive(packet);
 
-                byte[] data = Arrays.copyOf(packet.getData(), packet.getLength());
-                byte[] decoded = decoder.decode(data);
-                byte[] decrypted = decryptor.decrypt(decoded);
-                var networkPayload = Serializer.deserialize(decrypted);
+        try {
+            while (!Thread.currentThread().isInterrupted() && !socket.isClosed()) {
+                try {
+                    socket.receive(packet);
 
-                // TODO: rewrite this null check - ambiguous logic
-                // currently registry is passed only to server, and getClientUUID() != null is also only passed to server
-                if (registry != null && networkPayload.getClientUUID() != null) {
-                    registry.add(networkPayload.getClientUUID(), packet.getSocketAddress());
-                }
+                    byte[] data = Arrays.copyOf(packet.getData(), packet.getLength());
+                    byte[] decoded = decoder.decode(data);
+                    byte[] decrypted = decryptor.decrypt(decoded);
+                    var networkPayload = Serializer.deserialize(decrypted);
 
-                controller.register(networkPayload);
-            } catch (IOException e) {
-                if (socket.isClosed()) {
+                    if (registry != null && networkPayload.getClientUUID() != null) {
+                        registry.add(networkPayload.getClientUUID(), packet.getSocketAddress());
+                    }
+
+                    controller.register(networkPayload);
+
+                } catch (IOException e) {
+                    if (socket.isClosed() || Thread.currentThread().isInterrupted()) {
+                        break;
+                    }
+                    System.err.println("Receiver error: " + e.getMessage());
                     break;
-                } else {
-                    socket.close();
                 }
             }
+        } finally {
+            socket.close();
         }
     }
 }

@@ -1,5 +1,6 @@
-package org.client.UI;
+package org.client;
 
+import org.client.UI.MapDisplayManager;
 import org.client.game_logic.PayloadRouter;
 import org.client.network.PacketsSenderService;
 
@@ -9,7 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
-public class UIProvider {
+public class Startup {
     private static MapDisplayManager mapDisplayManager;
     private static PacketsSenderService networkManager;
     private static PayloadRouter controller;
@@ -18,6 +19,7 @@ public class UIProvider {
         try {
             initSocket();
             createGUI();
+            networkManager.sendJoinRequest();
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Failed to start network: " + e.getMessage());
@@ -33,7 +35,12 @@ public class UIProvider {
         networkManager = new PacketsSenderService(controller);
         controller.setNetworkManager(networkManager);
         networkManager.start();
-        networkManager.sendJoinRequest();
+
+        try {
+            Thread.sleep(500); // what for threads to initialize - refactor later
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private static void createGUI() {

@@ -6,18 +6,25 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.*;
-import org.lib.controllers.IController;
+import org.lib.controllers.IRouter;
 import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.actors.PlayerCharacter;
-import org.lib.packet_processing.send.PacketSenderThread;
-import org.lib.packet_processing.serializers.Serializer;
+import org.lib.data_structures.payloads.game.Coordinates;
+import org.lib.data_structures.payloads.game.GameState;
+import org.lib.data_structures.payloads.game.Notification;
+import org.lib.data_structures.payloads.game.PlayerInput;
+import org.lib.data_structures.payloads.network.ConnectionRequest;
+import org.lib.data_structures.payloads.queries.ClientLogin;
+import org.lib.packet_processing.send.BroadcastThread;
+import org.lib.packet_processing.send.UnicastThread;
 
 import java.util.List;
 
-public class PayloadRouter implements IController, Runnable {
+public class PayloadRouter implements IRouter, Runnable {
     private final ConcurrentQueue<NetworkPayload> receivedPackets = new ConcurrentQueue<>();
     private final GameStateManager gameStateManager;
-    @Getter @Setter private PacketSenderThread senderThread;
+    @Getter @Setter private BroadcastThread broadcastThread;
+    @Getter @Setter private UnicastThread unicastThread;
 
     public PayloadRouter(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
@@ -43,41 +50,46 @@ public class PayloadRouter implements IController, Runnable {
 
 
     @SneakyThrows
-    private void handle(NetworkPayload payload) {
+    public void handle(NetworkPayload payload) {
         for (var p: payload.getPayloads()) {
             switch (p.getType()) {
                 case PLAYER_INPUT -> handlePlayerInput((PlayerInput) p);
                 case ACTOR -> handleActor((Actor) p);
                 case GAME_STATE -> handleGameState((GameState) p);
-                case PLAYER_NOTIFICATION -> handlePlayerNotification((PlayerNotification) p);
+                case NOTIFICATION -> handlePlayerNotification((Notification) p);
                 case CONNECTION_REQUEST -> handleConnectionRequest((ConnectionRequest) p);
+                case CLIENT_QUERY -> handleClientQuery((ClientLogin) p); // MOCK
                 default -> System.err.println("Unknown payload type: " + p);
             }
         }
     }
 
     private void handleConnectionRequest(ConnectionRequest p) throws JsonProcessingException {
-        // WIP
-        // add check if this client is already present in the game state
-
         switch (p.getConnectionCode()) {
             case JOIN:
+                System.out.println("got connection req");
                 var character = new PlayerCharacter(p.getClientUUID(), new Coordinates(0, 0));
                 gameStateManager.addActor(character);
                 var gameState = gameStateManager.snapshot();
                 var networkPayload = new NetworkPayload(List.of(gameState));
-                var serialized = Serializer.serialize(networkPayload);
-                senderThread.send(serialized);
+                broadcastThread.send(networkPayload);
                 break;
 
             case DISCONNECT:
                 gameStateManager.removeActor(p.getClientUUID());
-                senderThread.removeReceiver(p.getClientUUID());
+                broadcastThread.removeReceiver(p.getClientUUID());
         }
     }
 
-    private void handlePlayerNotification(PlayerNotification notification) {
+    private void handlePlayerNotification(Notification notification) {
         System.out.println("handlePlayerNotification " + notification);
+    }
+
+    // MOCK
+    private void handleClientQuery(ClientLogin query) {
+        System.out.println("handleClientQuery " + query);
+        var notif = new Notification("hi there");
+        unicastThread.send(new NetworkPayload(List.of(notif), query.getClientUUID()));
     }
 
     private void handleGameState(GameState p) {
@@ -89,8 +101,8 @@ public class PayloadRouter implements IController, Runnable {
     }
 
     // TODO: refactor later to decouple sending logic
-    private void handlePlayerInput(PlayerInput p) throws JsonProcessingException {
-        if (senderThread == null) {
+    private void handlePlayerInput(PlayerInput p) {
+        if (broadcastThread == null) {
             System.out.println("Can`t process received message - sender thread is not initialized");
             return;
         }
@@ -98,7 +110,6 @@ public class PayloadRouter implements IController, Runnable {
         gameStateManager.updateGameStateByInput(p);
         var gameState = gameStateManager.snapshot();
         var networkPayload = new NetworkPayload(List.of(gameState));
-        var serialized = Serializer.serialize(networkPayload);
-        senderThread.send(serialized);
+        broadcastThread.send(networkPayload);
     }
 }

@@ -12,6 +12,11 @@ public class NetworkPayload {
 
     public NetworkPayload() {}
 
+    public NetworkPayload(List<Payload> payloads, String clientUUID) {
+        this.payloads = payloads;
+        this.clientUUID = clientUUID;
+    }
+
     public NetworkPayload(List<Payload> payloads) {
         this.payloads = payloads;
     }
