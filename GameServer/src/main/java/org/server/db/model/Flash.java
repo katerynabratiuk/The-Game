@@ -11,6 +11,7 @@ public class Flash extends Item{
     private Double radius;
 
     public Flash(Integer id, String name, Integer flashTime, Double radius) {
+        super(ItemType.FLASH);
         this.setId(id);
         this.setName(name);
         this.flashTime = flashTime;
@@ -18,6 +19,7 @@ public class Flash extends Item{
     }
 
     public Flash() {
+        super(ItemType.FLASH);
     }
 
 }

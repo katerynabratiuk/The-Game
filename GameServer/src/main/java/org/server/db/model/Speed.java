@@ -11,9 +11,11 @@ public class Speed extends Item {
     private Integer time;
 
     public Speed() {
+        super(ItemType.SPEED);
     }
 
-    public Speed(Integer id, String name, Integer power, Integer time) {
+    public Speed(Integer id, String name, Double power, Integer time) {
+        super(ItemType.SPEED);
         this.setId(id);
         this.setName(name);
         this.power = power;
