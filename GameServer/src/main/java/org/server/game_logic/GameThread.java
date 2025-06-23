@@ -1,60 +1,88 @@
 package org.server.game_logic;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Setter;
 import org.lib.data_structures.payloads.NetworkPayload;
-import org.lib.packet_processing.send.PacketSenderThread;
-import org.lib.packet_processing.serializers.Serializer;
+import org.lib.packet_processing.send.BroadcastThread;
 
 import java.util.List;
 
 public class GameThread extends Thread {
     private final GameStateManager gameStateService;
-    @Setter private PacketSenderThread senderThread;
-    private final int FPS = 30; // dev test value
+    @Setter private BroadcastThread broadcastThread;
+    private final int FPS = 30;
     private final long FRAME_TIME = 1000 / FPS;
+    private static final int MAX_RETRIES = 50;
+    private static final int RETRY_DELAY_MS = 100;
+    private static final int SKIP_FRAME_DELAY_MS = 1000;
 
-    public GameThread(GameStateManager gameStateService) {
-        this.gameStateService = gameStateService;
+    public GameThread(GameStateManager gameStateManager) {
+        this.gameStateService = gameStateManager;
     }
 
 
     @Override
     public void run() {
-        while (true) {
-            if (senderThread == null || !senderThread.isAlive()) break;
+        if (broadcastThread == null) {
+            System.err.println("GameThread failed to start - broadcastThread not initialized");
+            return;
+        }
 
-            // TODO: prototype logic
-            if (!senderThread.hasReceivers()) {
-                System.out.println("No receivers. Waiting...");
-                try {
-                    Thread.sleep(1000);
-                    continue;
-                } catch (InterruptedException e) {
-                    break;
-                }
-            }
+        while (true) {
+            waitForBroadcastThreadReady();
+            if (shouldSkipFrame()) continue;
 
             try {
-                long startTime = System.currentTimeMillis();
-
-                gameStateService.updateGameThread(); // move bullets, calc collisions, etc
-
-                var gameState = gameStateService.snapshot();
-                var payload = new NetworkPayload(List.of(gameState));
-                var serialized = Serializer.serialize(payload);
-                 senderThread.send(serialized);
-
-                // maintain frame rate - verify this
-                long elapsed = System.currentTimeMillis() - startTime;
-                long sleepTime = FRAME_TIME - elapsed;
-                if (sleepTime > 0) {
-                    Thread.sleep(sleepTime);
-                }
-            } catch (InterruptedException | JsonProcessingException e) {
+                executeGameFrame();
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
 
+        }
+    }
+
+    private void waitForBroadcastThreadReady() {
+        int retryCount = 0;
+        if (!broadcastThread.isAlive()) {
+            while (!broadcastThread.isAlive() && retryCount++ < MAX_RETRIES) {
+                try {
+                    Thread.sleep(RETRY_DELAY_MS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    System.err.println("broadcastThread terminated, stopping GameThread");
+                    return;
+                }
+            }
+        }
+    }
+
+    private boolean shouldSkipFrame() {
+        if (!broadcastThread.hasReceivers()) {
+            System.out.println("No receivers. Waiting...");
+            try {
+                Thread.sleep(SKIP_FRAME_DELAY_MS);
+                return true;
+            } catch (InterruptedException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private void executeGameFrame() throws InterruptedException {
+        long startTime = System.currentTimeMillis();
+
+        gameStateService.updateGameThread();
+        var gameState = gameStateService.snapshot();
+        broadcastThread.send(new NetworkPayload(List.of(gameState)));
+
+        maintainFrameRate(startTime);
+    }
+
+    private void maintainFrameRate(long startTime) throws InterruptedException {
+        long elapsed = System.currentTimeMillis() - startTime;
+        long sleepTime = FRAME_TIME - elapsed;
+        if (sleepTime > 0) {
+            Thread.sleep(sleepTime);
         }
     }
 }
