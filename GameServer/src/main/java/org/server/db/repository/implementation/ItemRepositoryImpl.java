@@ -1,6 +1,7 @@
 package org.server.db.repository.implementation;
 
 import org.server.db.database_access.DbConnection;
+import org.server.db.factory.ItemFactory;
 import org.server.db.model.Item;
 import org.server.db.repository.ItemRepository;
 
@@ -27,9 +28,9 @@ public class ItemRepositoryImpl implements ItemRepository {
                 subStmt.setInt(1, id);
                 ResultSet subRs = subStmt.executeQuery();
 
-//                if (subRs.next()) {
-//                    return ItemFactory.create(type, id, name, subRs);
-//                }
+                if (subRs.next()) {
+                    return ItemFactory.create(type, id, name, subRs);
+                }
             }
 
         } catch (SQLException e) {
@@ -53,10 +54,10 @@ public class ItemRepositoryImpl implements ItemRepository {
             stmt.setString(1, type.name().toLowerCase());
             ResultSet rs = stmt.executeQuery();
 
-//            while (rs.next()) {
-//                Item item = ItemFactory.create(type, rs.getInt("id_item"), rs.getString("name"), rs);
-//                result.add(item);
-//            }
+            while (rs.next()) {
+                Item item = ItemFactory.create(type, rs.getInt("id_item"), rs.getString("name"), rs);
+                result.add(item);
+            }
 
             return result;
 
