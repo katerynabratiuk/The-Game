@@ -13,7 +13,6 @@ public class GameThread extends Thread {
     private final long FRAME_TIME = 1000 / FPS;
     private static final int MAX_RETRIES = 50;
     private static final int RETRY_DELAY_MS = 100;
-    private static final int SKIP_FRAME_DELAY_MS = 1000;
 
     public GameThread(GameStateManager gameStateManager) {
         this.gameStateService = gameStateManager;
@@ -28,17 +27,15 @@ public class GameThread extends Thread {
         }
 
         waitForBroadcastThreadReady();
-
-        while (true) {
-
-            if (shouldSkipFrame()) continue;
-
+        while (!Thread.currentThread().isInterrupted()) {
             try {
+                if (shouldSkipFrame()) continue;
                 executeGameFrame();
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
+                System.err.println("GameThread interrupted, stopping...");
+                break;
             }
-
         }
     }
 
@@ -57,15 +54,11 @@ public class GameThread extends Thread {
         }
     }
 
-    private boolean shouldSkipFrame() {
+    private boolean shouldSkipFrame() throws InterruptedException {
         if (!broadcastThread.hasReceivers()) {
             System.out.println("No receivers. Waiting...");
-            try {
-                Thread.sleep(SKIP_FRAME_DELAY_MS);
-                return true;
-            } catch (InterruptedException e) {
-                return false;
-            }
+            broadcastThread.waitForReceivers();
+            return true;
         }
         return false;
     }

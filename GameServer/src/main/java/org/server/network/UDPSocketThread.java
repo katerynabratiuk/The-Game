@@ -34,6 +34,8 @@ public class UDPSocketThread extends Thread {
         this.unicastThread = new UnicastThread(socket, new Encoder(), new Encryptor(), registry);
         this.broadcastThread = new BroadcastThread(socket, new Encoder(), new Encryptor(), new DynamicRegistryStrategy(registry));
         this.receivingThread = new PacketReceiverThread(socket, controller, new Decoder(), new Decryptor(), registry);
+
+        registry.addObserver(broadcastThread);
         System.out.println("Server running on port " + PORT + "...");
     }
 

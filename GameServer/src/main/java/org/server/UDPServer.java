@@ -12,12 +12,12 @@ public class UDPServer {
         var serverThread = new UDPSocketThread(router);
         var gameThread = new GameThread(service);
 
+        router.setBroadcastThread(serverThread.getBroadcastThread());
+        router.setUnicastThread(serverThread.getUnicastThread());
+        gameThread.setBroadcastThread(serverThread.getBroadcastThread());
+
         serverThread.start();
         gameThread.start();
         new Thread(router).start();
-        router.setBroadcastThread(serverThread.getBroadcastThread());
-        router.setUnicastThread(serverThread.getUnicastThread());
-
-        gameThread.setBroadcastThread(serverThread.getBroadcastThread());
     }
 }

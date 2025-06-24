@@ -10,9 +10,10 @@ import org.lib.data_structures.payloads.actors.Bullet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameStateManager {
-    private final List<Actor> actors = new ArrayList<>();
+    private final List<Actor> actors = new CopyOnWriteArrayList<>();
     // add queue for updates?
 
     public synchronized void updateGameStateByInput(PlayerInput input) {
