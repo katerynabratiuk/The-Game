@@ -1,5 +1,7 @@
 package org.client.UI;
 
+import org.client.Startup;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -38,23 +40,22 @@ public class LoginPanel extends JPanel {
         JButton registerBtn = new JButton("Not registered yet?");
         gbc.gridy++;
         add(registerBtn, gbc);
-
         loginBtn.addActionListener(e -> {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword());
 
             if (!username.isEmpty() && !password.isEmpty()) {
-                // TODO: authorization logic
-
-
-
-                JOptionPane.showMessageDialog(frame, "Logged in as: " + username);
-                UIProvider.startGame(frame, username);
+                try {
+                    Startup.getNetworkManager().sendLogin(username, password);
+                    Startup.startGame(username);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(frame, "Login failed: " + ex.getMessage());
+                }
             } else {
                 JOptionPane.showMessageDialog(frame, "Please enter both username and password!");
             }
         });
 
-        registerBtn.addActionListener(e -> UIProvider.showRegister(frame));
     }
 }

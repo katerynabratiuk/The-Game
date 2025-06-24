@@ -22,7 +22,7 @@ public class MenuPanel extends JPanel {
         add(loginBtn, gbc);
 
         loginBtn.addActionListener(e -> {
-            UIProvider.showLogin(frame);
+            UIProvider.displayLogin(frame);
         });
 
         gbc.gridy++;
@@ -33,7 +33,7 @@ public class MenuPanel extends JPanel {
         add(registerBtn, gbc);
 
         registerBtn.addActionListener(e -> {
-            UIProvider.showRegister(frame);
+            UIProvider.displayRegister(frame);
         });
 
 

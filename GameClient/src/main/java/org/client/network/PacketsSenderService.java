@@ -36,10 +36,18 @@ public class PacketsSenderService {
         send(List.of(req));
     }
 
-    public void sendLogin(String username) {
-        var registration = new ClientLogin(getClientId(), username);
-        send(List.of(registration));
+
+    public void sendRegister(String username, String password) {
+        RegisterPayload payload = new RegisterPayload(username, password);
+        send(List.of(payload));
     }
+
+    public void sendLogin(String username, String password) {
+        LoginPayload payload = new LoginPayload(username, password);
+        send(List.of(payload));
+    }
+
+
 
     public void shutdown() {
         clientThread.shutdown();

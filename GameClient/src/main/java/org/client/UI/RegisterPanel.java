@@ -1,5 +1,7 @@
 package org.client.UI;
 
+import org.client.Startup;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -45,7 +47,6 @@ public class RegisterPanel extends JPanel {
         JButton backBtn = new JButton("Back");
         gbc.gridy++;
         add(backBtn, gbc);
-
         registerBtn.addActionListener(e -> {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword());
@@ -56,13 +57,17 @@ public class RegisterPanel extends JPanel {
             } else if (!password.equals(confirmPassword)) {
                 JOptionPane.showMessageDialog(frame, "Passwords do not match.");
             } else {
-                // TODO: registration logic
-
-                JOptionPane.showMessageDialog(frame, "Registered successfully as: " + username);
-                UIProvider.startGame(frame, username);
+                try {
+                    Startup.getNetworkManager().sendRegister(username, password);
+                    Startup.startGame(username);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(frame, "Failed to register: " + ex.getMessage());
+                }
             }
         });
 
-        backBtn.addActionListener(e -> UIProvider.createAndShowGUI());
     }
+
+
 }
