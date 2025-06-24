@@ -1,6 +1,8 @@
 package org.client.UI;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.HashMap;
@@ -13,9 +15,10 @@ public class RankingPanel extends JPanel {
     public RankingPanel() {
         setLayout(new BorderLayout());
         setOpaque(false);
-        setPreferredSize(new Dimension(200, 300));
+        setPreferredSize(new Dimension(250, 350));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        tableModel = new DefaultTableModel(new Object[]{"Rank", "Player", "Kills"}, 0) {
+        tableModel = new DefaultTableModel(new Object[]{"#", "Player", "Kills"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -23,22 +26,38 @@ public class RankingPanel extends JPanel {
         };
 
         JTable rankingTable = new JTable(tableModel);
-        rankingTable.setOpaque(false);
-        rankingTable.setFont(new Font("Arial", Font.PLAIN, 12));
-        rankingTable.setRowHeight(20);
-        rankingTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        rankingTable.setRowHeight(28);
+        rankingTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        rankingTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
 
-        // Style the table
-        rankingTable.setForeground(Color.WHITE);
-        rankingTable.setBackground(new Color(0, 0, 0, 150));
-        rankingTable.getTableHeader().setBackground(new Color(0, 0, 0, 200));
+
+        rankingTable.setBackground(new Color(248, 249, 250));
+        rankingTable.setForeground(Color.DARK_GRAY);
+        rankingTable.setGridColor(new Color(222, 226, 230));
+
+        rankingTable.setSelectionBackground(new Color(204, 229, 255));
+        rankingTable.setSelectionForeground(Color.BLACK);
+
+        rankingTable.getTableHeader().setBackground(new Color(52, 58, 64)); // dark header
         rankingTable.getTableHeader().setForeground(Color.WHITE);
+        rankingTable.getTableHeader().setOpaque(true);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        rankingTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        rankingTable.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
 
         JScrollPane scrollPane = new JScrollPane(rankingTable);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(222, 226, 230)));
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
+        JLabel title = new JLabel("Playerboard");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        title.setForeground(new Color(33, 37, 41));
+        title.setBorder(new EmptyBorder(5, 5, 10, 5));
+
+        add(title, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
     }
 
@@ -50,7 +69,6 @@ public class RankingPanel extends JPanel {
 
     private void refreshTable() {
         tableModel.setRowCount(0);
-
         playerKills.entrySet().stream()
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .forEachOrdered(entry -> {
