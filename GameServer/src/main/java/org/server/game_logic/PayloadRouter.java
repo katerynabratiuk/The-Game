@@ -18,6 +18,9 @@ import org.lib.data_structures.payloads.queries.LoginPayload;
 import org.lib.data_structures.payloads.queries.RegisterPayload;
 import org.lib.packet_processing.send.BroadcastThread;
 import org.lib.packet_processing.send.UnicastThread;
+import org.server.db.model.User;
+import org.server.db.repository.implementation.UserRepositoryImpl;
+import org.server.db.service.UserService;
 
 import java.util.List;
 
@@ -26,6 +29,9 @@ public class PayloadRouter implements IRouter, Runnable {
     private final GameStateManager gameStateManager;
     @Getter @Setter private BroadcastThread broadcastThread;
     @Getter @Setter private UnicastThread unicastThread;
+
+    // temporary
+    private UserService userService = new UserService(new UserRepositoryImpl());
 
     public PayloadRouter(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
@@ -66,6 +72,8 @@ public class PayloadRouter implements IRouter, Runnable {
         }
     }
 
+
+
     private void handleConnectionRequest(ConnectionRequest p) throws JsonProcessingException {
         switch (p.getConnectionCode()) {
             case JOIN:
@@ -88,8 +96,29 @@ public class PayloadRouter implements IRouter, Runnable {
 
     private void handleRegister(RegisterPayload query) {
         System.out.println("hangleRegister " + query);
-        var notif = new Notification("hi there");
+        var notif = new Notification(query.getUsername() + ", hi there. ypur pswd: " + query.getPassword());
+        User newUser = new User(query.getUsername(), query.getPassword());
+        userService.registerUser(newUser);
         unicastThread.send(new NetworkPayload(List.of(notif), query.getClientUUID()));
+    }
+
+    private void handleLogin(LoginPayload query) {
+
+        boolean success = userService.correctCredentials(new User(query.getUsername(), query.getPassword()));
+
+        System.out.println("success = " + success);
+        Notification notif = success
+                ? new Notification("Login successful")
+                : new Notification("Login failed: incorrect username or password");
+
+        unicastThread.send(new NetworkPayload(List.of(notif), query.getClientUUID()));
+
+        System.out.println("handleLogin " + query);
+//        var notif = new Notification(query.getUsername() + ", hi there. ypur pswd: " + query.getPassword());
+//        User newUser = new User(query.getUsername(), query.getPassword());
+//        userService.registerUser(newUser);
+//        unicastThread.send(new NetworkPayload(List.of(notif), query.getClientUUID()));
+
     }
 
     private void handleGameState(GameState p) {

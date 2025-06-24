@@ -141,4 +141,19 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
+    public boolean isValidForRegistration(User user) {
+        try (Connection connection = DbConnection.getConnection()) {
+
+            PreparedStatement stmt = connection.prepareStatement(
+                    "SELECT 1 FROM game_user WHERE username = ? and password = ? LIMIT 1"
+            );
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, PasswordHasher.hash(user.getPassword()));
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

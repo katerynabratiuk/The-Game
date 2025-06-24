@@ -4,7 +4,6 @@ import org.server.db.dto.UserDTO;
 import org.server.db.mapper.UserMapper;
 import org.server.db.model.User;
 import org.server.db.repository.UserRepository;
-import org.server.db.repository.implementation.UserRepositoryImpl;
 
 public class UserService {
 
@@ -37,4 +36,9 @@ public class UserService {
     public boolean userExists(String username) {
         return userRepository.existsByUsername(username);
     }
+
+    public boolean correctCredentials(User user) {
+        return userRepository.isValidForRegistration(user);
+    }
+
 }
