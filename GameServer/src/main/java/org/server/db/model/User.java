@@ -11,12 +11,10 @@ public class User {
 
     private String username;
     private String password;
-    private String country;
     private List<Session> sessions;
 
 
-    public User(String country, String password, String username) {
-        this.country = country;
+    public User(String username, String password) {
         this.password = password;
         this.username = username;
     }

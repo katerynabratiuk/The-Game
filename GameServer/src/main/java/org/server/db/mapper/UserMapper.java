@@ -5,6 +5,6 @@ import org.server.db.model.User;
 
 public class UserMapper {
     public static UserDTO toDto(User user) {
-        return new UserDTO(user.getUsername(), user.getCountry());
+        return new UserDTO(user.getUsername());
     }
 }

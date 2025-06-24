@@ -8,11 +8,9 @@ import lombok.Setter;
 public class UserDTO {
 
     private String username;
-    private String country;
 
-    public UserDTO(String username, String country) {
+    public UserDTO(String username) {
         this.username = username;
-        this.country = country;
     }
 
 }

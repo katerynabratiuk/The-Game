@@ -17,10 +17,9 @@ public class UserRepositoryImpl implements UserRepository {
     public User create(User user) {
         try(Connection connection = DbConnection.getConnection()) {
 
-            PreparedStatement pstmt = connection.prepareStatement("INSERT INTO game_user(username, password, country) VALUES(?,?,?)");
+            PreparedStatement pstmt = connection.prepareStatement("INSERT INTO game_user(username, password) VALUES(?,?)");
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, PasswordHasher.hash(user.getPassword()));
-            pstmt.setString(3, user.getCountry());
             pstmt.executeUpdate();
             return user;
         } catch (SQLException e) {
@@ -94,11 +93,6 @@ public class UserRepositoryImpl implements UserRepository {
             params.add("%" + criteria.getName() + "%");
         }
 
-        if (criteria.getCountry() != null && !criteria.getCountry().isBlank()) {
-            sql.append(" AND country = ?");
-            params.add(criteria.getCountry());
-        }
-
         if (criteria.getKills() != null) {
             sql.append(" AND (SELECT SUM(kill_count) FROM session s WHERE s.username = game_user.username) >= ?");
             params.add(criteria.getKills());
@@ -131,7 +125,7 @@ public class UserRepositoryImpl implements UserRepository {
 
 
     private User extractUserFromResultSet(ResultSet rs) throws SQLException {
-        return new User(rs.getString("username"), rs.getString("password"), rs.getString("country"));
+        return new User(rs.getString("username"), rs.getString("password"));
     }
 
     public boolean existsByUsername(String username) {
