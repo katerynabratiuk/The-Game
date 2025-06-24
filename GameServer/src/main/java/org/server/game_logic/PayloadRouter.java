@@ -14,11 +14,9 @@ import org.lib.data_structures.payloads.game.GameState;
 import org.lib.data_structures.payloads.game.Notification;
 import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.network.ConnectionRequest;
-import org.lib.data_structures.payloads.queries.LoginPayload;
 import org.lib.data_structures.payloads.queries.RegisterPayload;
 import org.lib.packet_processing.send.BroadcastThread;
 import org.lib.packet_processing.send.UnicastThread;
-import org.server.db.model.User;
 import org.server.db.repository.implementation.UserRepositoryImpl;
 import org.server.db.service.UserService;
 
@@ -65,14 +63,11 @@ public class PayloadRouter implements IRouter, Runnable {
                 case GAME_STATE -> handleGameState((GameState) p);
                 case NOTIFICATION -> handlePlayerNotification((Notification) p);
                 case CONNECTION_REQUEST -> handleConnectionRequest((ConnectionRequest) p);
-                case REGISTER -> handleRegister((RegisterPayload) p);
-                case LOGIN -> handleLogin((LoginPayload) p);
+                case REGISTER -> hangleRegister((RegisterPayload) p);
                 default -> System.err.println("Unknown payload type: " + p);
             }
         }
     }
-
-
 
     private void handleConnectionRequest(ConnectionRequest p) throws JsonProcessingException {
         switch (p.getConnectionCode()) {
@@ -86,7 +81,7 @@ public class PayloadRouter implements IRouter, Runnable {
 
             case DISCONNECT:
                 gameStateManager.removeActor(p.getClientUUID());
-               // broadcastThread.removeReceiver(p.getClientUUID());
+                broadcastThread.removeReceiver(p.getClientUUID());
         }
     }
 
@@ -94,31 +89,13 @@ public class PayloadRouter implements IRouter, Runnable {
         System.out.println("handlePlayerNotification " + notification);
     }
 
-    private void handleRegister(RegisterPayload query) {
-        System.out.println("hangleRegister " + query);
-        var notif = new Notification(query.getUsername() + ", hi there. ypur pswd: " + query.getPassword());
-        User newUser = new User(query.getUsername(), query.getPassword());
-        userService.registerUser(newUser);
+    private void hangleRegister(RegisterPayload query) {
+        System.out.println("Registered " + query.getUsername());
+        if (query.getClientUUID() != null && query.getUsername() != null) {
+            gameStateManager.registerUsername(query.getClientUUID(), query.getUsername());
+        }
+        var notif = new Notification("hi there");
         unicastThread.send(new NetworkPayload(List.of(notif), query.getClientUUID()));
-    }
-
-    private void handleLogin(LoginPayload query) {
-
-        boolean success = userService.correctCredentials(new User(query.getUsername(), query.getPassword()));
-
-        System.out.println("success = " + success);
-        Notification notif = success
-                ? new Notification("Login successful")
-                : new Notification("Login failed: incorrect username or password");
-
-        unicastThread.send(new NetworkPayload(List.of(notif), query.getClientUUID()));
-
-        System.out.println("handleLogin " + query);
-//        var notif = new Notification(query.getUsername() + ", hi there. ypur pswd: " + query.getPassword());
-//        User newUser = new User(query.getUsername(), query.getPassword());
-//        userService.registerUser(newUser);
-//        unicastThread.send(new NetworkPayload(List.of(notif), query.getClientUUID()));
-
     }
 
     private void handleGameState(GameState p) {

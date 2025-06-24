@@ -8,14 +8,11 @@ import org.client.network.PacketsSenderService;
 import org.client.network.UDPSocketThread;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 public class Startup {
     private static JFrame frame;
-    private static MapPanel mapDisplayManager;
+    private static MapPanel mapPanel;
     private static PayloadRouter controller;
 
     @Getter
@@ -39,15 +36,15 @@ public class Startup {
     }
 
     public static void startGame() {
-        UIProvider.displayGame(frame, mapDisplayManager);
-        attachControls();
+        UIProvider.displayGame(frame, mapPanel);
+        UIProvider.attachControls(frame, mapPanel, controller, packetsSenderService);
         packetsSenderService.sendJoinRequest();
     }
 
     private static void initComponents() throws IOException {
         // TODO: consider refactoring to resolve circular dependencies
-        mapDisplayManager = new MapPanel();
-        controller = new PayloadRouter(mapDisplayManager);
+        mapPanel = new MapPanel();
+        controller = new PayloadRouter(mapPanel);
 
         var clientThread = new UDPSocketThread(controller);
         packetsSenderService = new PacketsSenderService(clientThread);
@@ -55,24 +52,6 @@ public class Startup {
 
         new Thread(controller).start();
         clientThread.start();
-    }
-
-    private static void attachControls() {
-        JLabel positionLabel = new JLabel("Position: (0, 0)");
-        frame.add(positionLabel, BorderLayout.NORTH);
-
-        mapDisplayManager.addKeyListener(controller.getKeyListener(positionLabel));
-        mapDisplayManager.addMouseListener(controller.getMouseClickListener());
-
-        SwingUtilities.invokeLater(mapDisplayManager::requestFocusInWindow);
-
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                packetsSenderService.sendDisconnectRequest();
-                packetsSenderService.shutdown();
-            }
-        });
     }
 
     public static JFrame getMainFrame() {

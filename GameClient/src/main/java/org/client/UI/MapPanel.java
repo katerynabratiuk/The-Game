@@ -1,6 +1,7 @@
 package org.client.UI;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.game.Coordinates;
 import org.lib.data_structures.payloads.game.GameState;
@@ -9,6 +10,12 @@ import org.client.game_logic.PlayerNameMapper;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.MouseAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,9 +24,49 @@ public class MapPanel extends JPanel {
     private final RankingPanel rankingPanel;
     private final int SCALE = 5;
 
+    @Setter
+    private InputCallback inputCallback;
+    private KeyListener keyListener;
+    private MouseListener mouseListener;
+
     public MapPanel() {
         this.gameState = new GameState(new ArrayList<>(), new ConcurrentHashMap<>());
         this.rankingPanel = new RankingPanel();
+        setupInputListeners();
+    }
+
+    private void setupInputListeners() {
+        keyListener = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (inputCallback != null) {
+                    inputCallback.onKeyPressed(e.getKeyCode());
+                }
+            }
+        };
+        
+        mouseListener = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (inputCallback != null) {
+                    Coordinates gameCoords = convertToGameCoordinates(e.getX(), e.getY());
+                    inputCallback.onMouseClicked(gameCoords.getX(), gameCoords.getY());
+                }
+            }
+        };
+    }
+    
+    public void onKill() {
+        removeKeyListener(keyListener);
+        removeMouseListener(mouseListener);
+        setFocusable(false);
+    }
+    
+    public void enableInput() {
+        addKeyListener(keyListener);
+        addMouseListener(mouseListener);
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
     public void updateGameState(GameState gameState) {

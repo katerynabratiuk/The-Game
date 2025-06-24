@@ -1,7 +1,13 @@
 package org.client.UI;
 
+import org.client.game_logic.PayloadRouter;
+import org.client.network.PacketsSenderService;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class UIProvider {
     public static void displayMenu(JFrame frame) {
@@ -34,5 +40,22 @@ public class UIProvider {
     private static void refresh(JFrame frame) {
         frame.revalidate();
         frame.repaint();
+    }
+
+    public static void attachControls(JFrame frame, MapPanel mapPanel, PayloadRouter controller, PacketsSenderService service) {
+        mapPanel.enableInput();
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                service.sendDisconnectRequest();
+                service.shutdown();
+            }
+        });
+    }
+
+    public static void detachControls(JFrame frame) {
+        for (WindowListener listener : frame.getWindowListeners()) {
+            frame.removeWindowListener(listener);
+        }
     }
 }

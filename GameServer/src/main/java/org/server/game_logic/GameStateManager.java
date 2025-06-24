@@ -15,6 +15,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.lib.data_structures.payloads.enums.NotificationCode.KILL;
+
 public class GameStateManager {
     private final List<Actor> actors = new CopyOnWriteArrayList<>();
     @Getter
@@ -86,7 +88,7 @@ public class GameStateManager {
     }
 
     private void sendKillNotification(UnicastThread thread, Actor actor) {
-        var notif = new Notification("You were killed");
+        var notif = new Notification("You were killed", KILL);
         thread.send(new NetworkPayload(List.of(notif), actor.getClientUUID()));
     }
 
