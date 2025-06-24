@@ -34,11 +34,13 @@ public class PacketsSenderService {
 
     public void sendRegister(String username, String password) {
         RegisterPayload payload = new RegisterPayload(username, password, getClientId());
+        payload.setClientUUID(clientThread.getClientId());
         send(List.of(payload));
     }
 
     public void sendLogin(String username, String password) {
         LoginPayload payload = new LoginPayload(username, password);
+        payload.setClientUUID(clientThread.getClientId());
         send(List.of(payload));
     }
 
