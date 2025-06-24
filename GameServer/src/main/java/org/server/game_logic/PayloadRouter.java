@@ -59,7 +59,8 @@ public class PayloadRouter implements IRouter, Runnable {
                 case GAME_STATE -> handleGameState((GameState) p);
                 case NOTIFICATION -> handlePlayerNotification((Notification) p);
                 case CONNECTION_REQUEST -> handleConnectionRequest((ConnectionRequest) p);
-                case REGISTER -> hangleRegister((RegisterPayload) p);
+                case REGISTER -> handleRegister((RegisterPayload) p);
+                case LOGIN -> handleLogin((LoginPayload) p);
                 default -> System.err.println("Unknown payload type: " + p);
             }
         }
@@ -85,7 +86,7 @@ public class PayloadRouter implements IRouter, Runnable {
         System.out.println("handlePlayerNotification " + notification);
     }
 
-    private void hangleRegister(RegisterPayload query) {
+    private void handleRegister(RegisterPayload query) {
         System.out.println("hangleRegister " + query);
         var notif = new Notification("hi there");
         unicastThread.send(new NetworkPayload(List.of(notif), query.getClientUUID()));

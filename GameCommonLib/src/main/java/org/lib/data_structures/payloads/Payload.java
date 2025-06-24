@@ -51,8 +51,8 @@ public class Payload {
             case "Notification" -> NOTIFICATION;
             case "ConnectionRequest" -> CONNECTION_REQUEST;
             case "ConnectionResponse" -> CONNECTION_RESPONSE;
-            case "RegisterPayload" -> LOGIN;
-            case "LoginPayload" -> REGISTER;
+            case "RegisterPayload" -> REGISTER;
+            case "LoginPayload" -> LOGIN;
             default -> UNKNOWN;
         };
     }
