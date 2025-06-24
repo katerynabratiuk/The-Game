@@ -1,6 +1,7 @@
 package org.client.UI;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class UIProvider {
     public static void displayMenu(JFrame frame) {
@@ -21,8 +22,11 @@ public class UIProvider {
     public static void displayGame(JFrame frame, MapPanel gamePanel) {
         frame.getContentPane().removeAll();
         frame.setLayout(new java.awt.BorderLayout());
-        frame.add(new JLabel("Position: (0, 0)"), java.awt.BorderLayout.NORTH);
-        frame.add(gamePanel, java.awt.BorderLayout.CENTER);
+
+        JPanel rankPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        frame.add(rankPanel, BorderLayout.NORTH);
+        frame.add(gamePanel, BorderLayout.CENTER);
+
         refresh(frame);
         SwingUtilities.invokeLater(gamePanel::requestFocusInWindow);
     }

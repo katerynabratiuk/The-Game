@@ -1,7 +1,6 @@
 package org.client;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.client.UI.MapPanel;
 import org.client.UI.UIProvider;
 import org.client.game_logic.PayloadRouter;
@@ -49,6 +48,7 @@ public class Startup {
         // TODO: consider refactoring to resolve circular dependencies
         mapDisplayManager = new MapPanel();
         controller = new PayloadRouter(mapDisplayManager);
+
         var clientThread = new UDPSocketThread(controller);
         packetsSenderService = new PacketsSenderService(clientThread);
         controller.setPacketsSenderService(packetsSenderService);

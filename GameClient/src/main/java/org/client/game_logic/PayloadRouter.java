@@ -2,14 +2,12 @@ package org.client.game_logic;
 
 import lombok.Setter;
 import org.client.UI.MapPanel;
+import org.client.UI.PopupRenderer;
 import org.client.network.PacketsSenderService;
 import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.*;
 import org.lib.controllers.IRouter;
-import org.lib.data_structures.payloads.game.GameState;
-import org.lib.data_structures.payloads.game.Notification;
-import org.lib.data_structures.payloads.game.PlayerInput;
-import org.lib.data_structures.payloads.game.Vector;
+import org.lib.data_structures.payloads.game.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +18,7 @@ public class PayloadRouter implements IRouter, Runnable {
     private final MapPanel mapPanel;
     private final ConcurrentQueue<NetworkPayload> receivedPackets = new ConcurrentQueue<>();
     @Setter private PacketsSenderService packetsSenderService;
+    private volatile boolean isKilled = false;
 
     public PayloadRouter(MapPanel mapPanel) {
         this.mapPanel = mapPanel;
@@ -29,6 +28,7 @@ public class PayloadRouter implements IRouter, Runnable {
         return new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+                if (isKilled) return; // Disable input if killed
                 PlayerInput input = new PlayerInput(packetsSenderService.getClientId(), e.getKeyCode());
                 packetsSenderService.sendInput(input);
             }
@@ -39,6 +39,7 @@ public class PayloadRouter implements IRouter, Runnable {
         return new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (isKilled) return; // Disable input if killed
                 Point clickPoint = e.getPoint();
                 var direction = new Vector(mapPanel.convertToGameCoordinates(clickPoint.x, clickPoint.y));
                 PlayerInput input = new PlayerInput(packetsSenderService.getClientId(), MouseEvent.BUTTON1);
@@ -78,8 +79,8 @@ public class PayloadRouter implements IRouter, Runnable {
         }
     }
 
-    private void handlePlayerNotification(Notification p) {
-        System.out.println("Received notification - " + p.getMessage());
+    private void handlePlayerNotification(Notification notif) {
+        PopupRenderer.renderNotification(notif, mapPanel);
     }
 
     private void handleGameState(GameState p) {
