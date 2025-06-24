@@ -1,11 +1,11 @@
 package org.client.network;
 
-import org.client.game_logic.PayloadRouter;
 import org.lib.data_structures.payloads.*;
 import org.lib.data_structures.payloads.enums.ConnectionCode;
 import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.network.ConnectionRequest;
-import org.lib.data_structures.payloads.queries.ClientLogin;
+import org.lib.data_structures.payloads.queries.LoginPayload;
+import org.lib.data_structures.payloads.queries.RegisterPayload;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,12 +14,8 @@ import java.util.List;
 public class PacketsSenderService {
     private final UDPSocketThread clientThread;
 
-    public PacketsSenderService(PayloadRouter controller) throws IOException {
-        this.clientThread = new UDPSocketThread(controller);
-    }
-
-    public void start() {
-        clientThread.start();
+    public PacketsSenderService(UDPSocketThread thread) throws IOException {
+        this.clientThread = thread;
     }
 
     public void sendInput(PlayerInput input) {
@@ -36,9 +32,8 @@ public class PacketsSenderService {
         send(List.of(req));
     }
 
-
     public void sendRegister(String username, String password) {
-        RegisterPayload payload = new RegisterPayload(username, password);
+        RegisterPayload payload = new RegisterPayload(username, password, getClientId());
         send(List.of(payload));
     }
 
@@ -46,7 +41,6 @@ public class PacketsSenderService {
         LoginPayload payload = new LoginPayload(username, password);
         send(List.of(payload));
     }
-
 
 
     public void shutdown() {
@@ -64,7 +58,6 @@ public class PacketsSenderService {
             System.err.println("Sender thread not initialized yet");
             return;
         }
-
         var payload = new NetworkPayload(payloads);
         payload.setClientUUID(getClientId());
         clientThread.getSenderThread().send(payload);

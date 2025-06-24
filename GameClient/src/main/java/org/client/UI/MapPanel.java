@@ -10,11 +10,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class MapDisplayManager extends JPanel {
+public class MapPanel extends JPanel {
     @Getter private GameState gameState;
     private final int SCALE = 5;
 
-    public MapDisplayManager() {
+    public MapPanel() {
         this.gameState = new GameState(new ArrayList<>());
     }
 

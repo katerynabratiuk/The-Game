@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class RegisterPanel extends JPanel {
-
     public RegisterPanel(JFrame frame) {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -58,8 +57,8 @@ public class RegisterPanel extends JPanel {
                 JOptionPane.showMessageDialog(frame, "Passwords do not match.");
             } else {
                 try {
-                    Startup.getNetworkManager().sendRegister(username, password);
-                    Startup.startGame(username);
+                    Startup.getPacketsSenderService().sendRegister(username, password);
+                    Startup.startGame();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(frame, "Failed to register: " + ex.getMessage());

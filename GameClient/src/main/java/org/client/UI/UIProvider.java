@@ -3,7 +3,6 @@ package org.client.UI;
 import javax.swing.*;
 
 public class UIProvider {
-
     public static void displayMenu(JFrame frame) {
         frame.setContentPane(new MenuPanel(frame));
         refresh(frame);
@@ -19,7 +18,7 @@ public class UIProvider {
         refresh(frame);
     }
 
-    public static void displayGame(JFrame frame, MapDisplayManager gamePanel) {
+    public static void displayGame(JFrame frame, MapPanel gamePanel) {
         frame.getContentPane().removeAll();
         frame.setLayout(new java.awt.BorderLayout());
         frame.add(new JLabel("Position: (0, 0)"), java.awt.BorderLayout.NORTH);

@@ -14,7 +14,8 @@ import org.lib.data_structures.payloads.game.GameState;
 import org.lib.data_structures.payloads.game.Notification;
 import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.network.ConnectionRequest;
-import org.lib.data_structures.payloads.queries.ClientLogin;
+import org.lib.data_structures.payloads.queries.LoginPayload;
+import org.lib.data_structures.payloads.queries.RegisterPayload;
 import org.lib.packet_processing.send.BroadcastThread;
 import org.lib.packet_processing.send.UnicastThread;
 
@@ -58,7 +59,7 @@ public class PayloadRouter implements IRouter, Runnable {
                 case GAME_STATE -> handleGameState((GameState) p);
                 case NOTIFICATION -> handlePlayerNotification((Notification) p);
                 case CONNECTION_REQUEST -> handleConnectionRequest((ConnectionRequest) p);
-                case CLIENT_QUERY -> handleClientQuery((ClientLogin) p); // MOCK
+                case REGISTER -> hangleRegister((RegisterPayload) p);
                 default -> System.err.println("Unknown payload type: " + p);
             }
         }
@@ -85,9 +86,8 @@ public class PayloadRouter implements IRouter, Runnable {
         System.out.println("handlePlayerNotification " + notification);
     }
 
-    // MOCK
-    private void handleClientQuery(ClientLogin query) {
-        System.out.println("handleClientQuery " + query);
+    private void hangleRegister(RegisterPayload query) {
+        System.out.println("hangleRegister " + query);
         var notif = new Notification("hi there");
         unicastThread.send(new NetworkPayload(List.of(notif), query.getClientUUID()));
     }

@@ -1,7 +1,7 @@
 package org.client.game_logic;
 
 import lombok.Setter;
-import org.client.UI.MapDisplayManager;
+import org.client.UI.MapPanel;
 import org.client.network.PacketsSenderService;
 import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.*;
@@ -17,21 +17,20 @@ import java.awt.event.*;
 
 
 public class PayloadRouter implements IRouter, Runnable {
-    private final MapDisplayManager mapDisplayManager;
+    private final MapPanel mapPanel;
     private final ConcurrentQueue<NetworkPayload> receivedPackets = new ConcurrentQueue<>();
-    @Setter private PacketsSenderService networkManager;
+    @Setter private PacketsSenderService packetsSenderService;
 
-    public PayloadRouter(MapDisplayManager mapDisplayManager) {
-        this.mapDisplayManager = mapDisplayManager;
+    public PayloadRouter(MapPanel mapPanel) {
+        this.mapPanel = mapPanel;
     }
 
     public KeyListener getKeyListener(JLabel positionLabel) {
         return new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                PlayerInput input = new PlayerInput(networkManager.getClientId(), e.getKeyCode());
-                networkManager.sendInput(input);
-                positionLabel.setText("Last Key: " + e.getKeyCode());
+                PlayerInput input = new PlayerInput(packetsSenderService.getClientId(), e.getKeyCode());
+                packetsSenderService.sendInput(input);
             }
         };
     }
@@ -41,12 +40,12 @@ public class PayloadRouter implements IRouter, Runnable {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Point clickPoint = e.getPoint();
-                var direction = new Vector(mapDisplayManager.convertToGameCoordinates(clickPoint.x, clickPoint.y));
-                PlayerInput input = new PlayerInput(networkManager.getClientId(), MouseEvent.BUTTON1);
+                var direction = new Vector(mapPanel.convertToGameCoordinates(clickPoint.x, clickPoint.y));
+                PlayerInput input = new PlayerInput(packetsSenderService.getClientId(), MouseEvent.BUTTON1);
                 input.setDirection(direction);
 
                 System.out.println("Mouse clicked at: " + input.getDirection().getX() + " " + input.getDirection().getY());
-                networkManager.sendInput(input);
+                packetsSenderService.sendInput(input);
             }
         };
     }
@@ -84,7 +83,7 @@ public class PayloadRouter implements IRouter, Runnable {
     }
 
     private void handleGameState(GameState p) {
-        mapDisplayManager.updateGameState(p);
+        mapPanel.updateGameState(p);
     }
 }
 

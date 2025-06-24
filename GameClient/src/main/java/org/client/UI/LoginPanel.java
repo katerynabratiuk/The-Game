@@ -46,8 +46,8 @@ public class LoginPanel extends JPanel {
 
             if (!username.isEmpty() && !password.isEmpty()) {
                 try {
-                    Startup.getNetworkManager().sendLogin(username, password);
-                    Startup.startGame(username);
+                    Startup.getPacketsSenderService().sendLogin(username, password);
+                    Startup.startGame();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(frame, "Login failed: " + ex.getMessage());
