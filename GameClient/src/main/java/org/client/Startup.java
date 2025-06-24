@@ -1,6 +1,7 @@
 package org.client;
 
 import org.client.UI.MapDisplayManager;
+import org.client.UI.UIProvider;
 import org.client.game_logic.PayloadRouter;
 import org.client.network.PacketsSenderService;
 
@@ -11,21 +12,31 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 public class Startup {
+    private static JFrame frame;
     private static MapDisplayManager mapDisplayManager;
     private static PacketsSenderService networkManager;
     private static PayloadRouter controller;
 
-    public static void createAndShowGUI() {
-        try {
-            initSocket();
-            createGUI();
-            networkManager.sendJoinRequest();
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Failed to start network: " + e.getMessage());
-        }
+    public static void launch() {
+        frame = new JFrame("The Game");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600);
+        frame.setLocationRelativeTo(null);
+
+        UIProvider.displayMenu(frame);
+        frame.setVisible(true);
     }
 
+    public static void startGame(String username) {
+        try {
+            initSocket();
+            UIProvider.displayGame(frame, mapDisplayManager);
+            attachControls();
+            networkManager.sendJoinRequest();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(frame, "Failed to start game: " + e.getMessage());
+        }
+    }
 
     private static void initSocket() throws IOException {
         mapDisplayManager = new MapDisplayManager();
@@ -35,42 +46,31 @@ public class Startup {
         networkManager = new PacketsSenderService(controller);
         controller.setNetworkManager(networkManager);
         networkManager.start();
-
-        try {
-            Thread.sleep(500); // what for threads to initialize - refactor later
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 
-    private static void createGUI() {
-        JFrame frame = new JFrame("Demo UDP Client");
+    private static void attachControls() {
         JLabel positionLabel = new JLabel("Position: (0, 0)");
-
-        mapDisplayManager.setFocusable(true);
-        mapDisplayManager.setBackground(Color.LIGHT_GRAY);
-
-        frame.setLayout(new BorderLayout());
         frame.add(positionLabel, BorderLayout.NORTH);
-        frame.add(mapDisplayManager, BorderLayout.CENTER);
 
         mapDisplayManager.addKeyListener(controller.getKeyListener(positionLabel));
         mapDisplayManager.addMouseListener(controller.getMouseClickListener());
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
-        frame.setLocationRelativeTo(null);
-
-        frame.setVisible(true);
         SwingUtilities.invokeLater(mapDisplayManager::requestFocusInWindow);
 
         frame.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent windowEvent) {
+            public void windowClosing(WindowEvent e) {
                 networkManager.sendDisconnectRequest();
                 networkManager.shutdown();
             }
         });
     }
-}
 
+    public static PacketsSenderService getNetworkManager() {
+        return networkManager;
+    }
+
+    public static JFrame getMainFrame() {
+        return frame;
+    }
+}

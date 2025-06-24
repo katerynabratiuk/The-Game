@@ -4,6 +4,6 @@ import javax.swing.*;
 
 public class UDPClient {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Startup::createAndShowGUI);
+        SwingUtilities.invokeLater(Startup::launch);
     }
 }
