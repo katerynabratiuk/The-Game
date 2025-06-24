@@ -53,6 +53,7 @@ public class PlayerCharacter extends Actor {
     private void updateHitPoints(int newHp) {
         if (newHp <= 0) {
             setPendingDestroy(true);
+            setKilled(true);
         }
         setHitPoints(newHp);
     }

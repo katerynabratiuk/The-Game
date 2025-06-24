@@ -1,36 +1,25 @@
 package org.lib.data_structures.payloads.game;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.lib.data_structures.payloads.Payload;
 import org.lib.data_structures.payloads.actors.Actor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 public class GameState extends Payload {
     private List<Actor> actors;
 
-    public GameState(ArrayList<Actor> actors) {
+    @Getter @Setter
+    private Map<String, Integer> playerKills;
+
+    public GameState(ArrayList<Actor> actors, Map<String, Integer> playerKills) {
         this.actors = actors;
-    }
-
-    public void updateActor(String clientUUID, Coordinates coordinates) {
-        // TODO: check this method logic
-        boolean updated = false;
-
-        for (int i = 0; i < actors.size(); i++) {
-            Actor actor = actors.get(i);
-            if (actor.getClientUUID().equals(clientUUID)) {
-                actors.set(i, new Actor(coordinates, clientUUID));
-                updated = true;
-                break;
-            }
-        }
-
-        if (!updated) {
-            actors.add(new Actor(coordinates, clientUUID));
-        }
+        this.playerKills = playerKills;
     }
 
     public List<Actor> getActorsSnapshot() {
@@ -40,8 +29,4 @@ public class GameState extends Payload {
     public void setActorsSnapshot(List<Actor> actorsSnapshot) {
         this.actors = actorsSnapshot;
     }
-
-//    public void removeActor(String uuid) {
-//        actors.removeIf(actor -> actor.getUuid().equals(uuid));
-//    }
 }

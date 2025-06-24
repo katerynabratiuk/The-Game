@@ -18,7 +18,7 @@ public class Actor extends Payload {
 
 // add drawing strategy
 
-    @JsonIgnore @Getter @Setter
+    @Getter @Setter
     private String clientUUID;
 
     @Getter @Setter
@@ -26,6 +26,9 @@ public class Actor extends Payload {
 
     @JsonIgnore @Getter @Setter
     private boolean pendingDestroy;
+
+    @JsonIgnore @Getter @Setter
+    private boolean killed;
 
     @Getter @Setter
     private double radius = 10; // circular space occupied by actor
@@ -56,4 +59,5 @@ public class Actor extends Payload {
     }
 
     public void OnCollision(Actor target) {}
+    public void OnDeath() {}
 }

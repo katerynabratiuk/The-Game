@@ -3,12 +3,14 @@ package org.server.game_logic;
 import lombok.Setter;
 import org.lib.data_structures.payloads.NetworkPayload;
 import org.lib.packet_processing.send.BroadcastThread;
+import org.lib.packet_processing.send.UnicastThread;
 
 import java.util.List;
 
 public class GameThread extends Thread {
     private final GameStateManager gameStateService;
     @Setter private BroadcastThread broadcastThread;
+    @Setter private UnicastThread unicastThread;
     private final int FPS = 30;
     private final long FRAME_TIME = 1000 / FPS;
     private static final int MAX_RETRIES = 50;
@@ -66,7 +68,7 @@ public class GameThread extends Thread {
     private void executeGameFrame() throws InterruptedException {
         long startTime = System.currentTimeMillis();
 
-        gameStateService.updateGameThread();
+        gameStateService.updateGameThread(unicastThread);
         var gameState = gameStateService.snapshot();
         broadcastThread.send(new NetworkPayload(List.of(gameState)));
 

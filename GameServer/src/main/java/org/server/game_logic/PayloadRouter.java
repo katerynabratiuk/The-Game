@@ -86,7 +86,7 @@ public class PayloadRouter implements IRouter, Runnable {
 
             case DISCONNECT:
                 gameStateManager.removeActor(p.getClientUUID());
-                broadcastThread.removeReceiver(p.getClientUUID());
+               // broadcastThread.removeReceiver(p.getClientUUID());
         }
     }
 

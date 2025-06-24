@@ -15,6 +15,7 @@ public class UDPServer {
         router.setBroadcastThread(serverThread.getBroadcastThread());
         router.setUnicastThread(serverThread.getUnicastThread());
         gameThread.setBroadcastThread(serverThread.getBroadcastThread());
+        gameThread.setUnicastThread(serverThread.getUnicastThread());
 
         serverThread.start();
         gameThread.start();
