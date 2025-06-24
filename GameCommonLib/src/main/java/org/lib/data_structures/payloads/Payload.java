@@ -4,6 +4,8 @@ package org.lib.data_structures.payloads;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Getter;
+import lombok.Setter;
 import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.actors.Bullet;
 import org.lib.data_structures.payloads.actors.PlayerCharacter;
@@ -13,7 +15,8 @@ import org.lib.data_structures.payloads.game.Notification;
 import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.network.ConnectionRequest;
 import org.lib.data_structures.payloads.network.ConnectionResponse;
-import org.lib.data_structures.payloads.queries.ClientLogin;
+import org.lib.data_structures.payloads.queries.LoginPayload;
+import org.lib.data_structures.payloads.queries.RegisterPayload;
 
 
 import static org.lib.data_structures.payloads.enums.PayloadStructType.*;
@@ -28,10 +31,14 @@ import static org.lib.data_structures.payloads.enums.PayloadStructType.*;
         @JsonSubTypes.Type(value = Notification.class, name = "PLAYER_NOTIFICATION"),
         @JsonSubTypes.Type(value = ConnectionRequest.class, name = "CONNECTION_REQUEST"),
         @JsonSubTypes.Type(value = ConnectionResponse.class, name = "CONNECTION_RESPONSE"),
-        @JsonSubTypes.Type(value = ClientLogin.class, name = "CLIENT_QUERY") // MOCK
+        @JsonSubTypes.Type(value = RegisterPayload.class, name = "REGISTER"),
+        @JsonSubTypes.Type(value = LoginPayload.class, name = "LOGIN"),
 })
 public class Payload {
     @JsonIgnore private String type;
+
+    @Getter @Setter
+    private String clientUUID;
 
     public Payload() {}
 
@@ -44,7 +51,8 @@ public class Payload {
             case "Notification" -> NOTIFICATION;
             case "ConnectionRequest" -> CONNECTION_REQUEST;
             case "ConnectionResponse" -> CONNECTION_RESPONSE;
-            case "ClientLogin" -> CLIENT_QUERY;
+            case "RegisterPayload" -> LOGIN;
+            case "LoginPayload" -> REGISTER;
             default -> UNKNOWN;
         };
     }

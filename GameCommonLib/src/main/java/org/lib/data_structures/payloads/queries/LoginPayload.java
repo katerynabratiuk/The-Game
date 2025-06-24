@@ -1,13 +1,15 @@
 package org.lib.data_structures.payloads.queries;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.lib.data_structures.payloads.Payload;
 import org.lib.data_structures.payloads.enums.PayloadStructType;
 
+@NoArgsConstructor
 @Getter
 public class LoginPayload extends Payload {
-    private final String username;
-    private final String password;
+    private String username;
+    private String password;
 
     public LoginPayload(String username, String password) {
         this.username = username;
