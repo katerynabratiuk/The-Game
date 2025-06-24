@@ -8,5 +8,7 @@ public enum PayloadStructType {
     CONNECTION_REQUEST,
     CONNECTION_RESPONSE,
     CLIENT_QUERY,
+    LOGIN,
+    REGISTER,
     UNKNOWN
 }
