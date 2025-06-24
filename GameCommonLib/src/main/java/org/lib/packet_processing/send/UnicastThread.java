@@ -41,7 +41,7 @@ public class UnicastThread extends Thread {
                     var receiverAddress = registry.get(payload.getClientUUID());
                     var packet = new DatagramPacket(encoded, encoded.length, receiverAddress);
                     socket.send(packet);
-                    System.out.println("Packet sent to " + receiverAddress);
+                    //System.out.println("Packet sent to " + receiverAddress);
                 } catch (Exception e) {
                     if (socket.isClosed()) {
                         break;

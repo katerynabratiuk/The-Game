@@ -42,7 +42,7 @@ public class BroadcastThread extends Thread implements IReceiverRegistryObserver
                     for (SocketAddress receiver : receiverStrategy.getReceivers()) {
                         DatagramPacket packet = new DatagramPacket(encoded, encoded.length, receiver);
                         socket.send(packet);
-                        System.out.println("Packet sent to " + receiver);
+                        //System.out.println("Packet sent to " + receiver);
                     }
                 } catch (Exception e) {
                     if (socket.isClosed()) {

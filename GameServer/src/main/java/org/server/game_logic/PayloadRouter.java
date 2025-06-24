@@ -68,7 +68,6 @@ public class PayloadRouter implements IRouter, Runnable {
     private void handleConnectionRequest(ConnectionRequest p) throws JsonProcessingException {
         switch (p.getConnectionCode()) {
             case JOIN:
-                System.out.println("got connection req");
                 var character = new PlayerCharacter(p.getClientUUID(), new Coordinates(0, 0));
                 gameStateManager.addActor(character);
                 var gameState = gameStateManager.snapshot();

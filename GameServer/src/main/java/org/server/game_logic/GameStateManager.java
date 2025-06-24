@@ -7,9 +7,11 @@ import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.game.GameState;
 import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.actors.Bullet;
+import org.lib.packet_processing.send.BroadcastThread;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameStateManager {
@@ -103,8 +105,11 @@ public class GameStateManager {
     }
 
     public void removeActor(String clientUUID) {
-        var actor = getActorByClientUUID(clientUUID);
-        if (actor == null) return;
-        actors.remove(actor);
+        try {
+            var actor = getActorByClientUUID(clientUUID);
+            actors.remove(actor);
+        } catch (NoSuchElementException e) {
+            System.out.println("No actor with given UUID found: " + clientUUID);
+        }
     }
 }
