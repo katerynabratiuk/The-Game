@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MapPanel extends JPanel {
     @Getter private GameState gameState;
     private final RankingPanel rankingPanel;
+    private final InventoryPanel inventoryPanel;
     private final int SCALE = 5;
 
     @Setter
@@ -32,6 +33,7 @@ public class MapPanel extends JPanel {
     public MapPanel() {
         this.gameState = new GameState(new ArrayList<>(), new ConcurrentHashMap<>());
         this.rankingPanel = new RankingPanel();
+        this.inventoryPanel = new InventoryPanel();
         setupInputListeners();
     }
 
@@ -99,6 +101,7 @@ public class MapPanel extends JPanel {
 
         drawActors(g2d);
         updateRankingPanel();
+        updateInventoryPanel(); // currently is updated each frame
     }
 
     private void drawActors(Graphics2D g2d) {
@@ -175,6 +178,16 @@ public class MapPanel extends JPanel {
         add(rankingPanel);
         rankingPanel.repaint();
     }
-
+    
+    private void updateInventoryPanel() {
+        inventoryPanel.setBounds(
+                10,
+                getHeight() - inventoryPanel.getPreferredSize().height - 10,
+                inventoryPanel.getPreferredSize().width,
+                inventoryPanel.getPreferredSize().height
+        );
+        add(inventoryPanel);
+        inventoryPanel.repaint();
+    }
 
 }
