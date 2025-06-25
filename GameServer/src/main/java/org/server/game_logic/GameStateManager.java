@@ -3,9 +3,11 @@ package org.server.game_logic;
 import lombok.Getter;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.lib.data_structures.payloads.NetworkPayload;
+import org.lib.data_structures.payloads.actors.PlayerCharacter;
 import org.lib.data_structures.payloads.game.*;
 import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.actors.Bullet;
+import org.lib.packet_processing.send.BroadcastThread;
 import org.lib.packet_processing.send.UnicastThread;
 
 import java.util.ArrayList;
@@ -23,18 +25,9 @@ public class GameStateManager {
     private final Map<String, Integer> playerKills = new ConcurrentHashMap<>();
     private final Map<String, String> clientUUIDToUsernameLookup = new ConcurrentHashMap<>();
 
-    public synchronized void updateGameStateByInput(PlayerInput input) {
-        try {
-            var actor = getActorByClientUUID(input.getClientUUID());
-            KeyBindingsHandler.handleInput(input.getKeyInputCode(), actor, actors, input);
-        } catch (NoSuchElementException e) {
-            System.out.println("No actor with given UUID found: " + input.getClientUUID());
-        }
-    }
-
-    public synchronized void updateGameThread(UnicastThread thread) {
+    public synchronized void updateGameThread(UnicastThread unicast, BroadcastThread broadcast) {
         updateBullets();
-        checkCollision(thread);
+        checkCollision(unicast);
     }
 
     private synchronized void updateBullets() {
@@ -119,24 +112,16 @@ public class GameStateManager {
         return actors;
     }
 
-    public Actor getActorByClientUUID(String clientUUID) {
+    public Actor getPlayerCharacterByUUID(String clientUUID) {
         return actors.stream()
-                .filter(a -> a.getClientUUID().equals(clientUUID))
+                .filter(a -> a.getClientUUID().equals(clientUUID) && (a instanceof PlayerCharacter))
                 .findFirst()
-                .orElseThrow();
+                .orElse(null);
     }
 
     public void removeActor(String clientUUID) {
-        try {
-            var actor = getActorByClientUUID(clientUUID);
-            actors.remove(actor);
-        } catch (NoSuchElementException e) {
-            System.out.println("No actor with given UUID found: " + clientUUID);
-        }
-    }
-
-    public void incrementPlayerKills(String username) {
-        playerKills.put(username, playerKills.getOrDefault(username, 0) + 1);
+        var actor = getPlayerCharacterByUUID(clientUUID);
+        if (actor != null) actors.remove(actor);
     }
 
     public void registerUsername(String clientUUID, String username) {
@@ -148,11 +133,14 @@ public class GameStateManager {
     }
 
     private void updatePlayerKills(Actor killer) {
-        String killerUUID = killer.getClientUUID();
-        String killerUsername = clientUUIDToUsernameLookup.get(killerUUID);
-        if (killerUsername != null) {
-            incrementPlayerKills(killerUsername);
+        var killerCharacter = (PlayerCharacter) getPlayerCharacterByUUID(killer.getClientUUID());
+        if (killerCharacter != null) {
+            incrementPlayerKills(killerCharacter.getUsername());
+            System.out.println("Incremented player kills: " + killerCharacter.getUsername());
         }
-        System.out.println("Incremented player kills: " + killerUsername);
+    }
+
+    private void incrementPlayerKills(String username) {
+        playerKills.put(username, playerKills.getOrDefault(username, 0) + 1);
     }
 }

@@ -16,6 +16,9 @@ public class PlayerCharacter extends Actor {
     @Getter @Setter
     private int hitPoints = 5;
 
+    @Getter @Setter
+    private String username;
+
     @Getter
     private int maxHp = 5;
 
@@ -28,11 +31,12 @@ public class PlayerCharacter extends Actor {
     @JsonIgnore @Getter @Setter
     private double rateOfFire = 0; // temp in ms
 
-    public PlayerCharacter(String clientUUID, Coordinates coordinates) {
+    public PlayerCharacter(String clientUUID, Coordinates coordinates, String username) {
         setRadius(10);
         updateColor(Color.BLUE);
         setCoordinates(coordinates);
         setClientUUID(clientUUID);
+        this.username = username;
     }
 
     @Override

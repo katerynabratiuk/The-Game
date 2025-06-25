@@ -68,7 +68,7 @@ public class GameThread extends Thread {
     private void executeGameFrame() throws InterruptedException {
         long startTime = System.currentTimeMillis();
 
-        gameStateService.updateGameThread(unicastThread);
+        gameStateService.updateGameThread(unicastThread, broadcastThread);
         var gameState = gameStateService.snapshot();
         broadcastThread.send(new NetworkPayload(List.of(gameState)));
 

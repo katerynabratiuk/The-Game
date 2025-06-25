@@ -89,13 +89,14 @@ public class PayloadRouter implements IRouter, Runnable {
         System.out.println("handlePlayerNotification " + notification);
     }
 
-    private void hangleRegister(RegisterPayload query) {
-        System.out.println("Registered " + query.getUsername());
-        if (query.getClientUUID() != null && query.getUsername() != null) {
-            gameStateManager.registerUsername(query.getClientUUID(), query.getUsername());
+    private void hangleRegister(RegisterPayload registerPayload) {
+        if (registerPayload.getClientUUID() != null && registerPayload.getUsername() != null) {
+            gameStateManager.registerUsername(registerPayload.getClientUUID(), registerPayload.getUsername());
         }
-        var notif = new Notification("hi there");
-        unicastThread.send(new NetworkPayload(List.of(notif), query.getClientUUID()));
+        var notif = new Notification("Welcome to the map!");
+        unicastThread.send(new NetworkPayload(List.of(notif), registerPayload.getClientUUID()));
+        System.out.println("Registered " + registerPayload.getUsername());
+
     }
 
     private void handleGameState(GameState p) {
