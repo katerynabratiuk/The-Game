@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Character {
+public class GameCharacter {
 
     private Integer id;
     private String name;
@@ -15,10 +15,10 @@ public class Character {
     private Double movingSpeed;
     private Integer heartPoints;
 
-    public Character() {
+    public GameCharacter() {
     }
 
-    public Character(Integer id, String name, String imagePath, String description, Double movingSpeed, Integer heartPoints) {
+    public GameCharacter(Integer id, String name, String imagePath, String description, Double movingSpeed, Integer heartPoints) {
         this.id = id;
         this.name = name;
         this.imagePath = imagePath;

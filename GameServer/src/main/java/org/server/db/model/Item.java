@@ -11,13 +11,14 @@ public abstract class Item {
     private final ItemType type;
     private Integer id;
     private String name;
+    private String imagePath;
 
     public Item(ItemType itemType) {
         type = itemType;
     }
 
     public enum ItemType {
-        GUN, HEAL, FLASH, SPEED
+        WEAPON, HEAL, FLASH, SPEED
     }
 
 }
