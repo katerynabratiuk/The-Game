@@ -1,12 +1,12 @@
 package org.server.db.repository;
 
-import org.server.db.model.Character;
+import org.server.db.model.GameCharacter;
 
 import java.util.List;
 
 public interface CharacterRepository {
 
-    Character get(Integer id);
-    List<Character> getAll();
+    GameCharacter get(Integer id);
+    List<GameCharacter> getAll();
 
 }

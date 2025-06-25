@@ -1,7 +1,8 @@
 package org.server.db.service;
 
 
-import org.server.db.model.Character;
+import org.server.db.dto.CharacterDTO;
+import org.server.db.model.GameCharacter;
 import org.server.db.repository.CharacterRepository;
 
 import java.util.List;
@@ -14,11 +15,21 @@ public class CharacterService {
         this.characterRepository = characterRepository;
     }
 
-    public Character getCharacter(Integer id) {
+    public GameCharacter getCharacter(Integer id) {
         return characterRepository.get(id);
     }
 
-    public List<Character> getAllCharacters() {
-        return characterRepository.getAll();
+    public List<CharacterDTO> getAllCharacters() {
+        return characterRepository.getAll().stream().map(this::mapToDTO).toList();
+    }
+
+    private CharacterDTO mapToDTO(GameCharacter gameCharacter)
+    {
+        return new CharacterDTO(
+                gameCharacter.getId(),
+                gameCharacter.getName(),
+                gameCharacter.getDescription(),
+                gameCharacter.getImagePath()
+        );
     }
 }

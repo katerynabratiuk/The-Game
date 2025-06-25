@@ -1,7 +1,7 @@
 package org.server.db.repository.implementation;
 
 import org.server.db.database_access.DbConnection;
-import org.server.db.model.Character;
+import org.server.db.model.GameCharacter;
 import org.server.db.repository.CharacterRepository;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import java.util.List;
 public class CharacterRepositoryImpl implements CharacterRepository {
 
     @Override
-    public Character get(Integer id) {
+    public GameCharacter get(Integer id) {
         String sql = "SELECT * FROM character WHERE id_character = ?";
 
         try (Connection connection = DbConnection.getConnection();
@@ -32,8 +32,8 @@ public class CharacterRepositoryImpl implements CharacterRepository {
     }
 
     @Override
-    public List<Character> getAll() {
-        List<Character> result = new ArrayList<>();
+    public List<GameCharacter> getAll() {
+        List<GameCharacter> result = new ArrayList<>();
         String sql = "SELECT * FROM character";
 
         try (Connection connection = DbConnection.getConnection();
@@ -51,8 +51,8 @@ public class CharacterRepositoryImpl implements CharacterRepository {
         }
     }
 
-    private Character extractCharacterFromResultSet(ResultSet rs) throws SQLException {
-        return new Character(
+    private GameCharacter extractCharacterFromResultSet(ResultSet rs) throws SQLException {
+        return new GameCharacter(
                 rs.getInt("id_character"),
                 rs.getString("name"),
                 rs.getString("image_path"),
