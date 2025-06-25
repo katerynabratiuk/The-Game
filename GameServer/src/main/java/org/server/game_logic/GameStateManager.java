@@ -128,6 +128,10 @@ public class GameStateManager {
         clientUUIDToUsernameLookup.put(clientUUID, username);
     }
 
+    public void loginUsername(String clientUUID, String username) {
+        clientUUIDToUsernameLookup.put(clientUUID, username);
+    }
+
     public String getUsernameByClientUUID(String clientUUID) {
         return clientUUIDToUsernameLookup.get(clientUUID);
     }
