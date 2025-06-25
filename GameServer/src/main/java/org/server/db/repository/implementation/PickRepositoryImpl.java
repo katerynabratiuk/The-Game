@@ -1,7 +1,7 @@
 package org.server.db.repository.implementation;
 
 import org.server.db.database_access.DbConnection;
-import org.server.db.model.Character;
+import org.server.db.model.GameCharacter;
 import org.server.db.model.Pick;
 import org.server.db.repository.PickRepository;
 
@@ -18,7 +18,7 @@ public class PickRepositoryImpl implements PickRepository {
                     "INSERT INTO pick(id_pick, id_character) VALUES (?, ?)"
             );
             stmt.setInt(1, pick.getId());
-            stmt.setInt(2, pick.getCharacter().getId());
+            stmt.setInt(2, pick.getGameCharacter().getId());
             stmt.executeUpdate();
             return pick;
         } catch (SQLException e) {
@@ -45,7 +45,7 @@ public class PickRepositoryImpl implements PickRepository {
             PreparedStatement stmt = connection.prepareStatement(
                     "UPDATE pick SET id_character = ? WHERE id_pick = ?"
             );
-            stmt.setInt(1, pick.getCharacter().getId());
+            stmt.setInt(1, pick.getGameCharacter().getId());
             stmt.setInt(2, pick.getId());
             stmt.executeUpdate();
             return pick;
@@ -95,10 +95,10 @@ public class PickRepositoryImpl implements PickRepository {
         Pick pick = new Pick();
         pick.setId(rs.getInt("id_pick"));
 
-        Character character = new Character();
-        character.setId(rs.getInt("id_character"));
+        GameCharacter gameCharacter = new GameCharacter();
+        gameCharacter.setId(rs.getInt("id_character"));
 
-        pick.setCharacter(character);
+        pick.setGameCharacter(gameCharacter);
         return pick;
     }
 }

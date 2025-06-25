@@ -2,12 +2,15 @@ package org.client.UI;
 
 import org.client.game_logic.PayloadRouter;
 import org.client.network.PacketsSenderService;
+import org.lib.data_structures.dto.ItemDTO;
+import org.server.db.dto.CharacterDTO;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
 
 public class UIProvider {
     public static void displayMenu(JFrame frame) {
@@ -36,8 +39,8 @@ public class UIProvider {
         refresh(frame);
     }
 
-    public static void displayItemSelection(JFrame frame) {
-        frame.setContentPane(new ItemSelectPanel(frame));
+    public static void displayPowerUpSelection(JFrame frame, ArrayList<ItemDTO> items) {
+        frame.setContentPane(new PowerUpSelectPanel(frame, items));
         refresh(frame);
     }
 

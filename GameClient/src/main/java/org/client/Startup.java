@@ -6,6 +6,7 @@ import org.client.UI.UIProvider;
 import org.client.game_logic.PayloadRouter;
 import org.client.network.PacketsSenderService;
 import org.client.network.UDPSocketThread;
+import org.client.game_logic.UserPick;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -17,6 +18,9 @@ public class Startup {
 
     @Getter
     private static PacketsSenderService packetsSenderService;
+
+    @Getter
+    private static final UserPick userPick = new UserPick();
 
 
     public static void launch() {

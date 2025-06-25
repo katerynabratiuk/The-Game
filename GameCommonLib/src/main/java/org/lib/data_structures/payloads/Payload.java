@@ -15,8 +15,7 @@ import org.lib.data_structures.payloads.game.Notification;
 import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.network.ConnectionRequest;
 import org.lib.data_structures.payloads.network.ConnectionResponse;
-import org.lib.data_structures.payloads.queries.LoginPayload;
-import org.lib.data_structures.payloads.queries.RegisterPayload;
+import org.lib.data_structures.payloads.queries.*;
 
 
 import static org.lib.data_structures.payloads.enums.PayloadStructType.*;
@@ -33,6 +32,10 @@ import static org.lib.data_structures.payloads.enums.PayloadStructType.*;
         @JsonSubTypes.Type(value = ConnectionResponse.class, name = "CONNECTION_RESPONSE"),
         @JsonSubTypes.Type(value = RegisterPayload.class, name = "REGISTER"),
         @JsonSubTypes.Type(value = LoginPayload.class, name = "LOGIN"),
+        @JsonSubTypes.Type(value = UserPickPayload.class, name = "PICK"),
+        @JsonSubTypes.Type(value = CharacterListPayload.class, name = "CHARACTER_LIST"),
+        @JsonSubTypes.Type(value = WeaponListPayload.class, name = "WEAPON_LIST"),
+        @JsonSubTypes.Type(value = PowerUpListPayload.class, name = "POWERUP_LIST")
 })
 public class Payload {
     @JsonIgnore private String type;
@@ -53,6 +56,7 @@ public class Payload {
             case "ConnectionResponse" -> CONNECTION_RESPONSE;
             case "RegisterPayload" -> REGISTER;
             case "LoginPayload" -> LOGIN;
+            case "UserPickPayload" -> PICK;
             default -> UNKNOWN;
         };
     }

@@ -10,7 +10,7 @@ import java.util.List;
 public class Pick {
 
     private Integer id;
-    private Character character;
+    private GameCharacter gameCharacter;
     private List<Item> items;
 
     public Pick(Integer id, List<Item> items) {
