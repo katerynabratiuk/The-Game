@@ -72,11 +72,9 @@ public class PayloadRouter implements IRouter, Runnable {
     private void handleConnectionRequest(ConnectionRequest p) throws JsonProcessingException {
         switch (p.getConnectionCode()) {
             case JOIN:
-                var character = new PlayerCharacter(p.getClientUUID(), new Coordinates(0, 0));
+                String username = gameStateManager.getUsernameByClientUUID(p.getClientUUID());
+                var character = new PlayerCharacter(p.getClientUUID(), new Coordinates(0, 0), username);
                 gameStateManager.addActor(character);
-                var gameState = gameStateManager.snapshot();
-                var networkPayload = new NetworkPayload(List.of(gameState));
-                broadcastThread.send(networkPayload);
                 break;
 
             case DISCONNECT:
@@ -107,16 +105,18 @@ public class PayloadRouter implements IRouter, Runnable {
         System.out.println("handleActor " + p);
     }
 
-    // TODO: refactor later to decouple sending logic
-    private void handlePlayerInput(PlayerInput p) {
+    private void handlePlayerInput(PlayerInput input) {
         if (broadcastThread == null) {
             System.out.println("Can`t process received message - sender thread is not initialized");
             return;
         }
 
-        gameStateManager.updateGameStateByInput(p);
+        KeyBindingsHandler.updateKeyState(input.getClientUUID(), input.getKeyInputCode(), !input.isKeyReleased());
+        Actor actor = gameStateManager.getPlayerCharacterByUUID(input.getClientUUID());
+        if (actor == null) return;
+
+        KeyBindingsHandler.processInput(actor, gameStateManager.getAllActors(), input);
         var gameState = gameStateManager.snapshot();
-        var networkPayload = new NetworkPayload(List.of(gameState));
-        broadcastThread.send(networkPayload);
+        broadcastThread.send(new NetworkPayload(List.of(gameState)));
     }
 }

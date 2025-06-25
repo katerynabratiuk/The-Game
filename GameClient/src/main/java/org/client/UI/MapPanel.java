@@ -6,7 +6,6 @@ import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.game.Coordinates;
 import org.lib.data_structures.payloads.game.GameState;
 import org.lib.data_structures.payloads.actors.PlayerCharacter;
-import org.client.game_logic.PlayerNameMapper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,6 +44,13 @@ public class MapPanel extends JPanel {
                     inputCallback.onKeyPressed(e.getKeyCode());
                 }
             }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (inputCallback != null) {
+                    inputCallback.onKeyReleased(e.getKeyCode());
+                }
+            }
         };
         
         mouseListener = new MouseAdapter() {
@@ -73,7 +79,7 @@ public class MapPanel extends JPanel {
 
     public void updateGameState(GameState gameState) {
         this.gameState = gameState;
-        PlayerNameMapper.updatePlayerNameMappings(gameState);
+        // PlayerNameMapper.updatePlayerNameMappings(gameState);
         repaint();
     }
 
@@ -148,7 +154,7 @@ public class MapPanel extends JPanel {
     }
 
     private void drawUsername(Graphics2D g2d, PlayerCharacter player, Coordinates pos, int diameter) {
-        String username = PlayerNameMapper.getUsername(player.getClientUUID());
+        String username = player.getUsername();
         if (username == null) return;
 
         // font

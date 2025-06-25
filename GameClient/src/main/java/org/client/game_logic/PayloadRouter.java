@@ -47,6 +47,13 @@ public class PayloadRouter implements IRouter, Runnable, InputCallback {
         PlayerInput input = new PlayerInput(packetsSenderService.getClientId(), keyCode);
         packetsSenderService.sendInput(input);
     }
+
+    @Override
+    public void onKeyReleased(int keyCode) {
+        PlayerInput input = new PlayerInput(packetsSenderService.getClientId(), keyCode);
+        input.setKeyReleased(true);
+        packetsSenderService.sendInput(input);
+    }
     
     @Override
     public void onMouseClicked(int x, int y) {

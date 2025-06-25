@@ -10,5 +10,6 @@ public enum PayloadStructType {
     CLIENT_QUERY,
     LOGIN,
     REGISTER,
+    ACK,
     UNKNOWN
 }
