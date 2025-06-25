@@ -25,13 +25,14 @@ public class UIProvider {
         refresh(frame);
     }
 
-    public static void displayCharacterSelection(JFrame frame) {
-        frame.setContentPane(new CharacterSelectPanel(frame));
+    public static void displayCharacterSelection(JFrame frame, ArrayList<CharacterDTO> characters) {
+        frame.setContentPane(new CharacterSelectPanel(frame, characters));
         refresh(frame);
     }
 
-    public static void displayWeaponSelection(JFrame frame) {
-        frame.setContentPane(new WeaponSelectPanel(frame));
+
+    public static void displayWeaponSelection(JFrame frame, ArrayList<ItemDTO> items) {
+        frame.setContentPane(new WeaponSelectPanel(frame, items));
         refresh(frame);
     }
 

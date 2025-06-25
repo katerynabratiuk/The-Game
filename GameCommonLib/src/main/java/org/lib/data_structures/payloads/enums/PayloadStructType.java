@@ -10,6 +10,10 @@ public enum PayloadStructType {
     CLIENT_QUERY,
     LOGIN,
     REGISTER,
+    PICK,
+    CHARACTER_LIST,
+    WEAPON_LIST,
+    POWERUP_LIST,
     ACK,
     UNKNOWN
 }

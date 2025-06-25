@@ -1,6 +1,7 @@
 package org.server.db.service;
 
 
+import org.lib.data_structures.dto.ItemDTO;
 import org.server.db.model.Item;
 import org.server.db.repository.ItemRepository;
 
@@ -18,7 +19,13 @@ public class ItemService {
         return itemRepository.get(id);
     }
 
-    public List<Item> getItemsByType(Item.ItemType type) {
-        return itemRepository.getItemsByType(type);
+    public List<ItemDTO> getItemsByType(Item.ItemType type) {
+        return itemRepository.getItemsByType(type).stream().map(this::mapToDto).toList();
     }
+
+    private ItemDTO mapToDto(Item item)
+    {
+        return new ItemDTO(item.getId(), item.getName(), item.getImagePath());
+    }
+
 }

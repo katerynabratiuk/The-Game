@@ -22,6 +22,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
             String name = rs.getString("name");
             Item.ItemType type = Item.ItemType.valueOf(rs.getString("type").toUpperCase());
+            String imagePath = rs.getString("imagepath");
 
             String subtypeQuery = "SELECT * FROM " + type.name().toLowerCase() + " WHERE id_item = ?";
             try (PreparedStatement subStmt = conn.prepareStatement(subtypeQuery)) {
@@ -29,7 +30,7 @@ public class ItemRepositoryImpl implements ItemRepository {
                 ResultSet subRs = subStmt.executeQuery();
 
                 if (subRs.next()) {
-                    return ItemFactory.create(type, id, name, subRs);
+                    return ItemFactory.create(type, id, name, imagePath, subRs);
                 }
             }
 
@@ -45,7 +46,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         List<Item> result = new ArrayList<>();
         String table = type.name().toLowerCase();
 
-        String sql = "SELECT i.id_item, i.name, i.type, t.* " +
+        String sql = "SELECT i.*, t.* " +
                 "FROM item i JOIN " + table + " t ON i.id_item = t.id_item " +
                 "WHERE i.type = ?";
 
@@ -55,7 +56,10 @@ public class ItemRepositoryImpl implements ItemRepository {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                Item item = ItemFactory.create(type, rs.getInt("id_item"), rs.getString("name"), rs);
+                Item item = ItemFactory.create(type, rs.getInt("id_item"),
+                        rs.getString("name"),
+                        rs.getString("imagepath"),
+                        rs);
                 result.add(item);
             }
 

@@ -1,12 +1,16 @@
 package org.client.UI;
 
+import org.client.Startup;
+import org.lib.data_structures.dto.ItemDTO;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class WeaponSelectPanel extends JPanel {
-    private String selectedWeapon = null;
+    private ItemDTO selectedWeapon = null;
 
-    public WeaponSelectPanel(JFrame frame) {
+    public WeaponSelectPanel(JFrame frame, List<ItemDTO> weapons) {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -21,15 +25,13 @@ public class WeaponSelectPanel extends JPanel {
         gbc.gridwidth = 1;
         gbc.gridy++;
 
-        String[] names = {"MachineGun", "Rocket", "Pistol"};
-        String[] imagePaths = {
-                "/images/machine-gun.png",
-                "/images/rocket.png",
-                "/images/pistol.png"
-        };
+        for (int i = 0; i < weapons.size(); i++) {
+            ItemDTO weapon = weapons.get(i);
 
-        for (int i = 0; i < names.length; i++) {
-            java.net.URL imageURL = getClass().getResource(imagePaths[i]);
+            String name = weapon.getName();
+            String imagePath = weapon.getImagePath(); // наприклад: "/images/machine-gun.png"
+
+            java.net.URL imageURL = getClass().getResource(imagePath);
 
             JButton weaponButton;
             if (imageURL != null) {
@@ -37,16 +39,15 @@ public class WeaponSelectPanel extends JPanel {
                 Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
                 ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
-                weaponButton = new JButton(names[i], scaledIcon);
+                weaponButton = new JButton(name, scaledIcon);
                 weaponButton.setHorizontalTextPosition(SwingConstants.CENTER);
                 weaponButton.setVerticalTextPosition(SwingConstants.BOTTOM);
             } else {
-                weaponButton = new JButton(names[i] + " (no image)");
+                weaponButton = new JButton(name + " (no image)");
             }
 
             weaponButton.setPreferredSize(new Dimension(150, 150));
-            final int index = i;
-            weaponButton.addActionListener(e -> selectedWeapon = names[index]);
+            weaponButton.addActionListener(e -> selectedWeapon = weapon);
 
             gbc.gridx = i;
             add(weaponButton, gbc);
@@ -59,9 +60,9 @@ public class WeaponSelectPanel extends JPanel {
 
         continueBtn.addActionListener(e -> {
             if (selectedWeapon != null) {
-                System.out.println("Selected weapon: " + selectedWeapon);
-                // TODO: save weapon
-                UIProvider.displayItemSelection(frame);
+                System.out.println("Selected weapon: " + selectedWeapon.getName());
+                Startup.getUserPick().setWeaponId(selectedWeapon.getId());
+                Startup.getPacketsSenderService().sendPowerUpRequest();
             } else {
                 JOptionPane.showMessageDialog(frame, "Please select a weapon.");
             }

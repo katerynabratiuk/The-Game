@@ -4,8 +4,7 @@ import org.lib.data_structures.payloads.*;
 import org.lib.data_structures.payloads.enums.ConnectionCode;
 import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.network.ConnectionRequest;
-import org.lib.data_structures.payloads.queries.LoginPayload;
-import org.lib.data_structures.payloads.queries.RegisterPayload;
+import org.lib.data_structures.payloads.queries.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,6 +43,31 @@ public class PacketsSenderService {
         send(List.of(payload));
     }
 
+    public void sendCharacterListRequest() {
+        CharacterListPayload request = new CharacterListPayload();
+        request.setClientUUID(clientThread.getClientId());
+        send(List.of(request));
+    }
+
+    public void sendWeaponListRequest() {
+        WeaponListPayload request = new WeaponListPayload();
+        request.setClientUUID(clientThread.getClientId());
+        send(List.of(request));
+    }
+
+    public void sendPowerUpRequest() {
+        PowerUpListPayload request = new PowerUpListPayload();
+        request.setClientUUID(clientThread.getClientId());
+        send(List.of(request));
+    }
+
+
+    public void sendUserPick(Integer character, Integer weapon, Integer item)
+    {
+        UserPickPayload payload = new UserPickPayload(character, weapon, item, clientThread.getClientId());
+        send(List.of(payload));
+    }
+
 
     public void shutdown() {
         clientThread.shutdown();
@@ -64,4 +88,6 @@ public class PacketsSenderService {
         payload.setClientUUID(getClientId());
         clientThread.getSenderThread().send(payload);
     }
+
+
 }
