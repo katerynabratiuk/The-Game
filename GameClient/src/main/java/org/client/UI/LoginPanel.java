@@ -37,8 +37,19 @@ public class LoginPanel extends JPanel {
         gbc.gridy++;
         add(loginBtn, gbc);
 
-        JButton registerBtn = new JButton("Not registered yet?");
+        JLabel notRegisteredLabel = new JLabel("Not registered yet?");
         gbc.gridy++;
+        add(notRegisteredLabel, gbc);
+
+        JButton registerBtn = new JButton("Register");
+        gbc.gridy++;
+        add(registerBtn, gbc);
+
+        registerBtn.addActionListener(e -> {
+            UIProvider.displayRegister(frame);
+        });
+
+
         add(registerBtn, gbc);
         loginBtn.addActionListener(e -> {
             String username = usernameField.getText().trim();

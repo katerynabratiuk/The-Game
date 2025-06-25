@@ -46,6 +46,11 @@ public class RegisterPanel extends JPanel {
         JButton backBtn = new JButton("Back");
         gbc.gridy++;
         add(backBtn, gbc);
+
+        backBtn.addActionListener(e->{
+            UIProvider.displayMenu(frame);
+        });
+
         registerBtn.addActionListener(e -> {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword());
