@@ -36,7 +36,7 @@ public class UDPSocketThread extends Thread {
         this.receivingThread = new PacketReceiverThread(socket, controller, new Decoder(), new Decryptor(), registry);
 
         registry.addObserver(broadcastThread);
-        System.out.println("Server running on port " + PORT + "...");
+        System.out.println("Server running on host " + serverAddress + ":" + PORT + "...");
     }
 
     public void run() {

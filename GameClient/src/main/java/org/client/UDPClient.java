@@ -1,5 +1,4 @@
 package org.client;
-import lombok.SneakyThrows;
 
 import javax.swing.*;
 

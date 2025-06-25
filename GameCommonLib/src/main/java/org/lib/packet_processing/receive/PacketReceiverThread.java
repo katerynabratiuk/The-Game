@@ -2,7 +2,7 @@ package org.lib.packet_processing.receive;
 
 import org.lib.controllers.IRouter;
 import org.lib.packet_processing.registry.SocketAddressRegistry;
-import org.lib.packet_processing.serializers.Serializer;
+import org.lib.packet_processing.serializers.BsonSerializer;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -41,7 +41,7 @@ public class PacketReceiverThread extends Thread {
                     byte[] data = Arrays.copyOf(packet.getData(), packet.getLength());
                     byte[] decoded = decoder.decode(data);
                     byte[] decrypted = decryptor.decrypt(decoded);
-                    var networkPayload = Serializer.deserialize(decrypted);
+                    var networkPayload = BsonSerializer.deserialize(decrypted);
 
                     if (registry != null && networkPayload.getClientUUID() != null) {
                         registry.add(networkPayload.getClientUUID(), packet.getSocketAddress());

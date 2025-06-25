@@ -3,7 +3,7 @@ package org.lib.packet_processing.send;
 import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.NetworkPayload;
 import org.lib.packet_processing.registry.IReceiverRegistryObserver;
-import org.lib.packet_processing.serializers.Serializer;
+import org.lib.packet_processing.serializers.BsonSerializer;
 import org.lib.packet_processing.strategies.ReceiverStrategy;
 
 import java.net.DatagramPacket;
@@ -35,14 +35,14 @@ public class BroadcastThread extends Thread implements IReceiverRegistryObserver
             while (!socket.isClosed()) {
                 try {
                     NetworkPayload payload = queue.get();
-                    byte[] serialized = Serializer.serialize(payload);
+                    byte[] serialized = BsonSerializer.serialize(payload);
                     byte[] encrypted = encryptor.encrypt(serialized);
                     byte[] encoded = encoder.encode(encrypted);
 
                     for (SocketAddress receiver : receiverStrategy.getReceivers()) {
                         DatagramPacket packet = new DatagramPacket(encoded, encoded.length, receiver);
                         socket.send(packet);
-                        //System.out.println("Packet sent to " + receiver);
+                        // System.out.println("Packet sent to " + receiver);
                     }
                 } catch (Exception e) {
                     if (socket.isClosed()) {

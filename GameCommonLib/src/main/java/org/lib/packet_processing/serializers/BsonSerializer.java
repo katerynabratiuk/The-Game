@@ -6,7 +6,7 @@ import org.lib.data_structures.payloads.NetworkPayload;
 import java.io.IOException;
 
 
-public class Serializer {
+public class BsonSerializer {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
 

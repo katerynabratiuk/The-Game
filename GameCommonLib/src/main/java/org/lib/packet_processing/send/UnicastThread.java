@@ -3,12 +3,10 @@ package org.lib.packet_processing.send;
 import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.NetworkPayload;
 import org.lib.packet_processing.registry.SocketAddressRegistry;
-import org.lib.packet_processing.serializers.Serializer;
-import org.lib.packet_processing.strategies.ReceiverStrategy;
+import org.lib.packet_processing.serializers.BsonSerializer;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketAddress;
 
 public class UnicastThread extends Thread {
     private final DatagramSocket socket;
@@ -34,7 +32,7 @@ public class UnicastThread extends Thread {
             while (!socket.isClosed()) {
                 try {
                     NetworkPayload payload = queue.get();
-                    byte[] serialized = Serializer.serialize(payload);
+                    byte[] serialized = BsonSerializer.serialize(payload);
                     byte[] encrypted = encryptor.encrypt(serialized);
                     byte[] encoded = encoder.encode(encrypted);
 
