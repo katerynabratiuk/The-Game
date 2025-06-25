@@ -25,6 +25,21 @@ public class UIProvider {
         refresh(frame);
     }
 
+    public static void displayCharacterSelection(JFrame frame) {
+        frame.setContentPane(new CharacterSelectPanel(frame));
+        refresh(frame);
+    }
+
+    public static void displayWeaponSelection(JFrame frame) {
+        frame.setContentPane(new WeaponSelectPanel(frame));
+        refresh(frame);
+    }
+
+    public static void displayItemSelection(JFrame frame) {
+        frame.setContentPane(new ItemSelectPanel(frame));
+        refresh(frame);
+    }
+
     public static void displayGame(JFrame frame, MapPanel gamePanel) {
         frame.getContentPane().removeAll();
         frame.setLayout(new java.awt.BorderLayout());
@@ -58,4 +73,6 @@ public class UIProvider {
             frame.removeWindowListener(listener);
         }
     }
+
+
 }
