@@ -18,17 +18,16 @@ public class PlayerCharacter extends Actor {
     private int maxHp = 5;
     private int hitPoints = 5;
 
-    private double movementSpeed = 10;
-
     private Double sprayAngle = 0.0;
     private double rateOfFire = 1000;
     private double damage = 1;
 
-    private long lastAttackTime;
+    private long lastAttackTime = 0;
 
 
     public PlayerCharacter(String clientUUID, Coordinates coordinates, String username) {
         setRadius(20);
+        setMovementSpeed(20);
         updateColor(Color.BLUE);
         setCoordinates(coordinates);
         setClientUUID(clientUUID);
@@ -45,11 +44,12 @@ public class PlayerCharacter extends Actor {
     }
 
     public double calcCooldownRatio() {
-        return 1.0 - (System.currentTimeMillis() - lastAttackTime) / rateOfFire;
+        long elapsed = System.currentTimeMillis() - lastAttackTime;
+        return Math.min((double) elapsed / rateOfFire, 1.0);
     }
 
     public boolean determineAttackReady() {
-        return calcCooldownRatio() >= 1.0;
+        return System.currentTimeMillis() - lastAttackTime >= rateOfFire;
     }
 
     private void takeDamage(int damage) {

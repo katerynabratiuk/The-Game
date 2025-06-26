@@ -209,6 +209,9 @@ public class PayloadRouter implements IRouter, Runnable {
         var player = new PlayerCharacter(clientUUID, new Coordinates(0, 0), username);
 
         player.setMovementSpeed(player.getMovementSpeed() * character.getMovingSpeed());
+        System.out.println("character.getMovingSpeed() " + character.getMovingSpeed());
+        System.out.println("player.getMovementSpeed() " + player.getMovementSpeed());
+
         int newHp = player.getHitPoints() + character.getHeartPoints();
         player.setHitPoints(newHp);
         player.setMaxHp(newHp);

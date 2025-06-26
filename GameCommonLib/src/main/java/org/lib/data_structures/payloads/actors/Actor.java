@@ -21,6 +21,9 @@ public class Actor extends Payload {
     @JsonIgnore
     private boolean killed;
 
+    @JsonIgnore
+    private double movementSpeed = 1;
+
     private double radius = 10; // circular space occupied by actor
     private String imagePath;
 

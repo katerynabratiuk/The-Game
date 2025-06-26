@@ -56,6 +56,7 @@ public class KeyBindingsHandler {
         Map<Integer, Boolean> states = clientKeyStates.get(clientUUID);
         double dx = 0;
         double dy = 0;
+        double speed = actor.getMovementSpeed();
 
         if (states.getOrDefault(KeyEvent.VK_LEFT, false) || states.getOrDefault(KeyEvent.VK_A, false)) dx -= 1;
         if (states.getOrDefault(KeyEvent.VK_RIGHT, false) || states.getOrDefault(KeyEvent.VK_D, false)) dx += 1;
@@ -69,20 +70,25 @@ public class KeyBindingsHandler {
         }
 
         if (dx != 0 || dy != 0) {
+            dx *= speed;
+            dy *= speed;
             move(actor, (int)Math.round(dx), (int)Math.round(dy));
         }
     }
 
     private static void move(Actor actor, int dx, int dy) {
         var current = actor.getCoordinates();
-        var newCoord = new Coordinates(current.getX() + dx, current.getY() + dy);
+        var newCoord = new Coordinates((current.getX() + dx), (current.getY() + dy));
         actor.setCoordinates(newCoord);
     }
 
     private static void shoot(Actor actor, List<Actor> actors, PlayerInput input) {
         var player = (PlayerCharacter) actor;
+        if(!player.determineAttackReady()) return;
+
         double x = input.getDirection().getX();
         double y = input.getDirection().getY();
+
         var newActor = new Bullet(
                 input.getClientUUID(),
                 new Coordinates(player.getCoordinates().getX(), player.getCoordinates().getY()),

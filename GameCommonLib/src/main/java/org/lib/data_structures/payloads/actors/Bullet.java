@@ -11,28 +11,27 @@ import org.lib.data_structures.payloads.game.Vector;
 import java.awt.*;
 import java.util.Objects;
 
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Bullet extends Actor {
-    @JsonIgnore @Getter @Setter
-    private double movementSpeed = 5.0;
+    @JsonIgnore
+    private int lifespan = 1500; // in milliseconds
 
-    @JsonIgnore @Getter @Setter
-    private int lifespan = 500; // in milliseconds
-
-    @JsonIgnore @Getter @Setter
+    @JsonIgnore
     private int damage = 1;
 
-    @JsonIgnore @Getter @Setter
+    @JsonIgnore
     private Vector direction;
 
-    @JsonIgnore @Getter @Setter
+    @JsonIgnore
     private long creationTime = System.currentTimeMillis();
 
     public Bullet(String clientUUID, Coordinates coordinates, Vector vector, double radius) {
         setCoordinates(coordinates);
         setClientUUID(clientUUID);
         setRadius(radius);
+        setMovementSpeed(10.0);
         updateColor(Color.RED);
         this.creationTime = System.currentTimeMillis();
         this.direction = vector;
@@ -55,7 +54,7 @@ public class Bullet extends Actor {
         var direction = Vector.toVector2D(this.direction);
         if (direction.getNorm() == 0) return;
 
-        var movement = direction.normalize().scalarMultiply(movementSpeed);
+        var movement = direction.normalize().scalarMultiply(getMovementSpeed());
         var newPos = current.add(movement);
 
         setCoordinates(new Coordinates((int) newPos.getX(), (int) newPos.getY()));

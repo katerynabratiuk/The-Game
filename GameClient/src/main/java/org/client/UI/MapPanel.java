@@ -22,7 +22,7 @@ public class MapPanel extends JPanel {
     @Getter private GameState gameState;
     private final RankingPanel rankingPanel;
     private final InventoryPanel inventoryPanel;
-    private final int SCALE = 5;
+    private final int SCALE = 1;
     private Image backgroundImage;
 
     @Setter
@@ -164,7 +164,10 @@ public class MapPanel extends JPanel {
 
     private void drawCooldownIndicator(Graphics2D g2d, PlayerCharacter player, Coordinates pos, int diameter) {
         if (player.getRateOfFire() > 0) {
+            if (player.determineAttackReady()) return;
+
             double cooldownRatio = player.calcCooldownRatio();
+
             int innerDiameter = (int)(diameter * cooldownRatio);
             int innerX = pos.getX() + (diameter - innerDiameter)/2;
             int innerY = pos.getY() + (diameter - innerDiameter)/2;
