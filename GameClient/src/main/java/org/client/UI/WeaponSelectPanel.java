@@ -1,14 +1,16 @@
 package org.client.UI;
 
-import org.lib.data_structures.dto.ItemDTO;
-import org.lib.data_structures.payloads.queries.search.WeaponFilterPayload;
+import org.lib.data.dto.ItemDTO;
+import org.lib.data.payloads.queries.search.*;
 import org.client.GameContext;
 import org.lib.data.dto.ItemDTO;
+import org.lib.data_structures.payloads.queries.search.WeaponFilterPayload;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class WeaponSelectPanel extends JPanel {
     private ItemDTO selectedWeapon = null;
@@ -71,8 +73,8 @@ public class WeaponSelectPanel extends JPanel {
         continueBtn.addActionListener(e -> {
             if (selectedWeapon != null) {
                 System.out.println("Selected weapon: " + selectedWeapon.getName());
-                Startup.getUserPick().setWeaponId(selectedWeapon.getId());
-                Startup.getPacketsSenderService().sendPowerUpRequest();
+                GameContext.getUserPick().setWeaponId(selectedWeapon.getId());
+                GameContext.getPacketsSenderService().sendPowerUpRequest();
             } else {
                 JOptionPane.showMessageDialog(frame, "Please select a weapon.");
             }
@@ -89,7 +91,7 @@ public class WeaponSelectPanel extends JPanel {
             System.out.println("Weapon query: " + query);
             System.out.println("Sort fields: " + sortFields);
 
-            Startup.getPacketsSenderService().sendWeaponFilterRequest(query, sortFields);
+            GameContext.getPacketsSenderService().sendWeaponFilterRequest(query, sortFields);
         });
 
         displayWeapons(weapons);
@@ -123,20 +125,20 @@ public class WeaponSelectPanel extends JPanel {
         }
         weaponsPanel.revalidate();
         weaponsPanel.repaint();
-
-        gbc.gridy++;
-        gbc.gridx = 1;
-        JButton continueBtn = new JButton("Select and Continue");
-        add(continueBtn, gbc);
-
-        continueBtn.addActionListener(e -> {
-            if (selectedWeapon != null) {
-                System.out.println("Selected weapon: " + selectedWeapon.getName());
-                GameContext.getUserPick().setWeaponId(selectedWeapon.getId());
-                GameContext.getPacketsSenderService().sendPowerUpRequest();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Please select a weapon.");
-            }
-        });
+//
+//        gbc.gridy++;
+//        gbc.gridx = 1;
+//        JButton continueBtn = new JButton("Select and Continue");
+//        add(continueBtn, gbc);
+//
+//        continueBtn.addActionListener(e -> {
+//            if (selectedWeapon != null) {
+//                System.out.println("Selected weapon: " + selectedWeapon.getName());
+//                GameContext.getUserPick().setWeaponId(selectedWeapon.getId());
+//                GameContext.getPacketsSenderService().sendPowerUpRequest();
+//            } else {
+//               // JOptionPane.showMessageDialog("Please select a weapon.");
+//            }
+//        });
     }
 }

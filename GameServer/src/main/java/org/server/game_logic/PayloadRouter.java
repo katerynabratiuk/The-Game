@@ -126,7 +126,7 @@ public class PayloadRouter implements IRouter, Runnable {
                     .map(field -> switch (field) {
                         case DAMAGE -> "damage";
                         case SPRAY -> "spray";
-                        case RATE_OF_FIRE -> "rate_of_fire";
+                        case RATE_OF_FIRE -> "rof";
                     })
                     .toList();
 

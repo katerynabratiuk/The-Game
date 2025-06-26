@@ -104,7 +104,7 @@ public class PayloadRouter implements IRouter, Runnable {
     private void handleWeaponFilter(WeaponListPayload p) {
         System.out.println("Received filtered weapons: " + p.getItemList());
         SwingUtilities.invokeLater(() -> {
-            UIProvider.displayWeaponSelection(Startup.getMainFrame(), new ArrayList<>(p.getItemList()));
+            UIProvider.displayWeaponSelection(GameContext.getMainFrame(), new ArrayList<>(p.getItemList()));
         });
     }
 

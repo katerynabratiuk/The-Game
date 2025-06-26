@@ -60,7 +60,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (criteria.getSortBy() != null && !criteria.getSortBy().isEmpty()) {
             sql.append(" ORDER BY ");
             for (int i = 0; i < criteria.getSortBy().size(); i++) {
-                sql.append("t.").append(criteria.getSortBy().get(i));
+                sql.append("t.").append(criteria.getSortBy().get(i)).append(" DESC");
                 if (i < criteria.getSortBy().size() - 1) sql.append(", ");
             }
         }
