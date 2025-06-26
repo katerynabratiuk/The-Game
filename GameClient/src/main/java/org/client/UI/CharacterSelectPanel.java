@@ -9,31 +9,95 @@ import java.util.ArrayList;
 
 public class CharacterSelectPanel extends JPanel {
     private CharacterDTO selectedCharacter = null;
+    private final GridBagConstraints gbc = new GridBagConstraints();
+    private final JPanel charactersPanel = new JPanel(new FlowLayout());
 
     public CharacterSelectPanel(JFrame frame, ArrayList<CharacterDTO> characters) {
         setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        // title
         JLabel title = new JLabel("Choose Your Character");
         title.setFont(new Font("Arial", Font.BOLD, 22));
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.CENTER;
         add(title, gbc);
 
-        gbc.gridwidth = 1;
+        // search bar
         gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
+        JTextField searchField = new JTextField(20);
+        add(searchField, gbc);
 
+        JButton searchBtn = new JButton("Search");
+        gbc.gridx = 2;
+        gbc.gridwidth = 1;
+        add(searchBtn, gbc);
 
-        for (int i = 0; i < characters.size(); i++) {
-            CharacterDTO c = characters.get(i);
+        // filter panel (radio buttons)
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 3;
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JRadioButton fastRadio = new JRadioButton("Fast");
+        JRadioButton armorRadio = new JRadioButton("Armor");
+        filterPanel.add(fastRadio);
+        filterPanel.add(armorRadio);
+        add(filterPanel, gbc);
+
+        // characters panel
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 3;
+        charactersPanel.setPreferredSize(new Dimension(500, 200));
+        add(charactersPanel, gbc);
+
+        // continue button
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.CENTER;
+        JButton continueBtn = new JButton("Select and Continue");
+        add(continueBtn, gbc);
+
+        continueBtn.addActionListener(e -> {
+            if (selectedCharacter != null) {
+                System.out.println("Selected character: " + selectedCharacter);
+                Startup.getUserPick().setCharacterId(selectedCharacter.getId());
+                Startup.getPacketsSenderService().sendWeaponListRequest();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Please select a character.");
+            }
+        });
+
+        searchBtn.addActionListener(e -> {
+            String query = searchField.getText().trim();
+            boolean isFast = fastRadio.isSelected();
+            boolean hasArmor = armorRadio.isSelected();
+
+            System.out.println("Search query: " + query);
+            System.out.println("Filters — Fast: " + isFast + ", Armor: " + hasArmor);
+
+            // TODO: send request with query and filters
+            Startup.getPacketsSenderService().sendCharacterFilterRequest(query, isFast, hasArmor);
+
+        });
+
+        displayCharacters(characters);
+    }
+
+    private void displayCharacters(ArrayList<CharacterDTO> characters) {
+        charactersPanel.removeAll();
+        for (CharacterDTO c : characters) {
             String name = c.getName();
             String description = c.getDescription();
             String imagePath = c.getImagePath();
 
             java.net.URL imageURL = getClass().getResource(imagePath);
-
             JButton charButton;
             if (imageURL != null) {
                 ImageIcon icon = new ImageIcon(imageURL);
@@ -48,27 +112,12 @@ public class CharacterSelectPanel extends JPanel {
             }
 
             charButton.setPreferredSize(new Dimension(150, 150));
-            charButton.setToolTipText(description); // можна навести — і показується опис
+            charButton.setToolTipText(description);
             charButton.addActionListener(e -> selectedCharacter = c);
 
-            gbc.gridx = i;
-            add(charButton, gbc);
+            charactersPanel.add(charButton);
         }
-
-        gbc.gridy++;
-        gbc.gridx = 1;
-        JButton continueBtn = new JButton("Select and Continue");
-        add(continueBtn, gbc);
-
-        continueBtn.addActionListener(e -> {
-            if (selectedCharacter != null) {
-                System.out.println("Selected character: " + selectedCharacter);
-                Startup.getUserPick().setCharacterId(selectedCharacter.getId());
-                Startup.getPacketsSenderService().sendWeaponListRequest();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Please select a character.");
-            }
-        });
-
+        charactersPanel.revalidate();
+        charactersPanel.repaint();
     }
 }

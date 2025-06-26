@@ -16,6 +16,7 @@ import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.network.ConnectionRequest;
 import org.lib.data_structures.payloads.network.ConnectionResponse;
 import org.lib.data_structures.payloads.queries.*;
+import org.lib.data_structures.payloads.queries.search.CharacterFilterPayload;
 
 
 import static org.lib.data_structures.payloads.enums.PayloadStructType.*;
@@ -34,6 +35,7 @@ import static org.lib.data_structures.payloads.enums.PayloadStructType.*;
         @JsonSubTypes.Type(value = LoginPayload.class, name = "LOGIN"),
         @JsonSubTypes.Type(value = UserPickPayload.class, name = "PICK"),
         @JsonSubTypes.Type(value = CharacterListPayload.class, name = "CHARACTER_LIST"),
+        @JsonSubTypes.Type(value = CharacterFilterPayload.class, name = "SEARCH_CHARACTER"),
         @JsonSubTypes.Type(value = WeaponListPayload.class, name = "WEAPON_LIST"),
         @JsonSubTypes.Type(value = PowerUpListPayload.class, name = "POWERUP_LIST")
 })

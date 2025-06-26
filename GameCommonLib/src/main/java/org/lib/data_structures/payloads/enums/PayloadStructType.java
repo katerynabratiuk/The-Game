@@ -15,5 +15,5 @@ public enum PayloadStructType {
     WEAPON_LIST,
     POWERUP_LIST,
     ACK,
-    UNKNOWN
+    CHARACTER_FILTER, UNKNOWN
 }

@@ -50,6 +50,7 @@ public class PayloadRouter implements IRouter, Runnable {
                 case GAME_STATE -> handleGameState((GameState) p);
                 case NOTIFICATION -> handlePlayerNotification((Notification) p);
                 case CHARACTER_LIST -> handleCharacterList((CharacterListPayload)p);
+                case CHARACTER_FILTER -> handleCharacterFilter((CharacterListPayload)p);
                 case WEAPON_LIST -> handleWeaponList((WeaponListPayload) p);
                 case POWERUP_LIST -> handlePowerUpList((PowerUpListPayload) p);
                 default -> System.err.println("Unknown payload type: " + p);
@@ -68,6 +69,14 @@ public class PayloadRouter implements IRouter, Runnable {
     private void handleCharacterList(CharacterListPayload payload) {
         System.out.println("Received characters: " + payload.getCharacters());
 
+        SwingUtilities.invokeLater(() -> {
+            UIProvider.displayCharacterSelection(Startup.getMainFrame(), new ArrayList<>(payload.getCharacters()));
+        });
+    }
+
+    private void handleCharacterFilter(CharacterListPayload payload)
+    {
+        System.out.println("Received filtered characters: " + payload.getCharacters());
         SwingUtilities.invokeLater(() -> {
             UIProvider.displayCharacterSelection(Startup.getMainFrame(), new ArrayList<>(payload.getCharacters()));
         });

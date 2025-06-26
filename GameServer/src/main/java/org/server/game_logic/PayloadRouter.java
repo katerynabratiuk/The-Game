@@ -14,11 +14,12 @@ import org.lib.data_structures.payloads.game.Notification;
 import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.network.ConnectionRequest;
 import org.lib.data_structures.payloads.queries.*;
+import org.lib.data_structures.payloads.queries.search.CharacterFilterPayload;
 import org.lib.packet_processing.send.SenderThread;
 import org.server.db.model.Item;
 import org.server.db.model.Pick;
 import org.server.db.model.User;
-import org.server.db.model.Weapon;
+import org.server.db.repository.criteria.CharacterSearchCriteria;
 import org.server.db.repository.implementation.CharacterRepositoryImpl;
 import org.server.db.repository.implementation.ItemRepositoryImpl;
 import org.server.db.repository.implementation.PickRepositoryImpl;
@@ -77,6 +78,7 @@ public class PayloadRouter implements IRouter, Runnable {
                 case REGISTER -> handleRegister((RegisterPayload) p);
                 case LOGIN -> handleLogin((LoginPayload) p);
                 case CHARACTER_LIST -> handleCharacterList((CharacterListPayload)p);
+                case CHARACTER_FILTER -> handleCharacterSearch((CharacterFilterPayload) p);
                 case WEAPON_LIST -> handleWeaponList((WeaponListPayload)p);
                 case POWERUP_LIST -> handlePowerupList((PowerUpListPayload)p);
                 case PICK -> handlePick((UserPickPayload) p);
@@ -84,6 +86,7 @@ public class PayloadRouter implements IRouter, Runnable {
             }
         }
     }
+
 
     private void handleWeaponList(WeaponListPayload query) {
         String clientUUID = query.getClientUUID();
@@ -118,6 +121,14 @@ public class PayloadRouter implements IRouter, Runnable {
         var responsePayload = new CharacterListPayload(characters);
 
         unicastThread.send(new NetworkPayload(List.of(responsePayload), clientUUID));
+    }
+
+    private void handleCharacterSearch(CharacterFilterPayload p) {
+
+        var characters = characterService.filter(new CharacterSearchCriteria(p.getName(), p.getFast(), p.getArmor()));
+        var responsePayload = new CharacterListPayload(characters);
+
+        unicastThread.send(new NetworkPayload(List.of(responsePayload), p.getClientUUID()));
     }
 
 

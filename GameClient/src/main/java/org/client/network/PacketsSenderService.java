@@ -5,6 +5,7 @@ import org.lib.data_structures.payloads.enums.ConnectionCode;
 import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.network.ConnectionRequest;
 import org.lib.data_structures.payloads.queries.*;
+import org.lib.data_structures.payloads.queries.search.CharacterFilterPayload;
 
 import java.io.IOException;
 import java.util.List;
@@ -45,6 +46,12 @@ public class PacketsSenderService {
 
     public void sendCharacterListRequest() {
         CharacterListPayload request = new CharacterListPayload();
+        request.setClientUUID(clientThread.getClientId());
+        send(List.of(request));
+    }
+
+    public void sendCharacterFilterRequest(String name, Boolean fast, Boolean armor) {
+        CharacterFilterPayload request = new CharacterFilterPayload(name, fast, armor);
         request.setClientUUID(clientThread.getClientId());
         send(List.of(request));
     }
