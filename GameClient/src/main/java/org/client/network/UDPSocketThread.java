@@ -1,6 +1,7 @@
 package org.client.network;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.client.game_logic.PayloadRouter;
 import org.lib.data.concurrency.ConcurrentQueue;
 import org.lib.data.payloads.NetworkPayload;
@@ -19,11 +20,16 @@ import java.util.*;
 
 import static org.lib.environment.EnvLoader.ENV_VARS;
 
+@Getter
 public class UDPSocketThread extends Thread {
-    @Getter private volatile SenderThread senderThread;
-    @Getter private volatile PacketReceiverThread receiverThread;
-    @Getter private final String clientId = UUID.randomUUID().toString();
-    @Getter private final PayloadRouter controller;
+    @Setter
+    private SenderThread senderThread;
+    @Setter
+    private PacketReceiverThread receiverThread;
+
+    private final PayloadRouter controller;
+
+    private final String clientId = UUID.randomUUID().toString();
     private final int RECONNECT_DELAY_MS = 10_000;
     private volatile boolean running = true;
 
