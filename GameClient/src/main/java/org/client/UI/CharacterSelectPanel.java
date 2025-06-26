@@ -96,7 +96,8 @@ public class CharacterSelectPanel extends JPanel {
             String description = c.getDescription();
             String imagePath = c.getImagePath();
 
-            java.net.URL imageURL = getClass().getResource(imagePath);
+            var imageURL = getClass().getResource(imagePath);
+
             JButton charButton;
             if (imageURL != null) {
                 ImageIcon icon = new ImageIcon(imageURL);

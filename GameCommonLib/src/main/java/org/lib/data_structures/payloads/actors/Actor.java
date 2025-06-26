@@ -8,31 +8,24 @@ import org.lib.data_structures.payloads.Payload;
 
 import java.awt.*;
 
-
+@Getter @Setter
 @NoArgsConstructor
 public class Actor extends Payload {
-    @Getter @Setter
     private String clientUUID;
 
-    @Getter @Setter
     private Coordinates coordinates;
 
-    @JsonIgnore @Getter @Setter
+    @JsonIgnore
     private boolean pendingDestroy;
 
-    @JsonIgnore @Getter @Setter
+    @JsonIgnore
     private boolean killed;
 
-    @Getter @Setter
     private double radius = 10; // circular space occupied by actor
+    private String imagePath;
 
-    @Getter @Setter
     private int R = 0;
-
-    @Getter @Setter
     private int G = 0;
-
-    @Getter @Setter
     private int B = 0;
 
 

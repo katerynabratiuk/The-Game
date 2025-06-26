@@ -1,5 +1,6 @@
 package org.server.game_logic;
 
+import org.lib.data_structures.payloads.actors.PlayerCharacter;
 import org.lib.data_structures.payloads.game.Vector;
 import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.actors.Actor;
@@ -79,13 +80,16 @@ public class KeyBindingsHandler {
     }
 
     private static void shoot(Actor actor, List<Actor> actors, PlayerInput input) {
+        var player = (PlayerCharacter) actor;
         double x = input.getDirection().getX();
         double y = input.getDirection().getY();
         var newActor = new Bullet(
                 input.getClientUUID(),
-                new Coordinates(actor.getCoordinates().getX(), actor.getCoordinates().getY()),
-                new Vector(x, y)
+                new Coordinates(player.getCoordinates().getX(), player.getCoordinates().getY()),
+                new Vector(x, y),
+                player.getDamage()
         );
         actors.add(newActor);
+        player.setLastAttackTime(System.currentTimeMillis());
     }
 }

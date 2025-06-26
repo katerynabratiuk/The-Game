@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Weapon extends Item{
-
+public class Weapon extends Item {
     private Integer damage;
     private Double spray;
     private Integer rof;

@@ -1,6 +1,5 @@
 package org.lib.data_structures.payloads.actors;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,29 +8,27 @@ import lombok.Setter;
 import java.awt.*;
 import java.util.Objects;
 
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlayerCharacter extends Actor {
-    @Getter @Setter
-    private int hitPoints = 5;
-
-    @Getter @Setter
     private String username;
 
-    @Getter @Setter
     private int maxHp = 5;
+    private int hitPoints = 5;
 
-    @JsonIgnore @Getter @Setter
     private double movementSpeed = 10;
 
-    @JsonIgnore @Getter @Setter
-    private double sprayAngle = 0;
+    private Double sprayAngle = 0.0;
+    private double rateOfFire = 1000;
+    private double damage = 1;
 
-    @JsonIgnore @Getter @Setter
-    private double rateOfFire = 0;
+    private long lastAttackTime;
+
 
     public PlayerCharacter(String clientUUID, Coordinates coordinates, String username) {
-        setRadius(10);
+        setRadius(20);
         updateColor(Color.BLUE);
         setCoordinates(coordinates);
         setClientUUID(clientUUID);
@@ -45,6 +42,14 @@ public class PlayerCharacter extends Actor {
         if (target instanceof Bullet bullet) {
             takeDamage(bullet.getDamage());
         }
+    }
+
+    public double calcCooldownRatio() {
+        return 1.0 - (System.currentTimeMillis() - lastAttackTime) / rateOfFire;
+    }
+
+    public boolean determineAttackReady() {
+        return calcCooldownRatio() >= 1.0;
     }
 
     private void takeDamage(int damage) {

@@ -29,10 +29,10 @@ public class Bullet extends Actor {
     @JsonIgnore @Getter @Setter
     private long creationTime = System.currentTimeMillis();
 
-    public Bullet(String clientUUID, Coordinates coordinates, Vector vector) {
+    public Bullet(String clientUUID, Coordinates coordinates, Vector vector, double radius) {
         setCoordinates(coordinates);
         setClientUUID(clientUUID);
-        setRadius(5);
+        setRadius(radius);
         updateColor(Color.RED);
         this.creationTime = System.currentTimeMillis();
         this.direction = vector;

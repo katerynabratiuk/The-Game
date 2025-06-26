@@ -23,6 +23,7 @@ public class MapPanel extends JPanel {
     private final RankingPanel rankingPanel;
     private final InventoryPanel inventoryPanel;
     private final int SCALE = 5;
+    private Image backgroundImage;
 
     @Setter
     private InputCallback inputCallback;
@@ -34,6 +35,7 @@ public class MapPanel extends JPanel {
         this.rankingPanel = new RankingPanel();
         this.inventoryPanel = new InventoryPanel();
         setupInputListeners();
+        loadBackgroundImage();
     }
 
     private void setupInputListeners() {
@@ -79,7 +81,6 @@ public class MapPanel extends JPanel {
 
     public void updateGameState(GameState gameState) {
         this.gameState = gameState;
-        // PlayerNameMapper.updatePlayerNameMappings(gameState);
         repaint();
     }
 
@@ -104,10 +105,16 @@ public class MapPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-
+        setBackgroundImage(g2d);
         drawActors(g2d);
         updateRankingPanel();
-        updateInventoryPanel(); // currently is updated each frame
+        updateInventoryPanel(); // currently is updated each frame - needs to be refactored
+    }
+
+    private void setBackgroundImage(Graphics2D g2d) {
+        if (backgroundImage != null) {
+            g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
     }
 
     private void drawActors(Graphics2D g2d) {
@@ -118,20 +125,57 @@ public class MapPanel extends JPanel {
 
     private void drawActor(Graphics2D g2d, Actor actor) {
         Coordinates pos = convertToMapCoordinates(actor.getCoordinates().getX(), actor.getCoordinates().getY(), (int)actor.getRadius());
-
-        g2d.setColor(actor.color());
-        g2d.fillOval(pos.getX(), pos.getY(), (int) actor.getRadius()*2, (int)actor.getRadius()*2);
-        g2d.setColor(Color.BLACK);
-
+        int diameter = (int) actor.getRadius() * 2;
         if (actor instanceof PlayerCharacter pc) {
-            drawPlayerCharacter(g2d, pc, pos);
+            drawPlayerCharacter(g2d, pc, pos, diameter);
+        } else {
+            g2d.setColor(actor.color());
+            g2d.fillOval(pos.getX(), pos.getY(), diameter, diameter);
         }
     }
 
-    private void drawPlayerCharacter(Graphics2D g2d, PlayerCharacter player, Coordinates pos) {
-        int diameter = (int) player.getRadius() * 2;
+    private void drawPlayerCharacter(Graphics2D g2d, PlayerCharacter player, Coordinates pos, int diameter) {
+        drawPlayerImage(g2d, player, pos, diameter);
         drawHealthBar(g2d, player, pos, diameter);
         drawUsername(g2d, player, pos, diameter);
+        drawCooldownIndicator(g2d, player, pos, diameter);
+    }
+
+    private void drawPlayerImage(Graphics2D g2d, PlayerCharacter player, Coordinates pos, int diameter) {
+        if (player.getImagePath() != null && !player.getImagePath().isEmpty()) {
+            try {
+                String imagePath = player.getImagePath();
+                var imageURL = getClass().getResource(imagePath);
+                if (imageURL != null) {
+                    var icon = new ImageIcon(imageURL);
+                    var scaledImage = icon.getImage().getScaledInstance(diameter, diameter, Image.SCALE_SMOOTH);
+                    var scaledIcon = new ImageIcon(scaledImage);
+                    g2d.drawImage(scaledIcon.getImage(), pos.getX(), pos.getY(), this);
+                }
+            } catch (Exception e) {
+                g2d.setColor(player.color());
+                g2d.fillOval(pos.getX(), pos.getY(), diameter, diameter);
+            }
+        } else {
+            g2d.setColor(player.color());
+            g2d.fillOval(pos.getX(), pos.getY(), diameter, diameter);
+        }
+    }
+
+    private void drawCooldownIndicator(Graphics2D g2d, PlayerCharacter player, Coordinates pos, int diameter) {
+        if (player.getRateOfFire() > 0) {
+            double cooldownRatio = player.calcCooldownRatio();
+            int innerDiameter = (int)(diameter * cooldownRatio);
+            int innerX = pos.getX() + (diameter - innerDiameter)/2;
+            int innerY = pos.getY() + (diameter - innerDiameter)/2;
+
+            g2d.setColor(new Color(0, 0, 0, 100));
+            g2d.fillOval(innerX, innerY, innerDiameter, innerDiameter);
+
+            g2d.setColor(new Color(255, 255, 0, 150));
+            g2d.fillArc(innerX, innerY, innerDiameter, innerDiameter,
+                    90, (int)(360 * cooldownRatio));
+        }
     }
 
     private void drawHealthBar(Graphics2D g2d, PlayerCharacter player, Coordinates pos, int diameter) {
@@ -194,6 +238,17 @@ public class MapPanel extends JPanel {
         );
         add(inventoryPanel);
         inventoryPanel.repaint();
+    }
+
+    private void loadBackgroundImage() {
+        try {
+            var imageUrl = getClass().getResource("/images/moon_surface.jpg");
+            if (imageUrl != null) {
+                backgroundImage = new ImageIcon(imageUrl).getImage();
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to load background image: " + e.getMessage());
+        }
     }
 
 }
