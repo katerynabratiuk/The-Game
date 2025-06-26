@@ -24,6 +24,7 @@ public class MapPanel extends JPanel {
     private final InventoryPanel inventoryPanel;
     private final int SCALE = 1;
     private Image backgroundImage;
+    private JButton reenterMapButton;
 
     @Setter
     private InputCallback inputCallback;
@@ -36,6 +37,7 @@ public class MapPanel extends JPanel {
         this.inventoryPanel = new InventoryPanel();
         setupInputListeners();
         loadBackgroundImage();
+        setupReenterMapButton();
     }
 
     private void setupInputListeners() {
@@ -70,6 +72,10 @@ public class MapPanel extends JPanel {
         removeKeyListener(keyListener);
         removeMouseListener(mouseListener);
         setFocusable(false);
+        if (reenterMapButton != null) {
+            reenterMapButton.setVisible(true);
+            reenterMapButton.requestFocusInWindow();
+        }
     }
     
     public void enableInput() {
@@ -251,6 +257,27 @@ public class MapPanel extends JPanel {
             }
         } catch (Exception e) {
             System.err.println("Failed to load background image: " + e.getMessage());
+        }
+    }
+
+    private void setupReenterMapButton() {
+        reenterMapButton = new JButton("Reenter map with a new character");
+        reenterMapButton.setVisible(false);
+        reenterMapButton.setFocusable(false);
+        reenterMapButton.addActionListener(e -> {
+            reenterMapButton.setVisible(false);
+            org.client.Startup.getPacketsSenderService().sendCharacterListRequest();
+        });
+        setLayout(null);
+        add(reenterMapButton);
+    }
+
+    @Override
+    public void setBounds(int x, int y, int width, int height) {
+        super.setBounds(x, y, width, height);
+        if (reenterMapButton != null) {
+            int btnWidth = 180, btnHeight = 40;
+            reenterMapButton.setBounds((width - btnWidth) / 2, (height - btnHeight) / 2, btnWidth, btnHeight);
         }
     }
 

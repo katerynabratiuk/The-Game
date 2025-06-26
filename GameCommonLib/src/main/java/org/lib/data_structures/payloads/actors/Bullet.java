@@ -31,7 +31,7 @@ public class Bullet extends Actor {
         setCoordinates(coordinates);
         setClientUUID(clientUUID);
         setRadius(radius);
-        setMovementSpeed(10.0);
+        setMovementSpeed(20.0);
         updateColor(Color.RED);
         this.creationTime = System.currentTimeMillis();
         this.direction = vector;
