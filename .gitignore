@@ -40,4 +40,5 @@ build/
 ### Mac OS ###
 .DS_Store
 
-.env
+# Executable
+/GameClient/Game-Executable
