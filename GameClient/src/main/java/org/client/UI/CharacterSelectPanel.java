@@ -82,7 +82,6 @@ public class CharacterSelectPanel extends JPanel {
             System.out.println("Search query: " + query);
             System.out.println("Filters — Fast: " + isFast + ", Armor: " + hasArmor);
 
-            // TODO: send request with query and filters
             Startup.getPacketsSenderService().sendCharacterFilterRequest(query, isFast, hasArmor);
 
         });
