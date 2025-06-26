@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static org.lib.data.payloads.enums.NotificationCode.KILL;
@@ -34,8 +35,8 @@ public class GameStateManager {
         var bulletsToRemove = bulletUpdater.updateAndCleanupBullets(actors);
         var collidedToRemove = new ArrayList<Actor>();
 
-        Consumer<Actor> onKillCallback = killed -> {
-            updatePlayerKills(killed);
+        BiConsumer<Actor, Actor> onKillCallback = (killed, killer) -> {
+            updatePlayerKills(killer);
             sendKillNotification(unicast, killed);
         };
         Consumer<Actor> onDestroyCallback = collidedToRemove::add;

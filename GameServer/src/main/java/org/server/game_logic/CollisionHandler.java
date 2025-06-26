@@ -3,17 +3,18 @@ package org.server.game_logic;
 import org.lib.data.payloads.actors.Actor;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class CollisionHandler {
-    public void checkCollisions(List<Actor> actors, Consumer<Actor> onKill, Consumer<Actor> onDestroy) {
+    public void checkCollisions(List<Actor> actors, BiConsumer<Actor, Actor> onKill, Consumer<Actor> onDestroy) {
         for (Actor trigger : actors) {
             for (Actor target : actors) {
                 if (target == trigger) continue;
                 if (isCollision(trigger, target)) {
                     trigger.OnCollision(target);
                     if (trigger.isKilled()) {
-                        onKill.accept(trigger);
+                        onKill.accept(trigger, target);
                     }
                 }
             }
