@@ -2,8 +2,8 @@ package org.client.UI;
 
 import org.client.game_logic.PayloadRouter;
 import org.client.network.PacketsSenderService;
-import org.lib.data_structures.dto.CharacterDTO;
-import org.lib.data_structures.dto.ItemDTO;
+import org.lib.data.dto.CharacterDTO;
+import org.lib.data.dto.ItemDTO;
 
 import javax.swing.*;
 import java.awt.*;

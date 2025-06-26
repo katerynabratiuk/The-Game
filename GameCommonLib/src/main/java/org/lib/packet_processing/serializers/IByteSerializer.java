@@ -1,6 +1,6 @@
 package org.lib.packet_processing.serializers;
 
-import org.lib.data_structures.payloads.NetworkPayload;
+import org.lib.data.payloads.NetworkPayload;
 
 public interface IByteSerializer {
     static byte[] serialize(NetworkPayload payload) { return new byte[0]; }

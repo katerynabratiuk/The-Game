@@ -2,10 +2,10 @@ package org.client.UI;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.lib.data_structures.payloads.actors.Actor;
-import org.lib.data_structures.payloads.actors.Coordinates;
-import org.lib.data_structures.payloads.game.GameState;
-import org.lib.data_structures.payloads.actors.PlayerCharacter;
+import org.lib.data.payloads.actors.Actor;
+import org.lib.data.payloads.actors.Coordinates;
+import org.lib.data.payloads.game.GameState;
+import org.lib.data.payloads.actors.PlayerCharacter;
 
 import javax.swing.*;
 import java.awt.*;

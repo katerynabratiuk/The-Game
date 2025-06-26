@@ -7,7 +7,7 @@ import org.client.game_logic.InputHandler;
 import org.client.game_logic.PayloadRouter;
 import org.client.network.PacketsSenderService;
 import org.client.network.UDPSocketThread;
-import org.lib.data_structures.payloads.queries.UserPickPayload;
+import org.lib.data.payloads.queries.UserPickPayload;
 
 import javax.swing.*;
 import java.io.IOException;

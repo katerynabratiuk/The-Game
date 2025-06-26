@@ -1,7 +1,7 @@
 package org.client.UI;
 
 import org.client.Startup;
-import org.lib.data_structures.dto.CharacterDTO;
+import org.lib.data.dto.CharacterDTO;
 
 import javax.swing.*;
 import java.awt.*;

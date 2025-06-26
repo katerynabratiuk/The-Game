@@ -1,11 +1,11 @@
 package org.server.game_logic;
 
-import org.lib.data_structures.payloads.actors.PlayerCharacter;
-import org.lib.data_structures.payloads.game.Vector;
-import org.lib.data_structures.payloads.game.PlayerInput;
-import org.lib.data_structures.payloads.actors.Actor;
-import org.lib.data_structures.payloads.actors.Coordinates;
-import org.lib.data_structures.payloads.actors.Bullet;
+import org.lib.data.payloads.actors.PlayerCharacter;
+import org.lib.data.payloads.game.Vector;
+import org.lib.data.payloads.game.PlayerInput;
+import org.lib.data.payloads.actors.Actor;
+import org.lib.data.payloads.actors.Coordinates;
+import org.lib.data.payloads.actors.Bullet;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;

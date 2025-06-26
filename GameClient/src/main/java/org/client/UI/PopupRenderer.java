@@ -1,6 +1,6 @@
 package org.client.UI;
 
-import org.lib.data_structures.payloads.game.Notification;
+import org.lib.data.payloads.game.Notification;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,7 +1,7 @@
 package org.server.game_logic;
 
 import lombok.Setter;
-import org.lib.data_structures.payloads.NetworkPayload;
+import org.lib.data.payloads.NetworkPayload;
 import org.lib.packet_processing.send.SenderThread;
 
 import java.util.List;

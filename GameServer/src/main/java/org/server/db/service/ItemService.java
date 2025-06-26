@@ -1,7 +1,7 @@
 package org.server.db.service;
 
 
-import org.lib.data_structures.dto.ItemDTO;
+import org.lib.data.dto.ItemDTO;
 import org.server.db.model.Item;
 import org.server.db.repository.ItemRepository;
 

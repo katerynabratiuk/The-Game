@@ -1,7 +1,7 @@
 package org.lib.packet_processing.send;
 
-import org.lib.data_structures.concurrency.ConcurrentQueue;
-import org.lib.data_structures.payloads.NetworkPayload;
+import org.lib.data.concurrency.ConcurrentQueue;
+import org.lib.data.payloads.NetworkPayload;
 import org.lib.packet_processing.registry.IReceiverRegistryObserver;
 import org.lib.packet_processing.send.strategies.BroadcastStrategy;
 import org.lib.packet_processing.send.strategies.IReceiversResolveStrategy;

@@ -1,7 +1,7 @@
 package org.server.game_logic;
 
-import org.lib.data_structures.payloads.game.PlayerInput;
-import org.lib.data_structures.payloads.actors.Actor;
+import org.lib.data.payloads.game.PlayerInput;
+import org.lib.data.payloads.actors.Actor;
 
 import java.util.List;
 

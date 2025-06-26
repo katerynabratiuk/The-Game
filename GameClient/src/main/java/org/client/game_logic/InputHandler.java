@@ -3,9 +3,9 @@ package org.client.game_logic;
 import org.client.UI.InputCallback;
 import org.client.UI.MapPanel;
 import org.client.network.PacketsSenderService;
-import org.lib.data_structures.payloads.actors.Coordinates;
-import org.lib.data_structures.payloads.game.PlayerInput;
-import org.lib.data_structures.payloads.game.Vector;
+import org.lib.data.payloads.actors.Coordinates;
+import org.lib.data.payloads.game.PlayerInput;
+import org.lib.data.payloads.game.Vector;
 
 import java.awt.event.MouseEvent;
 

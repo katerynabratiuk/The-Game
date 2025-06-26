@@ -1,9 +1,5 @@
 package org.lib.packet_processing.serializers;
 
-import org.lib.data_structures.payloads.Payload;
-
-import java.io.*;
-
 public class BinarySerializer { // implements ISerializer
 //    WIP - draft for future binary serializer - for optimization
 

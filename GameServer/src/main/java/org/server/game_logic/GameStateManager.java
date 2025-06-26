@@ -1,10 +1,10 @@
 package org.server.game_logic;
 
 import lombok.Getter;
-import org.lib.data_structures.payloads.NetworkPayload;
-import org.lib.data_structures.payloads.actors.PlayerCharacter;
-import org.lib.data_structures.payloads.game.*;
-import org.lib.data_structures.payloads.actors.Actor;
+import org.lib.data.payloads.NetworkPayload;
+import org.lib.data.payloads.actors.PlayerCharacter;
+import org.lib.data.payloads.game.*;
+import org.lib.data.payloads.actors.Actor;
 import org.lib.packet_processing.send.SenderThread;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import static org.lib.data_structures.payloads.enums.NotificationCode.KILL;
+import static org.lib.data.payloads.enums.NotificationCode.KILL;
 
 @Getter
 public class GameStateManager {
