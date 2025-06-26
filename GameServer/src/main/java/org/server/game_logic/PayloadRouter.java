@@ -10,14 +10,13 @@ import org.lib.data_structures.payloads.*;
 import org.lib.controllers.IRouter;
 import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.actors.PlayerCharacter;
-import org.lib.data_structures.payloads.game.Coordinates;
+import org.lib.data_structures.payloads.actors.Coordinates;
 import org.lib.data_structures.payloads.game.GameState;
 import org.lib.data_structures.payloads.game.Notification;
 import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.network.ConnectionRequest;
 import org.lib.data_structures.payloads.queries.*;
-import org.lib.packet_processing.send.BroadcastThread;
-import org.lib.packet_processing.send.UnicastThread;
+import org.lib.packet_processing.send.SenderThread;
 import org.server.db.model.Item;
 import org.server.db.model.User;
 import org.server.db.repository.implementation.CharacterRepositoryImpl;
@@ -33,8 +32,8 @@ import java.util.List;
 public class PayloadRouter implements IRouter, Runnable {
     private final ConcurrentQueue<NetworkPayload> receivedPackets = new ConcurrentQueue<>();
     private final GameStateManager gameStateManager;
-    @Getter @Setter private BroadcastThread broadcastThread;
-    @Getter @Setter private UnicastThread unicastThread;
+    @Getter @Setter private SenderThread broadcastThread;
+    @Getter @Setter private SenderThread unicastThread;
 
     // temporary
     private UserService userService = new UserService(new UserRepositoryImpl());
@@ -53,7 +52,7 @@ public class PayloadRouter implements IRouter, Runnable {
         while (true) {
             try {
                 NetworkPayload payload = receivedPackets.get();
-                handle(payload);
+                route(payload);
             } catch (Exception e) {
                 e.printStackTrace();
                 break;
@@ -63,7 +62,7 @@ public class PayloadRouter implements IRouter, Runnable {
 
 
     @SneakyThrows
-    public void handle(NetworkPayload payload) {
+    public void route(NetworkPayload payload) {
         for (var p: payload.getPayloads()) {
             switch (p.getType()) {
                 case PLAYER_INPUT -> handlePlayerInput((PlayerInput) p);

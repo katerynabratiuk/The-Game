@@ -1,16 +1,14 @@
-package org.lib.packet_processing.strategies;
+package org.lib.packet_processing.send.strategies;
 
+import lombok.AllArgsConstructor;
 import org.lib.packet_processing.registry.SocketAddressRegistry;
 
 import java.net.SocketAddress;
 import java.util.Collection;
 
-public class DynamicRegistryStrategy implements ReceiverStrategy {
+@AllArgsConstructor
+public class DynamicRegistryStrategy implements IReceiverRegistryStrategy {
     private final SocketAddressRegistry registry;
-
-    public DynamicRegistryStrategy(SocketAddressRegistry registry) {
-        this.registry = registry;
-    }
 
     @Override
     public Collection<SocketAddress> getReceivers() {

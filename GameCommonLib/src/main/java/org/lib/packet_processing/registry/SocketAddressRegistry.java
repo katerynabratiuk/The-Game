@@ -30,7 +30,7 @@ public class SocketAddressRegistry implements ISocketAddressRegistry{
     public void add(String key, SocketAddress address) {
         boolean wasEmpty = receivers.isEmpty();
         receivers.put(key, address);
-        if (wasEmpty) { // && !receivers.isEmpty()
+        if (wasEmpty) {
             observers.forEach(IReceiverRegistryObserver::onReceiverAdded);
         }
         receivers.put(key, address);

@@ -6,11 +6,10 @@ import org.lib.packet_processing.receive.Decoder;
 import org.lib.packet_processing.receive.Decryptor;
 import org.lib.packet_processing.receive.PacketReceiverThread;
 import org.lib.packet_processing.registry.SocketAddressRegistry;
-import org.lib.packet_processing.send.Encoder;
-import org.lib.packet_processing.send.Encryptor;
-import org.lib.packet_processing.send.BroadcastThread;
-import org.lib.packet_processing.send.UnicastThread;
-import org.lib.packet_processing.strategies.DynamicRegistryStrategy;
+import org.lib.packet_processing.send.*;
+import org.lib.packet_processing.send.strategies.BroadcastStrategy;
+import org.lib.packet_processing.send.strategies.DynamicRegistryStrategy;
+import org.lib.packet_processing.send.strategies.UnicastStrategy;
 import org.server.game_logic.PayloadRouter;
 
 import java.net.*;
@@ -20,8 +19,8 @@ import static org.lib.environment.EnvLoader.ENV_VARS;
 public class UDPSocketThread extends Thread {
     @Getter public DatagramSocket socket;
     @Getter private final PacketReceiverThread  receivingThread;
-    @Getter private final BroadcastThread broadcastThread;
-    @Getter private final UnicastThread unicastThread;
+    @Getter private final SenderThread broadcastThread;
+    @Getter private final SenderThread unicastThread;
 
     @SneakyThrows
     public UDPSocketThread(PayloadRouter controller) {
@@ -31,8 +30,8 @@ public class UDPSocketThread extends Thread {
         this.socket = new DatagramSocket(PORT, serverAddress);
         var registry = new SocketAddressRegistry();
 
-        this.unicastThread = new UnicastThread(socket, new Encoder(), new Encryptor(), registry);
-        this.broadcastThread = new BroadcastThread(socket, new Encoder(), new Encryptor(), new DynamicRegistryStrategy(registry));
+        this.unicastThread = new SenderThread(socket, new Encoder(), new Encryptor(), new UnicastStrategy(registry));
+        this.broadcastThread = new SenderThread(socket, new Encoder(), new Encryptor(), new BroadcastStrategy(new DynamicRegistryStrategy(registry)));
         this.receivingThread = new PacketReceiverThread(socket, controller, new Decoder(), new Decryptor(), registry);
 
         registry.addObserver(broadcastThread);

@@ -3,29 +3,28 @@ package org.server.game_logic;
 import lombok.Getter;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.lib.data_structures.payloads.NetworkPayload;
+import org.lib.data_structures.payloads.actors.Coordinates;
 import org.lib.data_structures.payloads.actors.PlayerCharacter;
 import org.lib.data_structures.payloads.game.*;
 import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.actors.Bullet;
-import org.lib.packet_processing.send.BroadcastThread;
-import org.lib.packet_processing.send.UnicastThread;
+import org.lib.packet_processing.send.SenderThread;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.lib.data_structures.payloads.enums.NotificationCode.KILL;
 
+@Getter
 public class GameStateManager {
     private final List<Actor> actors = new CopyOnWriteArrayList<>();
-    @Getter
     private final Map<String, Integer> playerKills = new ConcurrentHashMap<>();
     private final Map<String, String> clientUUIDToUsernameLookup = new ConcurrentHashMap<>();
 
-    public synchronized void updateGameThread(UnicastThread unicast, BroadcastThread broadcast) {
+    public synchronized void updateGameThread(SenderThread unicast, SenderThread broadcast) {
         updateBullets();
         checkCollision(unicast);
     }
@@ -57,7 +56,7 @@ public class GameStateManager {
         actors.removeAll(toRemove);
     }
 
-    private synchronized void checkCollision(UnicastThread thread) {
+    private synchronized void checkCollision(SenderThread unicastThread) {
         List<Actor> actorsToRemove = new ArrayList<>();
 
         for (Actor trigger : actors) {
@@ -68,7 +67,7 @@ public class GameStateManager {
                 }
                 if (trigger.isKilled()) {
                     updatePlayerKills(target);
-                    sendKillNotification(thread, trigger);
+                    sendKillNotification(unicastThread, trigger);
                 }
             }
 
@@ -80,7 +79,7 @@ public class GameStateManager {
         actors.removeAll(actorsToRemove);
     }
 
-    private void sendKillNotification(UnicastThread thread, Actor actor) {
+    private void sendKillNotification(SenderThread thread, Actor actor) {
         var notif = new Notification("You were killed", KILL);
         thread.send(new NetworkPayload(List.of(notif), actor.getClientUUID()));
     }

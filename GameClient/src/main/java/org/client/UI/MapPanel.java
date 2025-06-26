@@ -3,7 +3,7 @@ package org.client.UI;
 import lombok.Getter;
 import lombok.Setter;
 import org.lib.data_structures.payloads.actors.Actor;
-import org.lib.data_structures.payloads.game.Coordinates;
+import org.lib.data_structures.payloads.actors.Coordinates;
 import org.lib.data_structures.payloads.game.GameState;
 import org.lib.data_structures.payloads.actors.PlayerCharacter;
 
@@ -111,7 +111,7 @@ public class MapPanel extends JPanel {
     }
 
     private void drawActors(Graphics2D g2d) {
-        for (Actor actor : gameState.getActorsSnapshot()) {
+        for (Actor actor : gameState.getActors()) {
             drawActor(g2d, actor);
         }
     }

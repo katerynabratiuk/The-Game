@@ -1,14 +1,11 @@
 package org.client.UI;
 
 import org.client.Startup;
-import org.lib.data_structures.payloads.queries.UserPickPayload;
-import org.server.db.dto.CharacterDTO;
+import org.lib.data_structures.dto.CharacterDTO;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
 
 public class CharacterSelectPanel extends JPanel {
     private CharacterDTO selectedCharacter = null;

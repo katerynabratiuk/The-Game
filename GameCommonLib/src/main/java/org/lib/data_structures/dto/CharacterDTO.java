@@ -1,4 +1,4 @@
-package org.server.db.dto;
+package org.lib.data_structures.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -10,6 +10,7 @@ import org.client.network.PacketsSenderService;
 import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.*;
 import org.lib.controllers.IRouter;
+import org.lib.data_structures.payloads.actors.Coordinates;
 import org.lib.data_structures.payloads.game.*;
 import org.lib.data_structures.payloads.enums.NotificationCode;
 import org.lib.data_structures.payloads.queries.CharacterListPayload;
@@ -42,7 +43,7 @@ public class PayloadRouter implements IRouter, Runnable, InputCallback {
         while (true) {
             try {
                 NetworkPayload payload = receivedPackets.get();
-                handle(payload);
+                route(payload);
             } catch (Exception e) {
                 e.printStackTrace();
                 break;
@@ -73,7 +74,7 @@ public class PayloadRouter implements IRouter, Runnable, InputCallback {
         packetsSenderService.sendInput(input);
     }
 
-    public void handle(NetworkPayload payload) {
+    public void route(NetworkPayload payload) {
         for (var p : payload.getPayloads()) {
             switch (p.getType()) {
                 case GAME_STATE -> handleGameState((GameState) p);

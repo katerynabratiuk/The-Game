@@ -2,24 +2,20 @@ package org.server.game_logic;
 
 import lombok.Setter;
 import org.lib.data_structures.payloads.NetworkPayload;
-import org.lib.packet_processing.send.BroadcastThread;
-import org.lib.packet_processing.send.UnicastThread;
+import org.lib.packet_processing.send.SenderThread;
 
 import java.util.List;
 
 public class GameThread extends Thread {
     private final GameStateManager gameStateService;
-    @Setter private BroadcastThread broadcastThread;
-    @Setter private UnicastThread unicastThread;
+    @Setter private SenderThread broadcastThread;
+    @Setter private SenderThread unicastThread;
     private final int FPS = 30;
     private final long FRAME_TIME = 1000 / FPS;
-    private static final int MAX_RETRIES = 50;
-    private static final int RETRY_DELAY_MS = 100;
 
     public GameThread(GameStateManager gameStateManager) {
         this.gameStateService = gameStateManager;
     }
-
 
     @Override
     public void run() {
@@ -28,7 +24,6 @@ public class GameThread extends Thread {
             return;
         }
 
-        waitForBroadcastThreadReady();
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 if (shouldSkipFrame()) continue;
@@ -41,23 +36,8 @@ public class GameThread extends Thread {
         }
     }
 
-    private void waitForBroadcastThreadReady() {
-        int retryCount = 0;
-        if (!broadcastThread.isAlive()) {
-            while (!broadcastThread.isAlive() && retryCount++ < MAX_RETRIES) {
-                try {
-                    Thread.sleep(RETRY_DELAY_MS);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    System.err.println("broadcastThread terminated, stopping GameThread");
-                    return;
-                }
-            }
-        }
-    }
-
     private boolean shouldSkipFrame() throws InterruptedException {
-        if (!broadcastThread.hasReceivers()) {
+        if (broadcastThread.noReceivers()) {
             System.out.println("No receivers. Waiting...");
             broadcastThread.waitForReceivers();
             return true;

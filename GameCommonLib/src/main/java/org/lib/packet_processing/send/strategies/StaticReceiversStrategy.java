@@ -1,16 +1,14 @@
-package org.lib.packet_processing.strategies;
+package org.lib.packet_processing.send.strategies;
+
+import lombok.AllArgsConstructor;
 
 import java.net.SocketAddress;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class StaticReceiversStrategy implements ReceiverStrategy {
-    private Map<String, SocketAddress> receivers = new ConcurrentHashMap<>();
-
-    public StaticReceiversStrategy(Map<String, SocketAddress> receivers) {
-        this.receivers = receivers;
-    }
+@AllArgsConstructor
+public class StaticReceiversStrategy implements IReceiverRegistryStrategy {
+    private Map<String, SocketAddress> receivers;
 
     @Override
     public Collection<SocketAddress> getReceivers() {

@@ -8,7 +8,8 @@ import org.lib.packet_processing.receive.PacketReceiverThread;
 import org.lib.packet_processing.registry.SocketAddressRegistry;
 import org.lib.packet_processing.send.Encoder;
 import org.lib.packet_processing.send.Encryptor;
-import org.lib.packet_processing.send.UnicastThread;
+import org.lib.packet_processing.send.SenderThread;
+import org.lib.packet_processing.send.strategies.UnicastStrategy;
 
 import java.io.IOException;
 import java.net.*;
@@ -17,7 +18,7 @@ import java.util.*;
 import static org.lib.environment.EnvLoader.ENV_VARS;
 
 public class UDPSocketThread extends Thread {
-    @Getter private volatile UnicastThread senderThread;
+    @Getter private volatile SenderThread senderThread;
     @Getter private volatile PacketReceiverThread receiverThread;
     @Getter private final String clientId = UUID.randomUUID().toString();
     @Getter private final PayloadRouter controller;
@@ -54,7 +55,7 @@ public class UDPSocketThread extends Thread {
         var socket = new DatagramSocket();
         var registry = getServerAddressRegistry();
 
-        senderThread = new UnicastThread(socket, new Encoder(), new Encryptor(), registry);
+        senderThread = new SenderThread(socket, new Encoder(), new Encryptor(), new UnicastStrategy(registry));
         receiverThread = new PacketReceiverThread(socket, controller, new Decoder(), new Decryptor(), null);
 
         senderThread.start();
@@ -83,7 +84,6 @@ public class UDPSocketThread extends Thread {
         Thread.sleep(RECONNECT_DELAY_MS);
     }
 
-    // check if sleep() needed
     private void handleNetworkError(IOException e) {
         System.err.println("Network error: " + e.getMessage());
         if (running) {

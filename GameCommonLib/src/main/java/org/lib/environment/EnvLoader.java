@@ -23,7 +23,7 @@ public class EnvLoader {
                 env.put(key, props.getProperty(key));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
         return env;
     }

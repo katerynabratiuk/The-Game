@@ -1,7 +1,7 @@
 package org.server.db.service;
 
 
-import org.server.db.dto.CharacterDTO;
+import org.lib.data_structures.dto.CharacterDTO;
 import org.server.db.model.GameCharacter;
 import org.server.db.repository.CharacterRepository;
 

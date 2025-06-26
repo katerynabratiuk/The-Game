@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.lib.data_structures.dto.CharacterDTO;
 import org.lib.data_structures.payloads.Payload;
 import org.lib.data_structures.payloads.enums.PayloadStructType;
-import org.server.db.dto.CharacterDTO;
 
 import java.util.List;
 

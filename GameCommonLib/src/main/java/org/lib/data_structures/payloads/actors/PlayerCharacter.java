@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.lib.data_structures.payloads.game.Coordinates;
 
 import java.awt.*;
 import java.util.Objects;
@@ -23,13 +22,13 @@ public class PlayerCharacter extends Actor {
     private int maxHp = 5;
 
     @JsonIgnore @Getter @Setter
-    private double movementSpeed = 10; // temp
+    private double movementSpeed = 10;
 
     @JsonIgnore @Getter @Setter
-    private double sprayAngle = 0; // temp
+    private double sprayAngle = 0;
 
     @JsonIgnore @Getter @Setter
-    private double rateOfFire = 0; // temp in ms
+    private double rateOfFire = 0;
 
     public PlayerCharacter(String clientUUID, Coordinates coordinates, String username) {
         setRadius(10);
@@ -41,7 +40,6 @@ public class PlayerCharacter extends Actor {
 
     @Override
     public void OnCollision(Actor target) {
-        // change UUID string field to UUID type
         if (Objects.equals(getClientUUID(), target.getClientUUID())) return; // prevent self-damage from bullets
 
         if (target instanceof Bullet bullet) {

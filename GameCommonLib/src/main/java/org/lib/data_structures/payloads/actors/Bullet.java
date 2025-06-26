@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.lib.data_structures.payloads.game.Coordinates;
 import org.lib.data_structures.payloads.game.Vector;
 
 import java.awt.*;
@@ -40,7 +39,6 @@ public class Bullet extends Actor {
 
     @Override
     public void OnCollision(Actor target) {
-        // TODO: needs refactoring to prevent checking UUID in all colliding actors
         if (Objects.equals(getClientUUID(), target.getClientUUID())) return;
         setPendingDestroy(true);
     }
