@@ -141,41 +141,43 @@ public class PayloadRouter implements IRouter, Runnable {
         System.out.println("handlePlayerNotification " + notification);
     }
 
-    private void hangleRegister(RegisterPayload registerPayload) {
-        if (registerPayload.getClientUUID() != null && registerPayload.getUsername() != null) {
-            gameStateManager.registerUsername(registerPayload.getClientUUID(), registerPayload.getUsername());
-        }
-        var notif = new Notification("Welcome to the map!");
-        unicastThread.send(new NetworkPayload(List.of(notif), registerPayload.getClientUUID()));
-        System.out.println("Registered " + registerPayload.getUsername());
-
-    }
-
     private void handleLogin(LoginPayload query) {
         System.out.println("Logged in " + query.getUsername());
         if (query.getClientUUID() != null && query.getUsername() != null) {
-            if (userService.correctCredentials(new User(query.getUsername(), query.getPassword())))
-            {
+            if (userService.correctCredentials(new User(query.getUsername(), query.getPassword()))) {
                 gameStateManager.loginUsername(query.getClientUUID(), query.getUsername());
-            }
-            else{
-                var notif = new Notification("Incorrect credentials!");
-                unicastThread.send(new NetworkPayload(List.of(notif), query.getClientUUID()));
+
+                var successNotif = new Notification("Login successful");
+                unicastThread.send(new NetworkPayload(List.of(successNotif), query.getClientUUID()));
+            } else {
+                var failNotif = new Notification("Incorrect credentials!");
+                unicastThread.send(new NetworkPayload(List.of(failNotif), query.getClientUUID()));
             }
         }
-        var notif = new Notification("hi there");
-        unicastThread.send(new NetworkPayload(List.of(notif), query.getClientUUID()));
     }
+
 
     public void handleRegister(RegisterPayload registerPayload) {
-        if (registerPayload.getClientUUID() != null && registerPayload.getUsername() != null) {
-            gameStateManager.registerUsername(registerPayload.getClientUUID(), registerPayload.getUsername());
-        }
-        var notif = new Notification("Welcome to the map!");
-        unicastThread.send(new NetworkPayload(List.of(notif), registerPayload.getClientUUID()));
-        System.out.println("Registered " + registerPayload.getUsername());
+        String uuid = registerPayload.getClientUUID();
+        String username = registerPayload.getUsername();
+        String password = registerPayload.getPassword();
 
+        if (uuid != null && username != null && password != null) {
+            try {
+                userService.registerUser(new User(username, password));
+                gameStateManager.registerUsername(uuid, username);
+                var notif = new Notification("Welcome to the map!");
+                unicastThread.send(new NetworkPayload(List.of(notif), uuid));
+            } catch (IllegalArgumentException e) {
+                var notif = new Notification("Registration failed: " + e.getMessage());
+                unicastThread.send(new NetworkPayload(List.of(notif), uuid));
+            }
+        } else {
+            var notif = new Notification("Invalid registration data");
+            unicastThread.send(new NetworkPayload(List.of(notif), uuid));
+        }
     }
+
 
 
     private void handlePick(UserPickPayload query) {

@@ -21,8 +21,7 @@ public class UserService {
 
     public User registerUser(User user) {
         if (!isValidUser(user)) {
-            return null;
-            //throw new IllegalArgumentException("Invalid user data or username already exists");
+            throw new IllegalArgumentException("Invalid user data or username already exists");
         }
         return userRepository.create(user);
     }

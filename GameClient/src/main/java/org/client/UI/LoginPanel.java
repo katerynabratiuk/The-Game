@@ -58,7 +58,6 @@ public class LoginPanel extends JPanel {
             if (!username.isEmpty() && !password.isEmpty()) {
                 try {
                     Startup.getPacketsSenderService().sendLogin(username, password);
-                    Startup.getPacketsSenderService().sendCharacterListRequest();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(frame, "Login failed: " + ex.getMessage());
@@ -67,6 +66,7 @@ public class LoginPanel extends JPanel {
                 JOptionPane.showMessageDialog(frame, "Please enter both username and password!");
             }
         });
+
 
     }
 }

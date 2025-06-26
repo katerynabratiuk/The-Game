@@ -63,13 +63,13 @@ public class RegisterPanel extends JPanel {
             } else {
                 try {
                     Startup.getPacketsSenderService().sendRegister(username, password);
-                    Startup.startGame();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(frame, "Failed to register: " + ex.getMessage());
                 }
             }
         });
+
 
     }
 

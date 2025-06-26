@@ -116,6 +116,13 @@ public class PayloadRouter implements IRouter, Runnable, InputCallback {
         if (notif.getCode() == NotificationCode.KILL) {
             mapPanel.onKill();
         }
+        String msg = notif.getMessage();
+
+        if (msg.equals("Login successful")) {
+            Startup.getPacketsSenderService().sendCharacterListRequest();
+        } else if (msg.equals("Welcome to the map!")) {
+            Startup.getPacketsSenderService().sendCharacterListRequest();
+        }
     }
 
     private void handleGameState(GameState p) {
