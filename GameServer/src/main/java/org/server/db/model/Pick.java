@@ -11,19 +11,16 @@ public class Pick {
 
     private Integer id;
     private GameCharacter gameCharacter;
-    private List<Item> items;
+    private Item weapon;
+    private Item powerUp;
 
-    public Pick(Integer id, List<Item> items) {
+    public Pick(Integer id, Item weapon, Item powerUp) {
         this.id = id;
-        this.items = items;
+        this.weapon = weapon;
+        this.powerUp = powerUp;
     }
 
     public Pick() {
-    }
-
-    public void addItem(Item item)
-    {
-        this.items.add(item);
     }
 
 }

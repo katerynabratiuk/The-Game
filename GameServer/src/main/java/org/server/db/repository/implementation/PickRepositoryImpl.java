@@ -15,10 +15,11 @@ public class PickRepositoryImpl implements PickRepository {
     public Pick create(Pick pick) {
         try (Connection connection = DbConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(
-                    "INSERT INTO pick(id_pick, id_character) VALUES (?, ?)"
+                    "INSERT INTO pick(id_character, id_weapon, id_powerup) VALUES (?, ?, ?)"
             );
-            stmt.setInt(1, pick.getId());
-            stmt.setInt(2, pick.getGameCharacter().getId());
+            stmt.setInt(1, pick.getGameCharacter().getId());
+            stmt.setInt(2, pick.getWeapon().getId());
+            stmt.setInt(3, pick.getPowerUp().getId());
             stmt.executeUpdate();
             return pick;
         } catch (SQLException e) {

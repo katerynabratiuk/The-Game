@@ -63,7 +63,7 @@ public class PowerUpSelectPanel extends JPanel {
                 System.out.println("Selected power-up: " + selectedItem.getName());
                 Startup.getUserPick().setPowerUpId(selectedItem.getId());
 
-                Startup.getPacketsSenderService().sendUserPick(
+                Startup.getPacketsSenderService().sendUserPickAndJoin(
                         Startup.getUserPick().getCharacterId(),
                         Startup.getUserPick().getWeaponId(),
                         Startup.getUserPick().getPowerUpId()

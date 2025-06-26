@@ -16,12 +16,16 @@ import org.lib.data_structures.payloads.network.ConnectionRequest;
 import org.lib.data_structures.payloads.queries.*;
 import org.lib.packet_processing.send.SenderThread;
 import org.server.db.model.Item;
+import org.server.db.model.Pick;
 import org.server.db.model.User;
+import org.server.db.model.Weapon;
 import org.server.db.repository.implementation.CharacterRepositoryImpl;
 import org.server.db.repository.implementation.ItemRepositoryImpl;
+import org.server.db.repository.implementation.PickRepositoryImpl;
 import org.server.db.repository.implementation.UserRepositoryImpl;
 import org.server.db.service.CharacterService;
 import org.server.db.service.ItemService;
+import org.server.db.service.PickService;
 import org.server.db.service.UserService;
 
 import java.util.ArrayList;
@@ -35,6 +39,10 @@ public class PayloadRouter implements IRouter, Runnable {
 
     // temporary
     private UserService userService = new UserService(new UserRepositoryImpl());
+    private PickService pickService = new PickService(new PickRepositoryImpl());
+    private CharacterService characterService = new CharacterService(new CharacterRepositoryImpl());
+    private ItemService itemService = new ItemService(new ItemRepositoryImpl());
+
 
     public PayloadRouter(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
@@ -172,7 +180,46 @@ public class PayloadRouter implements IRouter, Runnable {
         }
     }
 
+
+
     private void handlePick(UserPickPayload query) {
+        String clientUUID = query.getClientUUID();
+        String username = gameStateManager.getUsernameByClientUUID(clientUUID);
+
+        var character = characterService.getCharacter(query.getCharacterId());
+        var weapon = itemService.getItem(query.getWeaponId());
+        var powerUp = itemService.getItem(query.getPowerUpId());
+
+        if (character == null || weapon == null || powerUp == null) {
+            var notif = new Notification("Invalid pick data received.");
+            unicastThread.send(new NetworkPayload(List.of(notif), clientUUID));
+            return;
+        }
+
+        var player = new PlayerCharacter(clientUUID, new Coordinates(0, 0), username);
+
+        player.setMovementSpeed(player.getMovementSpeed() * character.getMovingSpeed());
+        int newHp = player.getHitPoints() + character.getHeartPoints();
+        player.setHitPoints(newHp);
+        player.setMaxHp(newHp);
+
+        switch (powerUp.getType()) {
+            case SPEED -> player.setMovementSpeed(player.getMovementSpeed() + 3);
+            case HEAL -> player.setHitPoints(player.getHitPoints() + 2);
+            case FLASH -> {} // TODO flash
+        }
+
+        gameStateManager.addActor(player);
+
+        Pick pick = new Pick();
+        pick.setGameCharacter(character);
+        pick.setWeapon(weapon);
+        pick.setPowerUp(powerUp);
+
+        pickService.createPick(pick);
+
+        var notif = new Notification("Pick successful! Starting game...");
+        unicastThread.send(new NetworkPayload(List.of(notif), clientUUID));
     }
 
     private void handlePlayerInput(PlayerInput input) {

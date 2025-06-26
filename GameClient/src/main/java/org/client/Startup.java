@@ -38,7 +38,7 @@ public class Startup {
     public static void startGame() {
         UIProvider.displayGame(frame, mapPanel);
         UIProvider.attachControls(frame, mapPanel, controller, packetsSenderService);
-        packetsSenderService.sendJoinRequest();
+        //packetsSenderService.sendJoinRequest();
     }
 
     private static void initComponents() throws IOException {

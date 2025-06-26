@@ -18,7 +18,7 @@ public class PlayerCharacter extends Actor {
     @Getter @Setter
     private String username;
 
-    @Getter
+    @Getter @Setter
     private int maxHp = 5;
 
     @JsonIgnore @Getter @Setter

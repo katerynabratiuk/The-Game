@@ -62,7 +62,7 @@ public class PacketsSenderService {
     }
 
 
-    public void sendUserPick(Integer character, Integer weapon, Integer item)
+    public void sendUserPickAndJoin(Integer character, Integer weapon, Integer item)
     {
         UserPickPayload payload = new UserPickPayload(character, weapon, item, clientThread.getClientId());
         send(List.of(payload));
