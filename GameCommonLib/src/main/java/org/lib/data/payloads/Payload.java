@@ -11,7 +11,7 @@ import org.lib.data.payloads.enums.PayloadStructType;
 import org.lib.data.payloads.game.*;
 import org.lib.data.payloads.network.*;
 import org.lib.data.payloads.queries.search.CharacterFilterPayload;
-import org.lib.data.payloads.queries.search.WeaponFilterPayload;
+import org.lib.data.payloads.queries.search.*;
 import org.lib.data.payloads.actors.Inventory;
 import org.lib.data.payloads.queries.*;
 

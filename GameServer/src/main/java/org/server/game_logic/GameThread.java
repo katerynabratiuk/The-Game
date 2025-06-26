@@ -34,6 +34,7 @@ public class GameThread extends Thread {
     private boolean shouldSkipFrame() throws InterruptedException {
         if (broadcastThread == null) return true;
         if (!broadcastThread.noReceivers()) return false;
+        if (!gameStateService.getActors().isEmpty()) return false;
 
         System.out.println("No receivers. Waiting...");
         broadcastThread.waitForReceivers();

@@ -36,14 +36,14 @@ import org.server.db.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter @Setter
 public class PayloadRouter implements IRouter, Runnable {
-    @Getter @Setter
-    private SenderThread broadcastThread;
-    @Getter @Setter
-    private SenderThread unicastThread;
-
     private final ConcurrentQueue<NetworkPayload> receivedPackets = new ConcurrentQueue<>();
     private final GameStateManager gameStateManager;
+
+    private SenderThread broadcastThread;
+    private SenderThread unicastThread;
+
     private UserService userService = new UserService(new UserRepositoryImpl());
     private PickService pickService = new PickService(new PickRepositoryImpl());
     private CharacterService characterService = new CharacterService(new CharacterRepositoryImpl());

@@ -88,12 +88,14 @@ public class KeyBindingsHandler {
 
         double x = input.getDirection().getX();
         double y = input.getDirection().getY();
+        double size = player.getDamage();
 
         var newActor = new Bullet(
                 input.getClientUUID(),
                 new Coordinates(player.getCoordinates().getX(), player.getCoordinates().getY()),
                 new Vector(x, y),
-                player.getDamage()
+                size,
+                (int) player.getDamage()
         );
         actors.add(newActor);
         player.setLastAttackTime(System.currentTimeMillis());
