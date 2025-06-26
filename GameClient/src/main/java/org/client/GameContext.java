@@ -13,7 +13,7 @@ import javax.swing.*;
 import java.io.IOException;
 
 
-public class Startup {
+public class GameContext {
     private static final int FRAME_WIDTH = 800;
     private static final int FRAME_HEIGHT = 600;
 
@@ -38,7 +38,7 @@ public class Startup {
     public static void startGame() {
         UIProvider.displayGame(frame, mapPanel);
         UIProvider.attachControls(frame, mapPanel, controller, packetsSenderService);
-        //packetsSenderService.sendJoinRequest();
+        // send join() request on demand
     }
 
     private static void initComponents() throws IOException {

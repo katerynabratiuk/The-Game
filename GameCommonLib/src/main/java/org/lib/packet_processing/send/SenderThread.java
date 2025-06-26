@@ -16,14 +16,15 @@ public class SenderThread extends Thread implements IReceiverRegistryObserver {
     private final IEncoder encoder;
     private final IEncryptor encryptor;
     private final IReceiversResolveStrategy strategy;
-    private final ConcurrentQueue<NetworkPayload> queue = new ConcurrentQueue<>();
+    private final ConcurrentQueue<NetworkPayload> queue;
     private final Object receiversLock = new Object();
 
-    public SenderThread(DatagramSocket socket, IEncoder encoder, IEncryptor encryptor, IReceiversResolveStrategy strategy) {
+    public SenderThread(DatagramSocket socket, IEncoder encoder, IEncryptor encryptor, IReceiversResolveStrategy strategy, ConcurrentQueue<NetworkPayload> incomingQueue) {
         this.socket = socket;
         this.encoder = encoder;
         this.encryptor = encryptor;
         this.strategy = strategy;
+        this.queue = incomingQueue;
     }
 
     public void send(NetworkPayload payload) {

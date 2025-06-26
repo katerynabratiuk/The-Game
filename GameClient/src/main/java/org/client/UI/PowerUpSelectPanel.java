@@ -1,6 +1,6 @@
 package org.client.UI;
 
-import org.client.Startup;
+import org.client.GameContext;
 import org.lib.data.dto.ItemDTO;
 
 import javax.swing.*;
@@ -61,15 +61,15 @@ public class PowerUpSelectPanel extends JPanel {
         continueBtn.addActionListener(e -> {
             if (selectedItem != null) {
                 System.out.println("Selected power-up: " + selectedItem.getName());
-                Startup.getUserPick().setPowerUpId(selectedItem.getId());
+                GameContext.getUserPick().setPowerUpId(selectedItem.getId());
 
-                Startup.getPacketsSenderService().sendUserPickAndJoin(
-                        Startup.getUserPick().getCharacterId(),
-                        Startup.getUserPick().getWeaponId(),
-                        Startup.getUserPick().getPowerUpId()
+                GameContext.getPacketsSenderService().sendUserPickAndJoin(
+                        GameContext.getUserPick().getCharacterId(),
+                        GameContext.getUserPick().getWeaponId(),
+                        GameContext.getUserPick().getPowerUpId()
                 );
 
-                Startup.startGame();
+                GameContext.startGame();
             } else {
                 JOptionPane.showMessageDialog(frame, "Please select a power-up.");
             }

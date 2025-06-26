@@ -1,6 +1,6 @@
 package org.client.UI;
 
-import org.client.Startup;
+import org.client.GameContext;
 import org.lib.data.dto.ItemDTO;
 
 import javax.swing.*;
@@ -61,8 +61,8 @@ public class WeaponSelectPanel extends JPanel {
         continueBtn.addActionListener(e -> {
             if (selectedWeapon != null) {
                 System.out.println("Selected weapon: " + selectedWeapon.getName());
-                Startup.getUserPick().setWeaponId(selectedWeapon.getId());
-                Startup.getPacketsSenderService().sendPowerUpRequest();
+                GameContext.getUserPick().setWeaponId(selectedWeapon.getId());
+                GameContext.getPacketsSenderService().sendPowerUpRequest();
             } else {
                 JOptionPane.showMessageDialog(frame, "Please select a weapon.");
             }

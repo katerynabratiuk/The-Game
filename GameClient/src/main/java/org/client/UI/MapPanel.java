@@ -2,6 +2,7 @@ package org.client.UI;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.client.GameContext;
 import org.lib.data.payloads.actors.Actor;
 import org.lib.data.payloads.actors.Coordinates;
 import org.lib.data.payloads.game.GameState;
@@ -266,7 +267,7 @@ public class MapPanel extends JPanel {
         reenterMapButton.setFocusable(false);
         reenterMapButton.addActionListener(e -> {
             reenterMapButton.setVisible(false);
-            org.client.Startup.getPacketsSenderService().sendCharacterListRequest();
+            GameContext.getPacketsSenderService().sendCharacterListRequest();
         });
         setLayout(null); 
         add(reenterMapButton);

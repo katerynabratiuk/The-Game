@@ -1,6 +1,6 @@
 package org.client.UI;
 
-import org.client.Startup;
+import org.client.GameContext;
 
 import javax.swing.*;
 import java.awt.*;
@@ -62,7 +62,7 @@ public class RegisterPanel extends JPanel {
                 JOptionPane.showMessageDialog(frame, "Passwords do not match.");
             } else {
                 try {
-                    Startup.getPacketsSenderService().sendRegister(username, password);
+                    GameContext.getPacketsSenderService().sendRegister(username, password);
                 } catch (Exception ex) {
                     System.err.println(ex.getMessage());
                     JOptionPane.showMessageDialog(frame, "Failed to register: " + ex.getMessage());

@@ -1,6 +1,6 @@
 package org.client.UI;
 
-import org.client.Startup;
+import org.client.GameContext;
 import org.lib.data.dto.CharacterDTO;
 
 import javax.swing.*;
@@ -67,8 +67,8 @@ public class CharacterSelectPanel extends JPanel {
         continueBtn.addActionListener(e -> {
             if (selectedCharacter != null) {
                 System.out.println("Selected character: " + selectedCharacter);
-                Startup.getUserPick().setCharacterId(selectedCharacter.getId());
-                Startup.getPacketsSenderService().sendWeaponListRequest();
+                GameContext.getUserPick().setCharacterId(selectedCharacter.getId());
+                GameContext.getPacketsSenderService().sendWeaponListRequest();
             } else {
                 JOptionPane.showMessageDialog(frame, "Please select a character.");
             }
@@ -82,7 +82,7 @@ public class CharacterSelectPanel extends JPanel {
             System.out.println("Search query: " + query);
             System.out.println("Filters — Fast: " + isFast + ", Armor: " + hasArmor);
 
-            Startup.getPacketsSenderService().sendCharacterFilterRequest(query, isFast, hasArmor);
+            GameContext.getPacketsSenderService().sendCharacterFilterRequest(query, isFast, hasArmor);
 
         });
 

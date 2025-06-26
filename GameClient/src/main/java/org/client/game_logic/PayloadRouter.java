@@ -1,6 +1,6 @@
 package org.client.game_logic;
 
-import org.client.Startup;
+import org.client.GameContext;
 import org.client.UI.MapPanel;
 import org.client.UI.PopupRenderer;
 import org.client.UI.UIProvider;
@@ -71,7 +71,7 @@ public class PayloadRouter implements IRouter, Runnable {
         System.out.println("Received weapons: " + payload.getItemList());
 
         SwingUtilities.invokeLater(() -> {
-            UIProvider.displayPowerUpSelection(Startup.getMainFrame(), new ArrayList<>(payload.getItemList()));
+            UIProvider.displayPowerUpSelection(GameContext.getMainFrame(), new ArrayList<>(payload.getItemList()));
         });
     }
 
@@ -79,7 +79,7 @@ public class PayloadRouter implements IRouter, Runnable {
         System.out.println("Received characters: " + payload.getCharacters());
 
         SwingUtilities.invokeLater(() -> {
-            UIProvider.displayCharacterSelection(Startup.getMainFrame(), new ArrayList<>(payload.getCharacters()));
+            UIProvider.displayCharacterSelection(GameContext.getMainFrame(), new ArrayList<>(payload.getCharacters()));
         });
     }
 
@@ -87,7 +87,7 @@ public class PayloadRouter implements IRouter, Runnable {
     {
         System.out.println("Received filtered characters: " + payload.getCharacters());
         SwingUtilities.invokeLater(() -> {
-            UIProvider.displayCharacterSelection(Startup.getMainFrame(), new ArrayList<>(payload.getCharacters()));
+            UIProvider.displayCharacterSelection(GameContext.getMainFrame(), new ArrayList<>(payload.getCharacters()));
         });
     }
 
@@ -95,7 +95,7 @@ public class PayloadRouter implements IRouter, Runnable {
         System.out.println("Received weapons: " + payload.getItemList());
 
         SwingUtilities.invokeLater(() -> {
-            UIProvider.displayWeaponSelection(Startup.getMainFrame(), new ArrayList<>(payload.getItemList()));
+            UIProvider.displayWeaponSelection(GameContext.getMainFrame(), new ArrayList<>(payload.getItemList()));
         });
     }
 
@@ -108,9 +108,9 @@ public class PayloadRouter implements IRouter, Runnable {
         String msg = notif.getMessage();
 
         if (msg.equals("Login successful")) {
-            Startup.getPacketsSenderService().sendCharacterListRequest();
+            GameContext.getPacketsSenderService().sendCharacterListRequest();
         } else if (msg.equals("Welcome to the map!")) {
-            Startup.getPacketsSenderService().sendCharacterListRequest();
+            GameContext.getPacketsSenderService().sendCharacterListRequest();
         }
     }
 

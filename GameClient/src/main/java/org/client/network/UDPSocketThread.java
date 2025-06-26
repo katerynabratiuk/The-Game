@@ -2,6 +2,8 @@ package org.client.network;
 
 import lombok.Getter;
 import org.client.game_logic.PayloadRouter;
+import org.lib.data.concurrency.ConcurrentQueue;
+import org.lib.data.payloads.NetworkPayload;
 import org.lib.packet_processing.receive.Decoder;
 import org.lib.packet_processing.receive.Decryptor;
 import org.lib.packet_processing.receive.PacketReceiverThread;
@@ -54,8 +56,9 @@ public class UDPSocketThread extends Thread {
         System.out.println("Creating a client socket...");
         var socket = new DatagramSocket();
         var registry = getServerAddressRegistry();
+        ConcurrentQueue<NetworkPayload> senderQueue = new ConcurrentQueue<>();
 
-        senderThread = new SenderThread(socket, new Encoder(), new Encryptor(), new UnicastStrategy(registry));
+        senderThread = new SenderThread(socket, new Encoder(), new Encryptor(), new UnicastStrategy(registry), senderQueue);
         receiverThread = new PacketReceiverThread(socket, controller, new Decoder(), new Decryptor(), null);
 
         senderThread.start();
@@ -80,7 +83,6 @@ public class UDPSocketThread extends Thread {
     }
 
     private void handleConnectionLoss() throws InterruptedException {
-        System.err.println("Connection lost");
         Thread.sleep(RECONNECT_DELAY_MS);
     }
 

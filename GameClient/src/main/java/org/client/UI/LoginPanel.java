@@ -1,6 +1,6 @@
 package org.client.UI;
 
-import org.client.Startup;
+import org.client.GameContext;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,7 +57,7 @@ public class LoginPanel extends JPanel {
 
             if (!username.isEmpty() && !password.isEmpty()) {
                 try {
-                    Startup.getPacketsSenderService().sendLogin(username, password);
+                    GameContext.getPacketsSenderService().sendLogin(username, password);
                 } catch (Exception ex) {
                     System.err.println(ex.getMessage());
                     JOptionPane.showMessageDialog(frame, "Login failed: " + ex.getMessage());

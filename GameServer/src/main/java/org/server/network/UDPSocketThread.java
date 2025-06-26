@@ -2,6 +2,8 @@ package org.server.network;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.lib.data.concurrency.ConcurrentQueue;
+import org.lib.data.payloads.NetworkPayload;
 import org.lib.packet_processing.receive.Decoder;
 import org.lib.packet_processing.receive.Decryptor;
 import org.lib.packet_processing.receive.PacketReceiverThread;
@@ -26,10 +28,12 @@ public class UDPSocketThread extends Thread {
 
     @SneakyThrows
     public UDPSocketThread(PayloadRouter controller) {
+        ConcurrentQueue<NetworkPayload> unicastQueue = new ConcurrentQueue<>();
+        ConcurrentQueue<NetworkPayload> broadcastQueue = new ConcurrentQueue<>();
         this.registry = new SocketAddressRegistry();
         this.socket = createServerSocket();
-        this.unicastThread = createUnicastSender();
-        this.broadcastThread = createBroadcastSender();
+        this.unicastThread = createUnicastSender(unicastQueue);
+        this.broadcastThread = createBroadcastSender(broadcastQueue);
         this.receivingThread = createReceiver(controller);
 
         registry.addObserver(broadcastThread);
@@ -48,13 +52,13 @@ public class UDPSocketThread extends Thread {
         return new DatagramSocket(port, address);
     }
 
-    private SenderThread createUnicastSender() {
-        return new SenderThread(socket, new Encoder(), new Encryptor(), new UnicastStrategy(registry));
+    private SenderThread createUnicastSender(ConcurrentQueue<NetworkPayload> queue) {
+        return new SenderThread(socket, new Encoder(), new Encryptor(), new UnicastStrategy(registry), queue);
     }
 
-    private SenderThread createBroadcastSender() {
+    private SenderThread createBroadcastSender(ConcurrentQueue<NetworkPayload> queue) {
         var strategy = new BroadcastStrategy(new DynamicRegistryStrategy(registry));
-        return new SenderThread(socket, new Encoder(), new Encryptor(), strategy);
+        return new SenderThread(socket, new Encoder(), new Encryptor(), strategy, queue);
     }
 
     private PacketReceiverThread createReceiver(PayloadRouter controller) {
