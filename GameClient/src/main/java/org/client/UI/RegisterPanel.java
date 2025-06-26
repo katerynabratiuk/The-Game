@@ -64,7 +64,7 @@ public class RegisterPanel extends JPanel {
                 try {
                     Startup.getPacketsSenderService().sendRegister(username, password);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    System.err.println(ex.getMessage());
                     JOptionPane.showMessageDialog(frame, "Failed to register: " + ex.getMessage());
                 }
             }

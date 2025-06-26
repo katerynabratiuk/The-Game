@@ -19,11 +19,6 @@ public class GameThread extends Thread {
 
     @Override
     public void run() {
-        if (broadcastThread == null) {
-            System.err.println("GameThread failed to start - broadcastThread not initialized");
-            return;
-        }
-
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 if (shouldSkipFrame()) continue;
@@ -37,12 +32,12 @@ public class GameThread extends Thread {
     }
 
     private boolean shouldSkipFrame() throws InterruptedException {
-        if (broadcastThread.noReceivers()) {
-            System.out.println("No receivers. Waiting...");
-            broadcastThread.waitForReceivers();
-            return true;
-        }
-        return false;
+        if (broadcastThread == null) return true;
+        if (!broadcastThread.noReceivers()) return false;
+
+        System.out.println("No receivers. Waiting...");
+        broadcastThread.waitForReceivers();
+        return true;
     }
 
     private void executeGameFrame() throws InterruptedException {

@@ -73,8 +73,8 @@ public class KeyBindingsHandler {
     }
 
     private static void move(Actor actor, int dx, int dy) {
-        Coordinates current = actor.getCoordinates();
-        Coordinates newCoord = new Coordinates(current.getX() + dx, current.getY() + dy);
+        var current = actor.getCoordinates();
+        var newCoord = new Coordinates(current.getX() + dx, current.getY() + dy);
         actor.setCoordinates(newCoord);
     }
 

@@ -59,7 +59,7 @@ public class LoginPanel extends JPanel {
                 try {
                     Startup.getPacketsSenderService().sendLogin(username, password);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    System.err.println(ex.getMessage());
                     JOptionPane.showMessageDialog(frame, "Login failed: " + ex.getMessage());
                 }
             } else {

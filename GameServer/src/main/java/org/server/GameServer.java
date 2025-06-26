@@ -1,13 +1,15 @@
 package org.server;
 
-import org.server.game_logic.GameStateManager;
-import org.server.game_logic.GameThread;
-import org.server.game_logic.PayloadRouter;
+import org.server.game_logic.*;
 import org.server.network.UDPSocketThread;
 
-public class UDPServer {
+public class GameServer {
     public static void main(String[] args) {
-        var service = new GameStateManager();
+        setupComponents();
+    }
+
+    private static void setupComponents() {
+        var service = new GameStateManager(new PlayersStatsTracker(), new CollisionHandler(), new BulletUpdateHandler());
         var router = new PayloadRouter(service);
         var serverThread = new UDPSocketThread(router);
         var gameThread = new GameThread(service);

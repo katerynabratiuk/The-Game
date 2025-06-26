@@ -45,7 +45,7 @@ public class PayloadRouter implements IRouter, Runnable, InputCallback {
                 NetworkPayload payload = receivedPackets.get();
                 route(payload);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println(e.getMessage());
                 break;
             }
         }

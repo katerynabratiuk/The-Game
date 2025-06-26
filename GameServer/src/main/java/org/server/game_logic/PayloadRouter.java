@@ -8,10 +8,8 @@ import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.dto.ItemDTO;
 import org.lib.data_structures.payloads.*;
 import org.lib.controllers.IRouter;
-import org.lib.data_structures.payloads.actors.Actor;
 import org.lib.data_structures.payloads.actors.PlayerCharacter;
 import org.lib.data_structures.payloads.actors.Coordinates;
-import org.lib.data_structures.payloads.game.GameState;
 import org.lib.data_structures.payloads.game.Notification;
 import org.lib.data_structures.payloads.game.PlayerInput;
 import org.lib.data_structures.payloads.network.ConnectionRequest;
@@ -54,7 +52,7 @@ public class PayloadRouter implements IRouter, Runnable {
                 NetworkPayload payload = receivedPackets.get();
                 route(payload);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println(e.getMessage());
                 break;
             }
         }

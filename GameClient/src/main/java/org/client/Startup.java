@@ -11,32 +11,27 @@ import org.lib.data_structures.payloads.queries.UserPickPayload;
 import javax.swing.*;
 import java.io.IOException;
 
+
 public class Startup {
-    private static JFrame frame;
+    private static final int FRAME_WIDTH = 800;
+    private static final int FRAME_HEIGHT = 600;
+
+    @Getter private static JFrame frame;
+    @Getter private static final UserPickPayload userPick = new UserPickPayload();
+    @Getter private static PacketsSenderService packetsSenderService;
+
     private static MapPanel mapPanel;
     private static PayloadRouter controller;
 
-    @Getter
-    private static PacketsSenderService packetsSenderService;
-
-    @Getter
-    private static final UserPickPayload userPick = new UserPickPayload();
-
-
     public static void launch() {
         try {
-            initComponents();
+            initCoreComponents();
+            setupMainWindow();
+            UIProvider.displayMenu(frame);
+            frame.setVisible(true);
         } catch (IOException e) {
-            throw new RuntimeException(e); // change logs
+            logAndThrowStartupError(e);
         }
-
-        frame = new JFrame("The Game");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        frame.setLocationRelativeTo(null);
-
-        UIProvider.displayMenu(frame);
-        frame.setVisible(true);
     }
 
     public static void startGame() {
@@ -45,17 +40,32 @@ public class Startup {
         packetsSenderService.sendJoinRequest();
     }
 
-    private static void initComponents() throws IOException {
-        // TODO: consider refactoring to resolve circular dependencies
+    private static void initCoreComponents() throws IOException {
         mapPanel = new MapPanel();
         controller = new PayloadRouter(mapPanel);
 
-        var clientThread = new UDPSocketThread(controller);
-        packetsSenderService = new PacketsSenderService(clientThread);
+        var udpSocketThread = new UDPSocketThread(controller);
+        packetsSenderService = new PacketsSenderService(udpSocketThread);
         controller.setPacketsSenderService(packetsSenderService);
 
+        startThreads(controller, udpSocketThread);
+    }
+
+    private static void setupMainWindow() {
+        frame = new JFrame("The Game");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+        frame.setLocationRelativeTo(null);
+    }
+
+    private static void startThreads(Runnable controller, Thread udpSocketThread) {
         new Thread(controller).start();
-        clientThread.start();
+        udpSocketThread.start();
+    }
+
+    private static void logAndThrowStartupError(IOException e) {
+        System.err.println("Failed to launch the game: " + e.getMessage());
+        throw new RuntimeException("Startup failed", e);
     }
 
     public static JFrame getMainFrame() {

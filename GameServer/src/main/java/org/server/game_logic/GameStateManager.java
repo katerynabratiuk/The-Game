@@ -5,7 +5,6 @@ import org.lib.data_structures.payloads.NetworkPayload;
 import org.lib.data_structures.payloads.actors.PlayerCharacter;
 import org.lib.data_structures.payloads.game.*;
 import org.lib.data_structures.payloads.actors.Actor;
-import org.lib.data_structures.payloads.actors.Bullet;
 import org.lib.packet_processing.send.SenderThread;
 
 import java.util.ArrayList;
@@ -13,66 +12,45 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import static org.lib.data_structures.payloads.enums.NotificationCode.KILL;
 
 @Getter
 public class GameStateManager {
     private final List<Actor> actors = new CopyOnWriteArrayList<>();
-    private final Map<String, Integer> playerKills = new ConcurrentHashMap<>();
     private final Map<String, String> clientUUIDToUsernameLookup = new ConcurrentHashMap<>();
+    private final PlayersStatsTracker statsTracker;
+    private final CollisionHandler collisionHandler;
+    private final BulletUpdateHandler bulletUpdater;
+
+    public GameStateManager(PlayersStatsTracker statsTracker, CollisionHandler collisionHandler, BulletUpdateHandler bulletUpdater) {
+        this.statsTracker = statsTracker;
+        this.collisionHandler = collisionHandler;
+        this.bulletUpdater = bulletUpdater;
+    }
 
     public synchronized void updateGameThread(SenderThread unicast, SenderThread broadcast) {
-        updateBullets();
-        checkCollision(unicast);
-    }
+        var bulletsToRemove = bulletUpdater.updateAndCleanupBullets(actors);
+        var collidedToRemove = new ArrayList<Actor>();
 
-    private synchronized void updateBullets() {
-        List<Actor> toRemove = new ArrayList<>();
+        Consumer<Actor> onKillCallback = killed -> {
+            updatePlayerKills(killed);
+            sendKillNotification(unicast, killed);
+        };
+        Consumer<Actor> onDestroyCallback = collidedToRemove::add;
+        collisionHandler.checkCollisions(actors, onKillCallback, onDestroyCallback);
 
-        for (Actor actor : actors) {
-            if (actor instanceof Bullet bullet) {
-                bullet.onNextFrame();
-                if (bullet.isPendingDestroy()) {
-                    toRemove.add(bullet);
-                }
-            }
-        }
-
-        actors.removeAll(toRemove);
-    }
-
-    private synchronized void checkCollision(SenderThread unicastThread) {
-        List<Actor> actorsToRemove = new ArrayList<>();
-
-        for (Actor trigger : actors) {
-            for (Actor target : actors) {
-                if (target == trigger) continue;
-                if (isCollision(trigger, target)) {
-                    trigger.OnCollision(target);
-                }
-                if (trigger.isKilled()) {
-                    updatePlayerKills(target);
-                    sendKillNotification(unicastThread, trigger);
-                }
-            }
-
-            if (trigger.isPendingDestroy()) {
-                actorsToRemove.add(trigger);
-            }
-        }
-
-        actors.removeAll(actorsToRemove);
+        List<Actor> allToRemove = new ArrayList<>(bulletsToRemove);
+        allToRemove.addAll(collidedToRemove);
+        actors.removeAll(allToRemove);
     }
 
     public synchronized GameState snapshot() {
-        Map<String, Integer> completePlayerKills = new ConcurrentHashMap<>();
-        
-        for (String username : clientUUIDToUsernameLookup.values()) {
-            completePlayerKills.put(username, playerKills.getOrDefault(username, 0));
-        }
-        
-        return new GameState(new ArrayList<>(actors), completePlayerKills);
+        return new GameState(
+                new ArrayList<>(actors),
+                statsTracker.getKillsSnapshot(clientUUIDToUsernameLookup.values())
+        );
     }
 
     public void addActor(Actor actor) {
@@ -85,7 +63,7 @@ public class GameStateManager {
 
     public Actor getPlayerCharacterByUUID(String clientUUID) {
         return actors.stream()
-                .filter(a -> a.getClientUUID().equals(clientUUID) && (a instanceof PlayerCharacter))
+                .filter(a -> a.getClientUUID().equals(clientUUID) && a instanceof PlayerCharacter)
                 .findFirst()
                 .orElse(null);
     }
@@ -108,24 +86,11 @@ public class GameStateManager {
         thread.send(new NetworkPayload(List.of(notif), actor.getClientUUID()));
     }
 
-    private boolean isCollision(Actor trigger, Actor target) {
-        double x = trigger.getCoordinates().getX() - target.getCoordinates().getX();
-        double y = trigger.getCoordinates().getY() - target.getCoordinates().getY();
-        double distance = Math.sqrt(x*x + y*y);
-
-        double radSum = trigger.getRadius() + target.getRadius();
-        return distance <= radSum;
-    }
-
-    private void updatePlayerKills(Actor killer) {
-        var killerCharacter = (PlayerCharacter) getPlayerCharacterByUUID(killer.getClientUUID());
-        if (killerCharacter != null) {
-            incrementPlayerKills(killerCharacter.getUsername());
-            System.out.println("Incremented player kills: " + killerCharacter.getUsername());
+    private void updatePlayerKills(Actor killedActor) {
+        var killer = getPlayerCharacterByUUID(killedActor.getClientUUID());
+        if (killer instanceof PlayerCharacter pc) {
+            statsTracker.incrementKill(pc.getUsername());
+            System.out.println("Incremented player kills: " + pc.getUsername());
         }
-    }
-
-    private void incrementPlayerKills(String username) {
-        playerKills.put(username, playerKills.getOrDefault(username, 0) + 1);
     }
 }
