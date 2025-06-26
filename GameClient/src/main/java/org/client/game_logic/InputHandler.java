@@ -35,8 +35,7 @@ public class InputHandler implements InputCallback {
         var direction = new Vector(new Coordinates(x, y));
         PlayerInput input = new PlayerInput(packetsSenderService.getClientId(), MouseEvent.BUTTON1);
         input.setDirection(direction);
-
-        System.out.println("Mouse clicked at: " + input.getDirection().getX() + " " + input.getDirection().getY());
+        System.out.println("Sending mouse click event: " + input.getDirection().getX() + " " + input.getDirection().getY());
         packetsSenderService.sendInput(input);
     }
 }

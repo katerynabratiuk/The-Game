@@ -7,6 +7,7 @@ import org.lib.data.payloads.actors.Coordinates;
 import org.server.game_logic.CollisionHandler;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static org.mockito.Mockito.*;
@@ -27,13 +28,13 @@ class CollisionHandlerTest {
         when(actor1.isPendingDestroy()).thenReturn(true);
 
         var handler = new CollisionHandler();
-        var onKill = mock(Consumer.class);
+        var onKill = mock(BiConsumer.class);
         var onDestroy = mock(Consumer.class);
 
         handler.checkCollisions(List.of(actor1, actor2), onKill, onDestroy);
 
         verify(actor1).OnCollision(actor2);
-        verify(onKill).accept(actor1);
+        verify(onKill).accept(actor1, actor2);
         verify(onDestroy).accept(actor1);
     }
 }
