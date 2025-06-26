@@ -1,9 +1,7 @@
 package org.server.game_logic;
 
 import lombok.Getter;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.lib.data_structures.payloads.NetworkPayload;
-import org.lib.data_structures.payloads.actors.Coordinates;
 import org.lib.data_structures.payloads.actors.PlayerCharacter;
 import org.lib.data_structures.payloads.game.*;
 import org.lib.data_structures.payloads.actors.Actor;
@@ -30,26 +28,14 @@ public class GameStateManager {
     }
 
     private synchronized void updateBullets() {
-        // rewrite with pendingDestroy
         List<Actor> toRemove = new ArrayList<>();
 
         for (Actor actor : actors) {
             if (actor instanceof Bullet bullet) {
-                long currentTime = System.currentTimeMillis();
-
-                if (currentTime - bullet.getCreationTime() >= bullet.getLifespan()) {
+                bullet.onNextFrame();
+                if (bullet.isPendingDestroy()) {
                     toRemove.add(bullet);
-                    continue;
                 }
-
-                var current = new Vector2D(bullet.getCoordinates().getX(), bullet.getCoordinates().getY());
-                var direction = Vector.toVector2D(bullet.getDirection());
-                if (direction.getNorm() == 0) continue;
-
-                var movement = direction.normalize().scalarMultiply(bullet.getMovementSpeed());
-                var newPos = current.add(movement);
-
-                bullet.setCoordinates(new Coordinates((int) newPos.getX(), (int) newPos.getY()));
             }
         }
 
@@ -77,20 +63,6 @@ public class GameStateManager {
         }
 
         actors.removeAll(actorsToRemove);
-    }
-
-    private void sendKillNotification(SenderThread thread, Actor actor) {
-        var notif = new Notification("You were killed", KILL);
-        thread.send(new NetworkPayload(List.of(notif), actor.getClientUUID()));
-    }
-
-    private boolean isCollision(Actor trigger, Actor target) {
-        double x = trigger.getCoordinates().getX() - target.getCoordinates().getX();
-        double y = trigger.getCoordinates().getY() - target.getCoordinates().getY();
-        double distance = Math.sqrt(x*x + y*y);
-
-        double radSum = trigger.getRadius() + target.getRadius();
-        return distance <= radSum;
     }
 
     public synchronized GameState snapshot() {
@@ -127,12 +99,22 @@ public class GameStateManager {
         clientUUIDToUsernameLookup.put(clientUUID, username);
     }
 
-    public void loginUsername(String clientUUID, String username) {
-        clientUUIDToUsernameLookup.put(clientUUID, username);
-    }
-
     public String getUsernameByClientUUID(String clientUUID) {
         return clientUUIDToUsernameLookup.get(clientUUID);
+    }
+
+    private void sendKillNotification(SenderThread thread, Actor actor) {
+        var notif = new Notification("You were killed", KILL);
+        thread.send(new NetworkPayload(List.of(notif), actor.getClientUUID()));
+    }
+
+    private boolean isCollision(Actor trigger, Actor target) {
+        double x = trigger.getCoordinates().getX() - target.getCoordinates().getX();
+        double y = trigger.getCoordinates().getY() - target.getCoordinates().getY();
+        double distance = Math.sqrt(x*x + y*y);
+
+        double radSum = trigger.getRadius() + target.getRadius();
+        return distance <= radSum;
     }
 
     private void updatePlayerKills(Actor killer) {

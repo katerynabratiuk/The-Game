@@ -80,7 +80,7 @@ public class UDPSocketThread extends Thread {
     }
 
     private void handleConnectionLoss() throws InterruptedException {
-        System.err.println("Connection lost. Reconnecting...");
+        System.err.println("Connection lost");
         Thread.sleep(RECONNECT_DELAY_MS);
     }
 

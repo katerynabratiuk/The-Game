@@ -66,8 +66,6 @@ public class PayloadRouter implements IRouter, Runnable {
         for (var p: payload.getPayloads()) {
             switch (p.getType()) {
                 case PLAYER_INPUT -> handlePlayerInput((PlayerInput) p);
-                case ACTOR -> handleActor((Actor) p);
-                case GAME_STATE -> handleGameState((GameState) p);
                 case NOTIFICATION -> handlePlayerNotification((Notification) p);
                 case CONNECTION_REQUEST -> handleConnectionRequest((ConnectionRequest) p);
                 case REGISTER -> handleRegister((RegisterPayload) p);
@@ -109,8 +107,7 @@ public class PayloadRouter implements IRouter, Runnable {
 
     private void handleCharacterList(CharacterListPayload query) {
         String clientUUID = query.getClientUUID();
-        CharacterService service = new CharacterService(new CharacterRepositoryImpl());
-
+        var service = new CharacterService(new CharacterRepositoryImpl());
         var characters = service.getAllCharacters();
         var responsePayload = new CharacterListPayload(characters);
 
@@ -144,7 +141,7 @@ public class PayloadRouter implements IRouter, Runnable {
         System.out.println("Logged in " + query.getUsername());
         if (query.getClientUUID() != null && query.getUsername() != null) {
             if (userService.correctCredentials(new User(query.getUsername(), query.getPassword()))) {
-                gameStateManager.loginUsername(query.getClientUUID(), query.getUsername());
+                gameStateManager.registerUsername(query.getClientUUID(), query.getUsername());
 
                 var successNotif = new Notification("Login successful");
                 unicastThread.send(new NetworkPayload(List.of(successNotif), query.getClientUUID()));
@@ -177,18 +174,7 @@ public class PayloadRouter implements IRouter, Runnable {
         }
     }
 
-
-
     private void handlePick(UserPickPayload query) {
-    }
-
-
-    private void handleGameState(GameState p) {
-        System.out.println("handleGameState " + p);
-    }
-
-    private void handleActor(Actor p) {
-        System.out.println("handleActor " + p);
     }
 
     private void handlePlayerInput(PlayerInput input) {
@@ -198,7 +184,7 @@ public class PayloadRouter implements IRouter, Runnable {
         }
 
         KeyBindingsHandler.updateKeyState(input.getClientUUID(), input.getKeyInputCode(), !input.isKeyReleased());
-        Actor actor = gameStateManager.getPlayerCharacterByUUID(input.getClientUUID());
+        var actor = gameStateManager.getPlayerCharacterByUUID(input.getClientUUID());
         if (actor == null) return;
 
         KeyBindingsHandler.processInput(actor, gameStateManager.getAllActors(), input);

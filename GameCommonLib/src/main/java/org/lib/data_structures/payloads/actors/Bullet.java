@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.lib.data_structures.payloads.game.Vector;
 
 import java.awt.*;
@@ -41,5 +42,22 @@ public class Bullet extends Actor {
     public void OnCollision(Actor target) {
         if (Objects.equals(getClientUUID(), target.getClientUUID())) return;
         setPendingDestroy(true);
+    }
+
+    public void onNextFrame() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - creationTime  >= lifespan) {
+            setPendingDestroy(true);
+            return;
+        }
+
+        var current = new Vector2D(getCoordinates().getX(), getCoordinates().getY());
+        var direction = Vector.toVector2D(this.direction);
+        if (direction.getNorm() == 0) return;
+
+        var movement = direction.normalize().scalarMultiply(movementSpeed);
+        var newPos = current.add(movement);
+
+        setCoordinates(new Coordinates((int) newPos.getX(), (int) newPos.getY()));
     }
 }
