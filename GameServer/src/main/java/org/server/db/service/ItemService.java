@@ -1,9 +1,12 @@
 package org.server.db.service;
 
 
+import org.lib.data_structures.dto.ItemDTO;
+import org.lib.data_structures.payloads.queries.search.WeaponFilterPayload;
 import org.lib.data.dto.ItemDTO;
 import org.server.db.model.Item;
 import org.server.db.repository.ItemRepository;
+import org.server.db.repository.criteria.WeaponSearchCriteria;
 
 import java.util.List;
 
@@ -21,6 +24,11 @@ public class ItemService {
 
     public List<ItemDTO> getItemsByType(Item.ItemType type) {
         return itemRepository.getItemsByType(type).stream().map(this::mapToDto).toList();
+    }
+
+    public List<ItemDTO> filter(WeaponSearchCriteria criteria)
+    {
+        return itemRepository.filter(criteria).stream().map(this::mapToDto).toList();
     }
 
     private ItemDTO mapToDto(Item item)

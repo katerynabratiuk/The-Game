@@ -16,12 +16,14 @@ import org.lib.data.payloads.game.PlayerInput;
 import org.lib.data.payloads.network.ConnectionRequest;
 import org.lib.data.payloads.queries.*;
 import org.lib.data.payloads.queries.search.CharacterFilterPayload;
+import org.lib.data_structures.payloads.queries.search.WeaponFilterPayload;
 import org.lib.packet_processing.send.SenderThread;
 import org.server.db.model.Item;
 import org.server.db.model.Pick;
 import org.server.db.model.User;
 import org.server.db.repository.criteria.CharacterSearchCriteria;
 import org.server.db.model.*;
+import org.server.db.repository.criteria.WeaponSearchCriteria;
 import org.server.db.repository.implementation.CharacterRepositoryImpl;
 import org.server.db.repository.implementation.ItemRepositoryImpl;
 import org.server.db.repository.implementation.PickRepositoryImpl;
@@ -83,6 +85,7 @@ public class PayloadRouter implements IRouter, Runnable {
                 case CHARACTER_LIST -> handleCharacterList((CharacterListPayload)p);
                 case CHARACTER_FILTER -> handleCharacterSearch((CharacterFilterPayload) p);
                 case WEAPON_LIST -> handleWeaponList((WeaponListPayload)p);
+                case WEAPON_FILTER -> handleWeaponFilter((WeaponFilterPayload) p);
                 case POWERUP_LIST -> handlePowerupList((PowerUpListPayload)p);
                 case PICK -> handlePick((UserPickPayload) p);
                 default -> System.err.println("Unknown payload type: " + p);
@@ -99,6 +102,40 @@ public class PayloadRouter implements IRouter, Runnable {
 
         unicastThread.send(new NetworkPayload(List.of(responsePayload), clientUUID));
     }
+
+    private void handleWeaponFilter(WeaponFilterPayload payload) {
+        WeaponSearchCriteria criteria = mapToCriteria(payload);
+
+        List<ItemDTO> filteredWeapons = itemService.filter(criteria);
+
+        WeaponListPayload response = new WeaponListPayload(filteredWeapons);
+        response.setClientUUID(payload.getClientUUID());
+        System.out.println(response.getType());
+
+        unicastThread.send(new NetworkPayload(List.of(response), payload.getClientUUID()));
+    }
+
+    private WeaponSearchCriteria mapToCriteria(WeaponFilterPayload payload) {
+        WeaponSearchCriteria criteria = new WeaponSearchCriteria();
+        criteria.setName(payload.getName());
+        criteria.setType(Item.ItemType.WEAPON);
+
+        if (payload.getSortBy() != null) {
+            List<String> sortFields = payload.getSortBy()
+                    .stream()
+                    .map(field -> switch (field) {
+                        case DAMAGE -> "damage";
+                        case SPRAY -> "spray";
+                        case RATE_OF_FIRE -> "rate_of_fire";
+                    })
+                    .toList();
+
+            criteria.setSortBy(sortFields);
+        }
+
+        return criteria;
+    }
+
 
     private void handlePowerupList(PowerUpListPayload query) {
         String clientUUID = query.getClientUUID();

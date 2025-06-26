@@ -4,6 +4,7 @@ import org.server.db.database_access.DbConnection;
 import org.server.db.factory.ItemFactory;
 import org.server.db.model.Item;
 import org.server.db.repository.ItemRepository;
+import org.server.db.repository.criteria.WeaponSearchCriteria;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -40,6 +41,61 @@ public class ItemRepositoryImpl implements ItemRepository {
 
         return null;
     }
+
+    @Override
+    public List<Item> filter(WeaponSearchCriteria criteria) {
+        List<Item> result = new ArrayList<>();
+        String table = criteria.getType().name().toLowerCase();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT i.*, t.* FROM item i " +
+                        "JOIN " + table + " t ON i.id_item = t.id_item " +
+                        "WHERE i.type = ?"
+        );
+
+        if (criteria.getName() != null && !criteria.getName().isBlank()) {
+            sql.append(" AND LOWER(i.name) LIKE ?");
+        }
+
+        if (criteria.getSortBy() != null && !criteria.getSortBy().isEmpty()) {
+            sql.append(" ORDER BY ");
+            for (int i = 0; i < criteria.getSortBy().size(); i++) {
+                sql.append("t.").append(criteria.getSortBy().get(i));
+                if (i < criteria.getSortBy().size() - 1) sql.append(", ");
+            }
+        }
+        System.out.println(sql);
+
+        try (Connection conn = DbConnection.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(sql.toString());
+
+            int index = 1;
+            stmt.setString(index++, criteria.getType().name().toLowerCase());
+
+            if (criteria.getName() != null && !criteria.getName().isBlank()) {
+                stmt.setString(index, "%" + criteria.getName().toLowerCase() + "%");
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Item item = ItemFactory.create(
+                        criteria.getType(),
+                        rs.getInt("id_item"),
+                        rs.getString("name"),
+                        rs.getString("imagepath"),
+                        rs
+                );
+                result.add(item);
+            }
+
+            return result;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
     @Override
     public List<Item> getItemsByType(Item.ItemType type) {

@@ -6,19 +6,20 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.Setter;
-import org.lib.data.payloads.actors.Actor;
-import org.lib.data.payloads.actors.Bullet;
+import org.lib.data_structures.payloads.actors.Actor;
+import org.lib.data_structures.payloads.actors.Bullet;
+import org.lib.data_structures.payloads.actors.PlayerCharacter;
+import org.lib.data_structures.payloads.enums.PayloadStructType;
+import org.lib.data_structures.payloads.game.GameState;
+import org.lib.data_structures.payloads.game.Notification;
+import org.lib.data_structures.payloads.game.PlayerInput;
+import org.lib.data_structures.payloads.network.ConnectionRequest;
+import org.lib.data_structures.payloads.network.ConnectionResponse;
+import org.lib.data_structures.payloads.queries.*;
+import org.lib.data_structures.payloads.queries.search.CharacterFilterPayload;
+import org.lib.data_structures.payloads.queries.search.WeaponFilterPayload;
 import org.lib.data.payloads.actors.Inventory;
-import org.lib.data.payloads.actors.PlayerCharacter;
-import org.lib.data.payloads.enums.PayloadStructType;
-import org.lib.data.payloads.game.GameState;
-import org.lib.data.payloads.game.Notification;
-import org.lib.data.payloads.game.PlayerInput;
-import org.lib.data.payloads.network.ConnectionRequest;
-import org.lib.data.payloads.network.ConnectionResponse;
 import org.lib.data.payloads.queries.*;
-import org.lib.data.payloads.queries.search.CharacterFilterPayload;
-
 
 import static org.lib.data.payloads.enums.PayloadStructType.*;
 
@@ -37,6 +38,7 @@ import static org.lib.data.payloads.enums.PayloadStructType.*;
         @JsonSubTypes.Type(value = UserPickPayload.class, name = "PICK"),
         @JsonSubTypes.Type(value = CharacterListPayload.class, name = "CHARACTER_LIST"),
         @JsonSubTypes.Type(value = CharacterFilterPayload.class, name = "SEARCH_CHARACTER"),
+        @JsonSubTypes.Type(value = WeaponFilterPayload.class, name = "WEAPON_FILTER"),
         @JsonSubTypes.Type(value = WeaponListPayload.class, name = "WEAPON_LIST"),
         @JsonSubTypes.Type(value = PowerUpListPayload.class, name = "POWERUP_LIST"),
         @JsonSubTypes.Type(value = Inventory.class, name = "INVENTORY")

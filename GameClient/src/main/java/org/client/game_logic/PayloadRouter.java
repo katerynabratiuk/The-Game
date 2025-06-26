@@ -52,6 +52,7 @@ public class PayloadRouter implements IRouter, Runnable {
                 case NOTIFICATION -> handlePlayerNotification((Notification) p);
                 case CHARACTER_LIST -> handleCharacterList((CharacterListPayload)p);
                 case CHARACTER_FILTER -> handleCharacterFilter((CharacterListPayload)p);
+                case WEAPON_FILTER -> handleWeaponFilter((WeaponListPayload) p);
                 case WEAPON_LIST -> handleWeaponList((WeaponListPayload) p);
                 case POWERUP_LIST -> handlePowerUpList((PowerUpListPayload) p);
                 case INVENTORY -> handleInventory((Inventory) p);
@@ -96,6 +97,14 @@ public class PayloadRouter implements IRouter, Runnable {
 
         SwingUtilities.invokeLater(() -> {
             UIProvider.displayWeaponSelection(GameContext.getMainFrame(), new ArrayList<>(payload.getItemList()));
+        });
+    }
+
+
+    private void handleWeaponFilter(WeaponListPayload p) {
+        System.out.println("Received filtered weapons: " + p.getItemList());
+        SwingUtilities.invokeLater(() -> {
+            UIProvider.displayWeaponSelection(Startup.getMainFrame(), new ArrayList<>(p.getItemList()));
         });
     }
 
