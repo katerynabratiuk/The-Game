@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.lib.data.payloads.actors.Actor;
 import org.lib.data.payloads.actors.Bullet;
+import org.lib.data.payloads.actors.Inventory;
 import org.lib.data.payloads.actors.PlayerCharacter;
 import org.lib.data.payloads.enums.PayloadStructType;
 import org.lib.data.payloads.game.GameState;
@@ -37,7 +38,8 @@ import static org.lib.data.payloads.enums.PayloadStructType.*;
         @JsonSubTypes.Type(value = CharacterListPayload.class, name = "CHARACTER_LIST"),
         @JsonSubTypes.Type(value = CharacterFilterPayload.class, name = "SEARCH_CHARACTER"),
         @JsonSubTypes.Type(value = WeaponListPayload.class, name = "WEAPON_LIST"),
-        @JsonSubTypes.Type(value = PowerUpListPayload.class, name = "POWERUP_LIST")
+        @JsonSubTypes.Type(value = PowerUpListPayload.class, name = "POWERUP_LIST"),
+        @JsonSubTypes.Type(value = Inventory.class, name = "INVENTORY")
 })
 public class Payload {
     @JsonIgnore private String type;
@@ -59,6 +61,7 @@ public class Payload {
             case "RegisterPayload" -> REGISTER;
             case "LoginPayload" -> LOGIN;
             case "UserPickPayload" -> PICK;
+            case "Inventory" -> INVENTORY;
             default -> UNKNOWN;
         };
     }

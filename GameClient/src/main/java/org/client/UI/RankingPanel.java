@@ -8,15 +8,15 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class RankingPanel extends JPanel {
     private final DefaultTableModel tableModel;
     private final Map<String, Integer> playerKills = new HashMap<>();
 
     public RankingPanel() {
-        setLayout(new BorderLayout());
         setOpaque(false);
-        setPreferredSize(new Dimension(250, 350));
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setPreferredSize(new Dimension(250, 220));
+        setLayout(new BorderLayout(0, 5));
 
         tableModel = new DefaultTableModel(new Object[]{"#", "Player", "Kills"}, 0) {
             @Override
@@ -26,21 +26,19 @@ public class RankingPanel extends JPanel {
         };
 
         JTable rankingTable = new JTable(tableModel);
-        rankingTable.setRowHeight(28);
-        rankingTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        rankingTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-
-
-        rankingTable.setBackground(new Color(248, 249, 250));
-        rankingTable.setForeground(Color.DARK_GRAY);
-        rankingTable.setGridColor(new Color(222, 226, 230));
-
-        rankingTable.setSelectionBackground(new Color(204, 229, 255));
-        rankingTable.setSelectionForeground(Color.BLACK);
-
-        rankingTable.getTableHeader().setBackground(new Color(52, 58, 64)); // dark header
-        rankingTable.getTableHeader().setForeground(Color.WHITE);
-        rankingTable.getTableHeader().setOpaque(true);
+        rankingTable.setOpaque(false);
+        rankingTable.setRowHeight(24);
+        rankingTable.setFont(new Font("Arial", Font.PLAIN, 12));
+        rankingTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        rankingTable.getTableHeader().setReorderingAllowed(false);
+        rankingTable.setShowGrid(false);
+        rankingTable.setFocusable(false);
+        rankingTable.setRowSelectionAllowed(false);
+        rankingTable.setBackground(new Color(0, 0, 0, 0));
+        rankingTable.setForeground(Color.WHITE);
+        rankingTable.getTableHeader().setOpaque(false);
+        rankingTable.getTableHeader().setBackground(new Color(0, 0, 0, 0));
+        rankingTable.getTableHeader().setForeground(Color.BLACK);
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -48,17 +46,23 @@ public class RankingPanel extends JPanel {
         rankingTable.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
 
         JScrollPane scrollPane = new JScrollPane(rankingTable);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(222, 226, 230)));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
 
-        JLabel title = new JLabel("Playerboard");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        title.setForeground(new Color(33, 37, 41));
-        title.setBorder(new EmptyBorder(5, 5, 10, 5));
+        JLabel title = new JLabel("Playerboard", SwingConstants.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 14));
+        title.setForeground(Color.WHITE);
+        title.setBorder(new EmptyBorder(5, 0, 0, 0));
 
-        add(title, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
+        RoundedPanel background = new RoundedPanel();
+        background.setLayout(new BorderLayout());
+        background.setOpaque(false);
+        background.setBorder(new EmptyBorder(10, 10, 10, 10));
+        background.add(title, BorderLayout.NORTH);
+        background.add(scrollPane, BorderLayout.CENTER);
+
+        add(background, BorderLayout.CENTER);
     }
 
     public void updateRankings(Map<String, Integer> newRankings) {
@@ -78,5 +82,19 @@ public class RankingPanel extends JPanel {
                             entry.getValue()
                     });
                 });
+    }
+
+    private static class RoundedPanel extends JPanel {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            g2d.setColor(new Color(50, 50, 50, 150));
+            g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 15, 15);
+            g2d.setColor(new Color(100, 100, 100));
+            g2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 15, 15);
+        }
     }
 }

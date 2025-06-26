@@ -7,6 +7,7 @@ import org.client.UI.UIProvider;
 import org.lib.data.concurrency.ConcurrentQueue;
 import org.lib.data.payloads.*;
 import org.lib.controllers.IRouter;
+import org.lib.data.payloads.actors.Inventory;
 import org.lib.data.payloads.game.*;
 import org.lib.data.payloads.enums.NotificationCode;
 import org.lib.data.payloads.queries.CharacterListPayload;
@@ -53,9 +54,17 @@ public class PayloadRouter implements IRouter, Runnable {
                 case CHARACTER_FILTER -> handleCharacterFilter((CharacterListPayload)p);
                 case WEAPON_LIST -> handleWeaponList((WeaponListPayload) p);
                 case POWERUP_LIST -> handlePowerUpList((PowerUpListPayload) p);
+                case INVENTORY -> handleInventory((Inventory) p);
                 default -> System.err.println("Unknown payload type: " + p);
             }
         }
+    }
+
+    private void handleInventory(Inventory inventory) {
+        System.out.println("GOT INVENTORY " + inventory);
+        SwingUtilities.invokeLater(() -> {
+            mapPanel.getInventoryPanel().updateInventory(inventory);
+        });
     }
 
     private void handlePowerUpList(PowerUpListPayload payload) {

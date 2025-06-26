@@ -20,8 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MapPanel extends JPanel {
     @Getter private GameState gameState;
-    private final RankingPanel rankingPanel;
-    private final InventoryPanel inventoryPanel;
+    @Getter private final RankingPanel rankingPanel;
+    @Getter private final InventoryPanel inventoryPanel;
     private final int SCALE = 1;
     private Image backgroundImage;
     private JButton reenterMapButton;
@@ -114,7 +114,7 @@ public class MapPanel extends JPanel {
         setBackgroundImage(g2d);
         drawActors(g2d);
         updateRankingPanel();
-        updateInventoryPanel(); // currently is updated each frame - needs to be refactored
+        updateInventoryPanel();
     }
 
     private void setBackgroundImage(Graphics2D g2d) {
@@ -237,7 +237,7 @@ public class MapPanel extends JPanel {
         add(rankingPanel);
         rankingPanel.repaint();
     }
-    
+
     private void updateInventoryPanel() {
         inventoryPanel.setBounds(
                 10,
@@ -261,14 +261,14 @@ public class MapPanel extends JPanel {
     }
 
     private void setupReenterMapButton() {
-        reenterMapButton = new JButton("Reenter map with a new character");
+        reenterMapButton = new JButton("Reenter Map");
         reenterMapButton.setVisible(false);
         reenterMapButton.setFocusable(false);
         reenterMapButton.addActionListener(e -> {
             reenterMapButton.setVisible(false);
             org.client.Startup.getPacketsSenderService().sendCharacterListRequest();
         });
-        setLayout(null);
+        setLayout(null); 
         add(reenterMapButton);
     }
 

@@ -21,8 +21,9 @@ public class PlayerCharacter extends Actor {
     private Double sprayAngle = 0.0;
     private double rateOfFire = 1000;
     private double damage = 1;
-
     private long lastAttackTime = 0;
+
+    private Inventory inventory;
 
 
     public PlayerCharacter(String clientUUID, Coordinates coordinates, String username) {

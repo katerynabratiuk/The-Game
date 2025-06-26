@@ -8,6 +8,7 @@ import org.lib.data.concurrency.ConcurrentQueue;
 import org.lib.data.dto.ItemDTO;
 import org.lib.data.payloads.*;
 import org.lib.controllers.IRouter;
+import org.lib.data.payloads.actors.Inventory;
 import org.lib.data.payloads.actors.PlayerCharacter;
 import org.lib.data.payloads.actors.Coordinates;
 import org.lib.data.payloads.game.Notification;
@@ -207,16 +208,18 @@ public class PayloadRouter implements IRouter, Runnable {
         }
 
         var player = new PlayerCharacter(clientUUID, new Coordinates(0, 0), username);
+        int newHp = player.getHitPoints() + character.getHeartPoints();
+        var powerUpDto = Item.toItemDto(powerUp);
+        var inventory = new Inventory(List.of(powerUpDto));
 
         player.setMovementSpeed(player.getMovementSpeed() * character.getMovingSpeed());
-
-        int newHp = player.getHitPoints() + character.getHeartPoints();
         player.setHitPoints(newHp);
         player.setMaxHp(newHp);
         player.setRateOfFire(weapon.getRof());
         player.setSprayAngle(weapon.getSpray());
         player.setDamage(weapon.getDamage());
         player.setImagePath(character.getImagePath());
+        player.setInventory(inventory);
 
         switch (powerUp.getType()) {
             case SPEED -> player.setMovementSpeed(player.getMovementSpeed() + 3);
@@ -229,6 +232,7 @@ public class PayloadRouter implements IRouter, Runnable {
 
         var notif = new Notification("Pick successful! Starting game...");
         unicastThread.send(new NetworkPayload(List.of(notif), clientUUID));
+        unicastThread.send(new NetworkPayload(List.of(inventory), clientUUID));
     }
 
     private void saveNewUserPick(GameCharacter character, Item weapon, Item powerUp) {
