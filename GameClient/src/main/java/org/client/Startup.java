@@ -3,6 +3,7 @@ package org.client;
 import lombok.Getter;
 import org.client.UI.MapPanel;
 import org.client.UI.UIProvider;
+import org.client.game_logic.InputHandler;
 import org.client.game_logic.PayloadRouter;
 import org.client.network.PacketsSenderService;
 import org.client.network.UDPSocketThread;
@@ -25,7 +26,7 @@ public class Startup {
 
     public static void launch() {
         try {
-            initCoreComponents();
+            initComponents();
             setupMainWindow();
             UIProvider.displayMenu(frame);
             frame.setVisible(true);
@@ -40,13 +41,13 @@ public class Startup {
         packetsSenderService.sendJoinRequest();
     }
 
-    private static void initCoreComponents() throws IOException {
+    private static void initComponents() throws IOException {
         mapPanel = new MapPanel();
         controller = new PayloadRouter(mapPanel);
 
         var udpSocketThread = new UDPSocketThread(controller);
         packetsSenderService = new PacketsSenderService(udpSocketThread);
-        controller.setPacketsSenderService(packetsSenderService);
+        new InputHandler(mapPanel, packetsSenderService);
 
         startThreads(controller, udpSocketThread);
     }

@@ -1,16 +1,12 @@
 package org.client.game_logic;
 
-import lombok.Setter;
 import org.client.Startup;
-import org.client.UI.InputCallback;
 import org.client.UI.MapPanel;
 import org.client.UI.PopupRenderer;
 import org.client.UI.UIProvider;
-import org.client.network.PacketsSenderService;
 import org.lib.data_structures.concurrency.ConcurrentQueue;
 import org.lib.data_structures.payloads.*;
 import org.lib.controllers.IRouter;
-import org.lib.data_structures.payloads.actors.Coordinates;
 import org.lib.data_structures.payloads.game.*;
 import org.lib.data_structures.payloads.enums.NotificationCode;
 import org.lib.data_structures.payloads.queries.CharacterListPayload;
@@ -18,18 +14,15 @@ import org.lib.data_structures.payloads.queries.PowerUpListPayload;
 import org.lib.data_structures.payloads.queries.WeaponListPayload;
 
 import javax.swing.*;
-import java.awt.event.*;
 import java.util.ArrayList;
 
 
-public class PayloadRouter implements IRouter, Runnable, InputCallback {
+public class PayloadRouter implements IRouter, Runnable {
     private final MapPanel mapPanel;
     private final ConcurrentQueue<NetworkPayload> receivedPackets = new ConcurrentQueue<>();
-    @Setter private PacketsSenderService packetsSenderService;
 
     public PayloadRouter(MapPanel mapPanel) {
         this.mapPanel = mapPanel;
-        this.mapPanel.setInputCallback(this);
     }
 
     @Override
@@ -49,29 +42,6 @@ public class PayloadRouter implements IRouter, Runnable, InputCallback {
                 break;
             }
         }
-    }
-
-    @Override
-    public void onKeyPressed(int keyCode) {
-        PlayerInput input = new PlayerInput(packetsSenderService.getClientId(), keyCode);
-        packetsSenderService.sendInput(input);
-    }
-
-    @Override
-    public void onKeyReleased(int keyCode) {
-        PlayerInput input = new PlayerInput(packetsSenderService.getClientId(), keyCode);
-        input.setKeyReleased(true);
-        packetsSenderService.sendInput(input);
-    }
-
-    @Override
-    public void onMouseClicked(int x, int y) {
-        var direction = new Vector(new Coordinates(x, y));
-        PlayerInput input = new PlayerInput(packetsSenderService.getClientId(), MouseEvent.BUTTON1);
-        input.setDirection(direction);
-
-        System.out.println("Mouse clicked at: " + input.getDirection().getX() + " " + input.getDirection().getY());
-        packetsSenderService.sendInput(input);
     }
 
     public void route(NetworkPayload payload) {
