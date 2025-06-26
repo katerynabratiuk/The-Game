@@ -16,7 +16,7 @@ import org.lib.data.payloads.game.PlayerInput;
 import org.lib.data.payloads.network.ConnectionRequest;
 import org.lib.data.payloads.queries.*;
 import org.lib.data.payloads.queries.search.CharacterFilterPayload;
-import org.lib.data_structures.payloads.queries.search.WeaponFilterPayload;
+import org.lib.data.payloads.queries.search.WeaponFilterPayload;
 import org.lib.packet_processing.send.SenderThread;
 import org.server.db.model.Item;
 import org.server.db.model.Pick;

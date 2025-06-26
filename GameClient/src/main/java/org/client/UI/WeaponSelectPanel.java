@@ -1,10 +1,8 @@
 package org.client.UI;
 
 import org.lib.data.dto.ItemDTO;
-import org.lib.data.payloads.queries.search.*;
 import org.client.GameContext;
-import org.lib.data.dto.ItemDTO;
-import org.lib.data_structures.payloads.queries.search.WeaponFilterPayload;
+import org.lib.data.payloads.queries.search.WeaponFilterPayload;
 
 import javax.swing.*;
 import java.awt.*;
