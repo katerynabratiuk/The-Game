@@ -35,6 +35,7 @@ import org.server.db.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Getter @Setter
 public class PayloadRouter implements IRouter, Runnable {
@@ -244,7 +245,12 @@ public class PayloadRouter implements IRouter, Runnable {
             return;
         }
 
-        var player = new PlayerCharacter(clientUUID, new Coordinates(0, 0), username);
+        Random rnd = new Random();
+
+        int randomX = rnd.nextInt(600);
+        int randomY = rnd.nextInt(400);
+
+        var player = new PlayerCharacter(clientUUID, new Coordinates(randomX, randomY), username);
         int newHp = player.getHitPoints() + character.getHeartPoints();
         var powerUpDto = Item.toItemDto(powerUp);
         var inventory = new Inventory(List.of(powerUpDto));
