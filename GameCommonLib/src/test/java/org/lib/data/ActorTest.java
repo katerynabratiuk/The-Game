@@ -79,7 +79,7 @@ public class ActorTest {
         bullet.setClientUUID("uuid");
 
         player.OnCollision(bullet);
-        assertEquals(5, player.getHitPoints());
+        assertEquals(30, player.getHitPoints());
     }
 
     @Test
