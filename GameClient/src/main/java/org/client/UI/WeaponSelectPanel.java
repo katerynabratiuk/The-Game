@@ -85,10 +85,6 @@ public class WeaponSelectPanel extends JPanel {
             if (damageCheck.isSelected()) sortFields.add(WeaponFilterPayload.SortField.DAMAGE);
             if (sprayCheck.isSelected()) sortFields.add(WeaponFilterPayload.SortField.SPRAY);
             if (rateCheck.isSelected()) sortFields.add(WeaponFilterPayload.SortField.RATE_OF_FIRE);
-
-            System.out.println("Weapon query: " + query);
-            System.out.println("Sort fields: " + sortFields);
-
             GameContext.getPacketsSenderService().sendWeaponFilterRequest(query, sortFields);
         });
 
@@ -123,20 +119,5 @@ public class WeaponSelectPanel extends JPanel {
         }
         weaponsPanel.revalidate();
         weaponsPanel.repaint();
-//
-//        gbc.gridy++;
-//        gbc.gridx = 1;
-//        JButton continueBtn = new JButton("Select and Continue");
-//        add(continueBtn, gbc);
-//
-//        continueBtn.addActionListener(e -> {
-//            if (selectedWeapon != null) {
-//                System.out.println("Selected weapon: " + selectedWeapon.getName());
-//                GameContext.getUserPick().setWeaponId(selectedWeapon.getId());
-//                GameContext.getPacketsSenderService().sendPowerUpRequest();
-//            } else {
-//               // JOptionPane.showMessageDialog("Please select a weapon.");
-//            }
-//        });
     }
 }

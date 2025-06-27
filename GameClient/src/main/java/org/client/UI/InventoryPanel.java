@@ -43,8 +43,6 @@ public class InventoryPanel extends JPanel {
             if (i < items.size()) {
                 ItemDTO item = items.get(i);
                 ImageIcon icon = loadItemImage(item.getImagePath());
-                System.out.println(icon);
-                System.out.println(item.getImagePath());
                 setSlotItem(i, icon, DEFAULT_KEY_BINDINGS[i], item.getName());
             } else {
                 setSlotItem(i, null, DEFAULT_KEY_BINDINGS[i], null);

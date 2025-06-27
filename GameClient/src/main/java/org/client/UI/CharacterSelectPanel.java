@@ -66,7 +66,7 @@ public class CharacterSelectPanel extends JPanel {
 
         continueBtn.addActionListener(e -> {
             if (selectedCharacter != null) {
-                System.out.println("Selected character: " + selectedCharacter);
+                System.out.println("Selected character: " + selectedCharacter.getName());
                 GameContext.getUserPick().setCharacterId(selectedCharacter.getId());
                 GameContext.getPacketsSenderService().sendWeaponListRequest();
             } else {
@@ -78,10 +78,6 @@ public class CharacterSelectPanel extends JPanel {
             String query = searchField.getText().trim();
             boolean isFast = fastRadio.isSelected();
             boolean hasArmor = armorRadio.isSelected();
-
-            System.out.println("Search query: " + query);
-            System.out.println("Filters — Fast: " + isFast + ", Armor: " + hasArmor);
-
             GameContext.getPacketsSenderService().sendCharacterFilterRequest(query, isFast, hasArmor);
 
         });

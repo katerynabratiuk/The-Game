@@ -62,23 +62,18 @@ public class PayloadRouter implements IRouter, Runnable {
     }
 
     private void handleInventory(Inventory inventory) {
-        System.out.println("GOT INVENTORY " + inventory);
         SwingUtilities.invokeLater(() -> {
             mapPanel.getInventoryPanel().updateInventory(inventory);
         });
     }
 
     private void handlePowerUpList(PowerUpListPayload payload) {
-        System.out.println("Received weapons: " + payload.getItemList());
-
         SwingUtilities.invokeLater(() -> {
             UIProvider.displayPowerUpSelection(GameContext.getMainFrame(), new ArrayList<>(payload.getItemList()));
         });
     }
 
     private void handleCharacterList(CharacterListPayload payload) {
-        System.out.println("Received characters: " + payload.getCharacters());
-
         SwingUtilities.invokeLater(() -> {
             UIProvider.displayCharacterSelection(GameContext.getMainFrame(), new ArrayList<>(payload.getCharacters()));
         });
@@ -93,8 +88,6 @@ public class PayloadRouter implements IRouter, Runnable {
     }
 
     private void handleWeaponList(WeaponListPayload payload) {
-        System.out.println("Received weapons: " + payload.getItemList());
-
         SwingUtilities.invokeLater(() -> {
             UIProvider.displayWeaponSelection(GameContext.getMainFrame(), new ArrayList<>(payload.getItemList()));
         });
@@ -102,7 +95,6 @@ public class PayloadRouter implements IRouter, Runnable {
 
 
     private void handleWeaponFilter(WeaponListPayload p) {
-        System.out.println("Received filtered weapons: " + p.getItemList());
         SwingUtilities.invokeLater(() -> {
             UIProvider.displayWeaponSelection(GameContext.getMainFrame(), new ArrayList<>(p.getItemList()));
         });
