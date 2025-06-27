@@ -15,8 +15,8 @@ import java.util.Objects;
 public class PlayerCharacter extends Actor {
     private String username;
 
-    private int maxHp = 5;
-    private int hitPoints = 5;
+    private int maxHp = 30;
+    private int hitPoints = 30;
 
     private Double sprayAngle = 0.0;
     private double rateOfFire = 1000;

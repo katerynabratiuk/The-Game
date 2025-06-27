@@ -247,8 +247,8 @@ public class PayloadRouter implements IRouter, Runnable {
 
         Random rnd = new Random();
 
-        int randomX = rnd.nextInt(600);
-        int randomY = rnd.nextInt(400);
+        int randomX = rnd.nextInt(400);
+        int randomY = rnd.nextInt(200);
 
         var player = new PlayerCharacter(clientUUID, new Coordinates(randomX, randomY), username);
         int newHp = player.getHitPoints() + character.getHeartPoints();
